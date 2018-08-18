@@ -1,8 +1,8 @@
 package com.alpha.marketplace.repositories;
 
-import com.alpha.marketplace.models.Extension;
-import org.springframework.data.repository.CrudRepository;
+import com.alpha.marketplace.models.User;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends CrudRepository<Extension, Long> {
+public interface UserRepository extends JpaRepository<User, Long>{
 
 }

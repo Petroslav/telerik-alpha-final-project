@@ -2,6 +2,7 @@ package com.alpha.marketplace.models;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -36,7 +37,10 @@ public class User {
     @OneToMany(mappedBy = "publisher")
     private List<Extension> extensions;
 
-    public User(){}
+    public User(){
+        setBanned(false);
+        setExtensions(new ArrayList<>());
+    }
 
     public User(String password, String firstName, String lastName, @Email String email, Role role, boolean isBanned, List<Extension> extensions) {
         this.password = password;
