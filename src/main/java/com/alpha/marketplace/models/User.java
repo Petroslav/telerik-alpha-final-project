@@ -2,7 +2,6 @@ package com.alpha.marketplace.models;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -13,6 +12,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private long id;
+
+    @Column(name = "password", nullable = false, length = 1000)
+    private String password;
 
     @Column(name = "first_name")
     private String firstName;
@@ -36,7 +38,8 @@ public class User {
 
     public User(){}
 
-    public User(String firstName, String lastName, @Email String email, Role role, boolean isBanned, List<Extension> extensions) {
+    public User(String password, String firstName, String lastName, @Email String email, Role role, boolean isBanned, List<Extension> extensions) {
+        this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -51,6 +54,14 @@ public class User {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getFirstName() {

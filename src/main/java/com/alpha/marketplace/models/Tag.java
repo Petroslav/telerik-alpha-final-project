@@ -15,13 +15,6 @@ class Tag {
     @Column(name = "tag_name")
     private String name;
 
-    @ManyToMany( cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE
-    })
-    @JoinTable(name = "tagged_extensions",
-            joinColumns = @JoinColumn(name = "tag_id"),
-            inverseJoinColumns = @JoinColumn(name = "extension_id")
-    )
+    @ManyToMany(mappedBy = "tags")
     List<Extension> taggedExtensions;
 }
