@@ -48,11 +48,25 @@ public class Extension {
     @Column(name = "is_approved", nullable = false)
     private boolean isApproved;
 
+    @Column(name = "dl_uri", nullable = false)
+    private String dlURI;
+
     //TODO add GitHub API fields for pull requests, open issues and latest commit.
 
     public Extension(){}
 
-    public Extension(String name, String description, User publisher, int downloads, String version, List<Tag> tags, Date addedOn, Date latestUpdate, boolean isApproved) {
+    public Extension(
+            String name,
+            String description,
+            User publisher,
+            int downloads,
+            String version,
+            List<Tag> tags,
+            Date addedOn,
+            Date latestUpdate,
+            boolean isApproved,
+            String dlURI
+        ) {
         this.name = name;
         this.description = description;
         this.publisher = publisher;
@@ -62,6 +76,7 @@ public class Extension {
         this.addedOn = addedOn;
         this.latestUpdate = latestUpdate;
         this.isApproved = isApproved;
+        this.dlURI = dlURI;
     }
 
     public long getId() {
@@ -134,5 +149,21 @@ public class Extension {
 
     public void setApproved(boolean approved) {
         isApproved = approved;
+    }
+
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
+    }
+
+    public String getDlURI() {
+        return dlURI;
+    }
+
+    public void setDlURI(String dlURI) {
+        this.dlURI = dlURI;
     }
 }
