@@ -1,7 +1,7 @@
 <main>
     <div th:each="extension : ${extensions}">
         <header>
-            <h2 th:text = ${extension.name}></h2>
+            <h2 th:href = "@{/extension/{id}(id=${extension.id})}" th:text = ${extension.name}></h2>
         </header>
     </div>
 </main>

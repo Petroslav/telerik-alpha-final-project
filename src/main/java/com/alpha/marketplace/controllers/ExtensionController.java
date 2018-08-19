@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -43,5 +44,26 @@ public class ExtensionController {
         extensionService.createExtension(model);
 
         return "redirect:/";
+    }
+    @GetMapping("/{id}")
+    public String viewExtension(@PathVariable String id, Model model){
+
+        int intId = Integer.parseInt(id);
+        Extension extension = extensionService.getById(intId);
+        if(extension == null){
+            model.addAttribute("view", "error/404");
+            return "base-layout";
+        }
+        String approved = "isNotApproved";
+
+        if(extension.isApproved()){
+            approved = "Approved";
+        }
+
+
+        model.addAttribute("view", "extensions/details");
+        model.addAttribute("approved", approved);
+        model.addAttribute("extension", extension);
+        return "base-layout";
     }
 }
