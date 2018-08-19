@@ -1,6 +1,7 @@
 package com.alpha.marketplace.servicesImpl;
 
 import com.alpha.marketplace.models.Extension;
+import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.ExtensionBindingModel;
 import com.alpha.marketplace.repositories.base.ExtensionRepository;
 import com.alpha.marketplace.services.ExtensionService;
@@ -49,6 +50,11 @@ public class ExtensionServiceImpl implements ExtensionService {
     public void createExtension(ExtensionBindingModel model) {
         //TODO implement validation
 
+        User u = new User();
+        u.setEmail("testMail");
+        u.setFirstName("testFirstName");
+        u.setLastName("testLAstName");
+        u.setPassword("123");
         Extension extension = new Extension();
         extension.setName(model.getName());
         extension.setDescription(model.getDescription());
@@ -56,10 +62,11 @@ public class ExtensionServiceImpl implements ExtensionService {
         extension.setDownloads(0);
         extension.setTags(new ArrayList<>());
         extension.setAddedOn(new Date());
-//        extension.setPublisher();
+        extension.setVersion("1");
+         extension.setPublisher(u);
         //TODO get current logged user to set as publisher
-        extension.setDlURI(model.getDownloadLink());
-        extension.setRepoURL(model.getRepositoryUrl());
+        extension.setDlURI("test");
+        extension.setRepoURL("test");
 
         repository.save(extension);
     }
