@@ -39,52 +39,6 @@ public class ExtensionRepositoryImpl implements ExtensionRepository {
         return extensions;
     }
 
-    @Override
-    public List<Extension> getSelectedByAdmin() {
-        //TODO Implement admin selection
-        return null;
-    }
-
-    @Override
-    public List<Extension> getNewest() {
-        List<Extension> extensions = null;
-        try (Session sess = session.openSession()) {
-            sess.beginTransaction();
-
-            extensions = getAll().stream().
-                    sorted(Comparator.comparing(Extension::getAddedOn))
-                    .limit(10)
-                    .collect(Collectors.toList());
-
-            sess.getTransaction().commit();
-            System.out.println("Newest extensions retrieved successfully");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
-        return extensions;
-    }
-
-    @Override
-    public List<Extension> getMostPopular() {
-        List<Extension> extensions = null;
-        try (Session sess = session.openSession()) {
-            sess.beginTransaction();
-
-            extensions = getAll().stream()
-                    .sorted(Comparator.comparing(Extension::getDownloads).reversed())
-                    .limit(10)
-                    .collect(Collectors.toList());
-
-            sess.getTransaction().commit();
-            System.out.println("Most popular extensions retrieved successfully");
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
-        return extensions;
-    }
 
     @Override
     public Extension getById(int id) {

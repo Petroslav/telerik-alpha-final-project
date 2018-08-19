@@ -2,6 +2,7 @@ package com.alpha.marketplace.controllers;
 
 import com.alpha.marketplace.models.Extension;
 import com.alpha.marketplace.repositories.base.ExtensionRepository;
+import com.alpha.marketplace.services.ExtensionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,18 +14,18 @@ import java.util.List;
 @Controller
 public class HomeController {
 
-    private ExtensionRepository extensionRepository;
+    private ExtensionService extensionService;
 
     @Autowired
-    public HomeController(ExtensionRepository extensionRepository){
-        this.extensionRepository = extensionRepository;
+    public HomeController(ExtensionService extensionService){
+        this.extensionService = extensionService;
     }
 
     @GetMapping("/")
     public String index(Model model){
-        List<Extension> newestExtensions = extensionRepository.getNewest();
-        List<Extension> selectedByAdmin = extensionRepository.getSelectedByAdmin();
-        List<Extension> mostPopular = extensionRepository.getMostPopular();
+        List<Extension> newestExtensions = extensionService.getLatest();
+        List<Extension> selectedByAdmin = extensionService.getAdminSelection();
+        List<Extension> mostPopular = extensionService.getMostPopular();
 
         model.addAttribute("view", "index");
         model.addAttribute("newest", newestExtensions);

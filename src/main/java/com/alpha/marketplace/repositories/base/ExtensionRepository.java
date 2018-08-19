@@ -8,9 +8,6 @@ import java.util.List;
 public interface ExtensionRepository {
 
     List<Extension> getAll();
-    List<Extension> getSelectedByAdmin();
-    List<Extension> getNewest();
-    List<Extension> getMostPopular();
     Extension getById(int id);
     Extension getByName(String name);
     List<Extension> getByDownloads(int downloads);
