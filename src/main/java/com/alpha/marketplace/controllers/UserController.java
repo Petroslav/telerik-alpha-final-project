@@ -34,4 +34,9 @@ public class UserController {
         }
         return "succesfulReg";
     }
+
+    @GetMapping("test")
+    public String test(){
+        return "redirect:/index";
+    }
 }

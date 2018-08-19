@@ -7,5 +7,5 @@ public interface UserService {
 
     User registerUser(UserBindingModel u);
     User getById(int id);
-    User getByUsername(String username);
+    User getByEmail(String email);
 }

@@ -2,7 +2,7 @@ package com.alpha.marketplace.servicesImpl;
 
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.UserBindingModel;
-import com.alpha.marketplace.repositories.UserRepository;
+import com.alpha.marketplace.repositories.base.UserRepository;
 import com.alpha.marketplace.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,6 @@ public class UserServiceImpl implements UserService {
         if(!model.getPass1().equals(model.getPass2())){
             u = null;
         }
-        repository.saveAndFlush(u);
         return u;
     }
 
@@ -37,7 +36,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getByUsername(String username) {
-        return null;
+    public User getByEmail(String email) {
+        return repository.getByEmail(email);
     }
 }
