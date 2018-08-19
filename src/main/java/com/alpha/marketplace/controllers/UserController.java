@@ -1,6 +1,6 @@
 package com.alpha.marketplace.controllers;
 
-import com.alpha.marketplace.models.UserBindingModel;
+import com.alpha.marketplace.models.binding.UserBindingModel;
 import com.alpha.marketplace.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

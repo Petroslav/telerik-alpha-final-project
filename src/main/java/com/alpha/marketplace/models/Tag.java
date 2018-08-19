@@ -12,7 +12,7 @@ public class Tag {
     @Column(name = "tag_id")
     private int id;
 
-    @Column(name = "tag_name")
+    @Column(name = "tag_name", unique = true)
     private String name;
 
     @ManyToMany(mappedBy = "tags")

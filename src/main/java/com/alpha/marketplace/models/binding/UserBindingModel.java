@@ -1,20 +1,24 @@
-package com.alpha.marketplace.models;
+package com.alpha.marketplace.models.binding;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 public class UserBindingModel {
 
-    @NotNull
+    @NotEmpty
     @Email
+    @Size(min = 5)
     private String email;
 
     private String firstName;
     private String lastName;
 
-    @NotNull
+    @NotEmpty
+    @Size(min = 6, max = 36)
     private String pass1;
-    @NotNull
+    @NotEmpty
+    @Size(min = 6, max = 36)
     private String pass2;
 
     public UserBindingModel(){}
