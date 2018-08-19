@@ -1,7 +1,7 @@
 package com.alpha.marketplace.models;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -51,6 +51,9 @@ public class Extension {
     @Column(name = "dl_uri", nullable = false)
     private String dlURI;
 
+    @Column(name = "repo_url", nullable = false)
+    private String repoURL;
+
     //TODO add GitHub API fields for pull requests, open issues and latest commit.
 
     public Extension(){}
@@ -65,7 +68,8 @@ public class Extension {
             Date addedOn,
             Date latestUpdate,
             boolean isApproved,
-            String dlURI
+            String dlURI,
+            String repoURL
         ) {
         this.name = name;
         this.description = description;
@@ -77,6 +81,7 @@ public class Extension {
         this.latestUpdate = latestUpdate;
         this.isApproved = isApproved;
         this.dlURI = dlURI;
+        this.repoURL = repoURL;
     }
 
     public long getId() {
@@ -165,5 +170,17 @@ public class Extension {
 
     public void setDlURI(String dlURI) {
         this.dlURI = dlURI;
+    }
+
+    public String getRepoURL() {
+        return repoURL;
+    }
+
+    public void setRepoURL(String repoURL) {
+        this.repoURL = repoURL;
+    }
+
+    public void approve(){
+        isApproved = true;
     }
 }
