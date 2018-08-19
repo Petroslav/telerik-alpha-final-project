@@ -65,8 +65,8 @@ public class ExtensionServiceImpl implements ExtensionService {
         extension.setVersion("1");
          extension.setPublisher(u);
         //TODO get current logged user to set as publisher
-        extension.setDlURI("test");
-        extension.setRepoURL("test");
+        extension.setDlURI(model.getDownloadLink());
+        extension.setRepoURL(model.getRepositoryUrl());
 
         repository.save(extension);
     }
