@@ -1,4 +1,4 @@
-package com.alpha.marketplace.services;
+package com.alpha.marketplace.services.base;
 
 import com.alpha.marketplace.models.Extension;
 import com.alpha.marketplace.models.binding.ExtensionBindingModel;

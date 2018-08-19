@@ -1,9 +1,9 @@
-package com.alpha.marketplace.servicesImpl;
+package com.alpha.marketplace.services;
 
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.UserBindingModel;
 import com.alpha.marketplace.repositories.base.UserRepository;
-import com.alpha.marketplace.services.UserService;
+import com.alpha.marketplace.services.base.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User registerUser(UserBindingModel model) {
-        if(!validateRegUser(model)){
+        if(!validateReg(model)){
             //TODO Error handling
             return null;
         }
@@ -36,17 +36,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getById(int id) {
-        if(id < 0){
-            //TODO error handling
-            return null;
-        }
+    public User findById(long id) {
         return repository.findById(id);
     }
 
     @Override
-    public User getByEmail(String email) {
-        return null;
+    public User findByEmail(String email) {
+        return repository.findByEmail(email);
     }
 
     @Override
@@ -55,9 +51,8 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
-    @Override
-    public boolean authenticateUser(String email, String password) {
-        User user = repository.getByEmail(email);
+    private boolean authenticateUser(String email, String password) {
+        User user = repository.findByEmail(email);
         if(user == null){
             //TODO error handling
             return false;
@@ -66,8 +61,8 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
-    @Override
-    public boolean validateRegUser(UserBindingModel model) {
-        return true;
+    private boolean validateReg(UserBindingModel model) {
+        return (repository.findByEmail(model.getEmail()) != null) &&
+                (model.getPass1().equals(model.getPass2()));
     }
 }

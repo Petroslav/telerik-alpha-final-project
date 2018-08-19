@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public class UserRepositoryImpl implements UserRepository {
 
-    private SessionFactory session;
+    private final SessionFactory session;
 
     @Autowired
     public UserRepositoryImpl(SessionFactory session) {
@@ -20,11 +20,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User findById(int id) {
+    public User findById(long id) {
         User u = null;
         try(Session sess = session.openSession()){
             sess.beginTransaction();
-            u = sess.get(User.class, (long)id);
+            u = sess.get(User.class, id);
             sess.getTransaction().commit();
             System.out.println("User retrieved successfully.");
         }catch(Exception e){
@@ -35,7 +35,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User getByEmail(String email) {
+    public User findByEmail(String email) {
         User u = null;
         try(Session sess = session.openSession()){
             sess.beginTransaction();
@@ -97,7 +97,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean deleteById(int id) {
+    public boolean deleteById(long id) {
         try(Session sess = session.openSession()){
             sess.beginTransaction();
             sess.delete(findById(id));
@@ -106,8 +106,7 @@ public class UserRepositoryImpl implements UserRepository {
         }catch(Exception e){
             System.out.println(e.getMessage());
             e.printStackTrace();
-            return false;
-        }
+            return false;        }
         return true;
     }
 
@@ -115,7 +114,7 @@ public class UserRepositoryImpl implements UserRepository {
     public boolean deleteByEmail(String email) {
         try(Session sess = session.openSession()){
             sess.beginTransaction();
-            sess.delete(getByEmail(email));
+            sess.delete(findByEmail(email));
             sess.getTransaction().commit();
             System.out.println("User deleted successfully.");
         }catch(Exception e){

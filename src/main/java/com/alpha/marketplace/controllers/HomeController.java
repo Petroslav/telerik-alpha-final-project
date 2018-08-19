@@ -1,13 +1,11 @@
 package com.alpha.marketplace.controllers;
 
 import com.alpha.marketplace.models.Extension;
-import com.alpha.marketplace.repositories.base.ExtensionRepository;
-import com.alpha.marketplace.services.ExtensionService;
+import com.alpha.marketplace.services.base.ExtensionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 

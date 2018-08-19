@@ -1,7 +1,8 @@
 package com.alpha.marketplace.controllers;
 
+import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.UserBindingModel;
-import com.alpha.marketplace.services.UserService;
+import com.alpha.marketplace.services.base.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,12 +28,14 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String register(UserBindingModel model){
-        if(service.registerUser(model) == null){
+    public String register(Model model, UserBindingModel user){
+        User newUser = service.registerUser(user);
+        if(newUser == null){
             return "failReg";
         }
+        model.addAttribute("user", newUser);
 
-        return "successfulReg";
+        return "base-layout";
     }
 
     @PostMapping("/login")
@@ -47,6 +50,6 @@ public class UserController {
 
     @GetMapping("/logoutPage")
     public String logoutPage(){
-        return "sad";
+        return "services";
     }
 }

@@ -6,12 +6,12 @@ import java.util.List;
 
 public interface UserRepository {
 
-    User findById(int id);
-    User getByEmail(String email);
+    User findById(long id);
+    User findByEmail(String email);
     List<User> getAll();
     boolean save(User u);
     boolean update(User u);
-    boolean deleteById(int id);
+    boolean deleteById(long id);
     boolean deleteByEmail(String email);
 
 }

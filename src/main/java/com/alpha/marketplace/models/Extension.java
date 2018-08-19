@@ -31,7 +31,7 @@ public class Extension {
 
     @ManyToMany( cascade = {
             CascadeType.PERSIST,
-            CascadeType.MERGE
+            CascadeType.MERGE,
     })
     @JoinTable(name = "tagged_extensions",
             joinColumns = @JoinColumn(name = "extension_id"),
