@@ -22,7 +22,6 @@ public class UserController {
 
     @GetMapping("/registerPage")
     public String registerPage(Model model){
-        model.addAttribute("newUser", new UserBindingModel());
 
         return "register";
     }
@@ -32,11 +31,22 @@ public class UserController {
         if(service.registerUser(model) == null){
             return "failReg";
         }
-        return "succesfulReg";
+
+        return "successfulReg";
     }
 
-    @GetMapping("test")
-    public String test(){
+    @PostMapping("/login")
+    public String login(){
         return "redirect:/index";
+    }
+
+    @PostMapping("/logout")
+    public String logout(){
+        return "redirect:/logoutPage";
+    }
+
+    @GetMapping("/logoutPage")
+    public String logoutPage(){
+        return "sad";
     }
 }

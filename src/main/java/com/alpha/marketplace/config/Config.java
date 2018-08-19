@@ -11,11 +11,11 @@ public class Config {
     @Bean
     SessionFactory getSessionFactory(){
         return new org.hibernate.cfg.Configuration()
-            .configure("hibernate.cfg.xml")
-            .addAnnotatedClass(User.class)
-            .addAnnotatedClass(Extension.class)
-            .addAnnotatedClass(Tag.class)
-            .addAnnotatedClass(Role.class)
-            .buildSessionFactory();
+                .configure()
+                .addAnnotatedClass(User.class)
+                .addAnnotatedClass(Extension.class)
+                .addAnnotatedClass(Tag.class)
+                .addAnnotatedClass(Role.class)
+                .buildSessionFactory();
     }
 }

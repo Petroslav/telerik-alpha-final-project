@@ -31,6 +31,7 @@ public class UserServiceImpl implements UserService {
         if(!model.getPass1().equals(model.getPass2())){
             u = null;
         }
+        repository.save(u);
         return u;
     }
 
@@ -50,7 +51,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean editUser(User u) {
-        return false;
+        //TODO logic for editing user profile
+        return true;
     }
 
     @Override
@@ -66,6 +68,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean validateRegUser(UserBindingModel model) {
-        return false;
+        return true;
     }
 }
