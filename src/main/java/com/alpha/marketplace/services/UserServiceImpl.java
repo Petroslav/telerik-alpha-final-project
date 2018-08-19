@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean validateReg(UserBindingModel model) {
-        return (repository.findByEmail(model.getEmail()) != null) &&
+        return (repository.findByEmail(model.getEmail()) == null) &&
                 (model.getPass1().equals(model.getPass2()));
     }
 }

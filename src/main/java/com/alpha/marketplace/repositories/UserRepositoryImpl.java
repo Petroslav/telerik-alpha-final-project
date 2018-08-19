@@ -36,19 +36,20 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User findByEmail(String email) {
-        User u = null;
+        List<User> matches = null;
         try(Session sess = session.openSession()){
             sess.beginTransaction();
-            u = (User) sess
-                    .createQuery("FROM User WHERE email = :emailString")
-                    .setParameter("emailString", email);
+            matches = sess.createQuery("FROM User WHERE email = :emailString", User.class)
+                    .setParameter("emailString", email)
+                    .list();
+
             sess.getTransaction().commit();
             System.out.println("User retrieved successfully.");
         }catch(Exception e){
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
-        return u;
+        return matches == null? null : matches.get(0);
     }
 
     @Override
