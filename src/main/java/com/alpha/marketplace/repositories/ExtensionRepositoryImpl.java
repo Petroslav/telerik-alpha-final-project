@@ -46,7 +46,8 @@ public class ExtensionRepositoryImpl implements ExtensionRepository {
         try (Session sess = session.openSession()) {
             sess.beginTransaction();
 
-            extension = sess.get(Extension.class, id);
+            extension = sess.get(Extension.class, (long)id);
+            //TODO ask about casting good practices
 
             sess.getTransaction().commit();
             System.out.println("Extension retrieved successfully");

@@ -4,6 +4,7 @@ import com.alpha.marketplace.models.Extension;
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.ExtensionBindingModel;
 import com.alpha.marketplace.repositories.base.ExtensionRepository;
+import com.alpha.marketplace.repositories.base.UserRepository;
 import com.alpha.marketplace.services.ExtensionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,10 +18,12 @@ import java.util.stream.Collectors;
 @Service
 public class ExtensionServiceImpl implements ExtensionService {
     private ExtensionRepository repository;
+    private UserRepository userRepository;
 
     @Autowired
-    public ExtensionServiceImpl(ExtensionRepository repository) {
+    public ExtensionServiceImpl(ExtensionRepository repository, UserRepository userRepository) {
         this.repository = repository;
+        this.userRepository = userRepository;
     }
 
 
@@ -50,7 +53,7 @@ public class ExtensionServiceImpl implements ExtensionService {
     public void createExtension(ExtensionBindingModel model) {
         //TODO implement validation
 
-        User u = new User();
+        User u = userRepository.findById(1);
         u.setEmail("testMail");
         u.setFirstName("testFirstName");
         u.setLastName("testLAstName");
@@ -58,7 +61,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         Extension extension = new Extension();
         extension.setName(model.getName());
         extension.setDescription(model.getDescription());
-        extension.setApproved(false);
+        extension.setApproved(true);
         extension.setDownloads(0);
         extension.setTags(new ArrayList<>());
         extension.setAddedOn(new Date());

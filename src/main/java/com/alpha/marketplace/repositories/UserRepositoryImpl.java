@@ -24,7 +24,7 @@ public class UserRepositoryImpl implements UserRepository {
         User u = null;
         try(Session sess = session.openSession()){
             sess.beginTransaction();
-            u = sess.get(User.class, id);
+            u = sess.get(User.class, (long)id);
             sess.getTransaction().commit();
             System.out.println("User retrieved successfully.");
         }catch(Exception e){
