@@ -54,7 +54,6 @@ public class UserServiceImpl implements UserService {
     private boolean authenticateUser(String email, String password) {
         User user = repository.findByEmail(email);
         if(user == null){
-            //TODO error handling
             return false;
         }
         //TODO add encryption to check hashed passwords
