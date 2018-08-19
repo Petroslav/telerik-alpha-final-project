@@ -29,6 +29,9 @@ public class UserController {
 
     @PostMapping("/register")
     public String register(UserBindingModel model){
-        return "index";
+        if(service.registerUser(model) == null){
+            return "failReg";
+        }
+        return "succesfulReg";
     }
 }

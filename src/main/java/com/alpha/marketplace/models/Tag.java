@@ -16,5 +16,36 @@ public class Tag {
     private String name;
 
     @ManyToMany(mappedBy = "tags")
-    List<Extension> taggedExtensions;
+    private List<Extension> taggedExtensions;
+
+    public Tag(){}
+
+    public Tag(String name, List<Extension> taggedExtensions) {
+        this.name = name;
+        this.taggedExtensions = taggedExtensions;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<Extension> getTaggedExtensions() {
+        return taggedExtensions;
+    }
+
+    public void setTaggedExtensions(List<Extension> taggedExtensions) {
+        this.taggedExtensions = taggedExtensions;
+    }
 }
