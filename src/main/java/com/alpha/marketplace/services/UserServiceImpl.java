@@ -46,6 +46,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByPublisherName(String name) {
+        return null;
+    }
+
+    @Override
     public boolean editUser(User u) {
         //TODO logic for editing user profile
         return true;

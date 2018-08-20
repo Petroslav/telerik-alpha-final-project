@@ -21,19 +21,22 @@ public class UserController {
         this.service = service;
     }
 
-    @GetMapping("/registerPage")
-    public String registerPage(Model model){
-
-        return "register";
+    @GetMapping("/register")
+    public String register(Model model){
+        model.addAttribute("user", new UserBindingModel());
+        model.addAttribute("view", "register");
+        return "base-layout";
     }
 
     @PostMapping("/register")
-    public String register(Model model, UserBindingModel user){
+    public String regUser(Model model, UserBindingModel user){
         User newUser = service.registerUser(user);
         if(newUser == null){
+            model.addAttribute("view", "failReg");
             return "failReg";
         }
         model.addAttribute("user", newUser);
+        model.addAttribute("view", "successfulReg");
 
         return "base-layout";
     }

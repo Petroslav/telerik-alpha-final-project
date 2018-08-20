@@ -27,6 +27,9 @@ public class User {
     @Email
     private String email;
 
+    @Column(name = "publisher_name", nullable = false, unique = true)
+    private String publisherName;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
     private Role role;
@@ -42,11 +45,12 @@ public class User {
         setExtensions(new ArrayList<>());
     }
 
-    public User(String password, String firstName, String lastName, @Email String email, Role role, boolean isBanned, List<Extension> extensions) {
+    public User(String password, String firstName, String lastName, @Email String email, String publisherName, Role role, boolean isBanned, List<Extension> extensions) {
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.publisherName = publisherName;
         this.role = role;
         this.isBanned = isBanned;
         this.extensions = extensions;
@@ -90,6 +94,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPublisherName() {
+        return publisherName;
+    }
+
+    public void setPublisherName(String publisherName) {
+        this.publisherName = publisherName;
     }
 
     public Role getRole() {

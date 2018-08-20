@@ -53,6 +53,24 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public User findByPublisherName(String name) {
+        List<User> matches = null;
+        try(Session sess = session.openSession()){
+            sess.beginTransaction();
+            matches = sess.createQuery("FROM User WHERE publisherName = :nameString", User.class)
+                    .setParameter("nameString", name)
+                    .list();
+            sess.getTransaction().commit();
+            System.out.println("User retrieved successfully.");
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return matches == null? null : matches.get(0);
+
+    }
+
+    @Override
     public List<User> getAll() {
         List<User> users = null;
         try(Session sess = session.openSession()){

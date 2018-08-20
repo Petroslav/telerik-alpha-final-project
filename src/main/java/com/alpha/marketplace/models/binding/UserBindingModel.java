@@ -1,6 +1,7 @@
 package com.alpha.marketplace.models.binding;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
@@ -10,6 +11,9 @@ public class UserBindingModel {
     @Email
     @Size(min = 5)
     private String email;
+
+    @NotBlank
+    private String publisherName;
 
     private String firstName;
     private String lastName;
@@ -23,8 +27,9 @@ public class UserBindingModel {
 
     public UserBindingModel(){}
 
-    public UserBindingModel(String email, String firstName, String lastName, String pass1, String pass2) {
+    public UserBindingModel(String email, String publisherName, String firstName, String lastName, String pass1, String pass2) {
         this.email = email;
+        this.publisherName = publisherName;
         this.firstName = firstName;
         this.lastName = lastName;
         this.pass1 = pass1;
@@ -37,6 +42,14 @@ public class UserBindingModel {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPublisherName() {
+        return publisherName;
+    }
+
+    public void setPublisherName(String publisherName) {
+        this.publisherName = publisherName;
     }
 
     public String getFirstName() {
