@@ -1,6 +1,7 @@
 package com.alpha.marketplace.controllers;
 
 import com.alpha.marketplace.models.Extension;
+import com.alpha.marketplace.models.binding.UserBindingModel;
 import com.alpha.marketplace.services.base.ExtensionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,6 +31,13 @@ public class HomeController {
         model.addAttribute("adminSelection", selectedByAdmin);
         model.addAttribute("mostPopular", mostPopular);
 
+        return "base-layout";
+    }
+
+    @GetMapping("/register")
+    public String register(Model model){
+        model.addAttribute("view", "register");
+        model.addAttribute("user", new UserBindingModel());
         return "base-layout";
     }
 }

@@ -4,6 +4,7 @@ import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.UserBindingModel;
 import com.alpha.marketplace.repositories.base.UserRepository;
 import com.alpha.marketplace.services.base.UserService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,12 +16,14 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository repository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final BCryptPasswordEncoder encoder;
+    private final ModelMapper mapper;
 
     @Autowired
-    public UserServiceImpl(UserRepository repository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserServiceImpl(UserRepository repository, BCryptPasswordEncoder encoder, ModelMapper mapper) {
         this.repository = repository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.encoder = encoder;
+        this.mapper = mapper;
     }
 
     @Override
@@ -34,11 +37,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         u.setPublisherName(model.getPublisherName());
         u.setFirstName(model.getFirstName());
         u.setLastName(model.getLastName());
-        u.setPassword(model.getPass1());
+        String encryptedPass = encoder.encode(model.getPass1());
+        u.setPassword(encryptedPass);
         //ENCRYPT PASSWORDS AND THEN CHECK THEM
-        if(!model.getPass1().equals(model.getPass2())){
-            u = null;
-        }
         repository.save(u);
         return u;
     }

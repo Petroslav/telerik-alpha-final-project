@@ -21,13 +21,6 @@ public class UserController {
         this.service = service;
     }
 
-    @GetMapping("/register")
-    public String register(Model model){
-        model.addAttribute("user", new UserBindingModel());
-        model.addAttribute("view", "register");
-        return "base-layout";
-    }
-
     @PostMapping("/register")
     public String regUser(Model model, UserBindingModel user){
         User newUser = service.registerUser(user);

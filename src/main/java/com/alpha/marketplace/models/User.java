@@ -1,27 +1,39 @@
 package com.alpha.marketplace.models;
 
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users" )
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private long id;
 
+    @Column(name = "expired")
+    private boolean isAccountNonExpired;
+
+    @Column(name = "locked")
+    private boolean isAccountNonLocked;
+
+    @Column(name = "credentials_expired")
+    private boolean isCredentialsNonExpired;
+
+    @Column(name = "enabled")
+    private boolean isEnabled;
+
+    @Column(name = "username")
+    private String username;
+
     @Column(name = "password", nullable = false, length = 1000)
     private String password;
-
-    @Column(name = "first_name")
-    private String firstName;
-
-    @Column(name = "last_name")
-    private String lastName;
 
     @Column(name = "email", nullable = false, unique = true)
     @Email
@@ -30,29 +42,53 @@ public class User {
     @Column(name = "publisher_name", nullable = false, unique = true)
     private String publisherName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id")
-    private Role role;
+    @Column(name = "first_name")
+    private String firstName;
 
-    @Column(name = "is_banned", nullable = false)
-    private boolean isBanned;
+    @Column(name = "last_name")
+    private String lastName;
+
+    @ManyToMany( cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE,
+    })
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> authorities;
 
     @OneToMany(mappedBy = "publisher")
     private List<Extension> extensions;
 
     public User(){
-        setBanned(false);
-        setExtensions(new ArrayList<>());
+        extensions = new ArrayList<>();
     }
 
-    public User(String password, String firstName, String lastName, @Email String email, String publisherName, Role role, boolean isBanned, List<Extension> extensions) {
+    public User(
+            boolean isAccountNonExpired,
+            boolean isAccountNonLocked,
+            boolean isCredentialsNonExpired,
+            boolean isEnabled, String username,
+            String password,
+            String email,
+            String publisherName,
+            String firstName,
+            String lastName,
+            Set<Role> authorities,
+            List<Extension> extensions
+    ) {
+        this.isAccountNonExpired = isAccountNonExpired;
+        this.isAccountNonLocked = isAccountNonLocked;
+        this.isCredentialsNonExpired = isCredentialsNonExpired;
+        this.isEnabled = isEnabled;
+        this.username = username;
         this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
         this.email = email;
         this.publisherName = publisherName;
-        this.role = role;
-        this.isBanned = isBanned;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.authorities = authorities;
         this.extensions = extensions;
     }
 
@@ -64,28 +100,28 @@ public class User {
         this.id = id;
     }
 
-    public String getPassword() {
-        return password;
+    public void setAccountNonExpired(boolean accountNonExpired) {
+        isAccountNonExpired = accountNonExpired;
+    }
+
+    public void setAccountNonLocked(boolean accountNonLocked) {
+        isAccountNonLocked = accountNonLocked;
+    }
+
+    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
+        isCredentialsNonExpired = credentialsNonExpired;
+    }
+
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 
     public String getEmail() {
@@ -104,20 +140,24 @@ public class User {
         this.publisherName = publisherName;
     }
 
-    public Role getRole() {
-        return role;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public boolean isBanned() {
-        return isBanned;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setBanned(boolean banned) {
-        isBanned = banned;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setAuthorities(Set<Role> authorities) {
+        this.authorities = authorities;
     }
 
     public List<Extension> getExtensions() {
@@ -126,5 +166,40 @@ public class User {
 
     public void setExtensions(List<Extension> extensions) {
         this.extensions = extensions;
+    }
+
+    @Override
+    public Set<Role> getAuthorities() {
+        return authorities;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return isAccountNonExpired;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return isAccountNonLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return isCredentialsNonExpired;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
     }
 }

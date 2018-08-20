@@ -41,6 +41,7 @@ dependencies {
     compile group: 'org.springframework.cloud', name: 'spring-cloud-gcp-starter'
     compile group: 'org.springframework.cloud', name: 'spring-cloud-gcp-starter-sql-mysql'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-security'
+    compile group: 'org.modelmapper', name: 'modelmapper', version: '2.2.0'
 
     runtime('mysql:mysql-connector-java')
 

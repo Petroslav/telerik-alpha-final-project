@@ -1,11 +1,14 @@
 package com.alpha.marketplace.models;
 
+import org.springframework.security.core.GrantedAuthority;
+
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "roles")
-public class Role {
+public class Role implements GrantedAuthority {
 
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
@@ -13,16 +16,12 @@ public class Role {
     private int id;
 
     @Column(name = "role_name", nullable = false, unique = true)
-    private String name;
+    private String authority;
 
-    @OneToMany(mappedBy = "role")
-    private List<User> users;
+    public Role() {}
 
-    public Role(){}
-
-    public Role(String name, List<User> users) {
-        this.name = name;
-        this.users = users;
+    public Role(String authority) {
+        this.authority = authority;
     }
 
     public int getId() {
@@ -33,19 +32,8 @@ public class Role {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
+    @Override
+    public String getAuthority() {
+        return authority;
     }
 }
