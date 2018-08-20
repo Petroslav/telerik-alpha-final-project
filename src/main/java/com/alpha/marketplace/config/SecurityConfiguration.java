@@ -16,12 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private UserService userService;
-
     @Autowired
-    public SecurityConfiguration(UserService userService){
-        this.userService = userService;
-    }
+    private UserService userService;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -39,7 +35,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .usernameParameter("username")
                 .passwordParameter("password")
                 .and()
-                .logout().logoutSuccessUrl("").permitAll()
+                .logout().logoutSuccessUrl("/logout?login").permitAll()
                 .and()
                 .exceptionHandling().accessDeniedPage("/unauthorized");
     }
