@@ -8,7 +8,6 @@ public interface UserRepository {
 
     User findById(long id);
     User findByEmail(String email);
-    User findByPublisherName(String name);
     List<User> getAll();
     boolean save(User u);
     boolean update(User u);

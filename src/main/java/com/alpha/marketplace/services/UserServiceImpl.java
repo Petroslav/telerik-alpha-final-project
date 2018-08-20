@@ -28,18 +28,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public User registerUser(UserBindingModel model) {
-        if(!validateReg(model)){
+        if(!validateReg(model)) {
             //TODO Error handling
             return null;
         }
-        User u = new User();
-        u.setEmail(model.getEmail());
-        u.setPublisherName(model.getPublisherName());
-        u.setFirstName(model.getFirstName());
-        u.setLastName(model.getLastName());
+        User u = mapper.map(model, User.class);
         String encryptedPass = encoder.encode(model.getPass1());
         u.setPassword(encryptedPass);
-        //ENCRYPT PASSWORDS AND THEN CHECK THEM
         repository.save(u);
         return u;
     }
@@ -52,11 +47,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public User findByEmail(String email) {
         return repository.findByEmail(email);
-    }
-
-    @Override
-    public User findByPublisherName(String name) {
-        return repository.findByPublisherName(name);
     }
 
     @Override

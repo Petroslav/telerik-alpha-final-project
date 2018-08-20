@@ -39,9 +39,6 @@ public class User implements UserDetails {
     @Email
     private String email;
 
-    @Column(name = "publisher_name", nullable = false, unique = true)
-    private String publisherName;
-
     @Column(name = "first_name")
     private String firstName;
 
@@ -62,6 +59,10 @@ public class User implements UserDetails {
     private List<Extension> extensions;
 
     public User(){
+        this.isAccountNonExpired = true;
+        this.isAccountNonLocked = true;
+        this.isCredentialsNonExpired = true;
+        this.isEnabled = true;
         extensions = new ArrayList<>();
     }
 
@@ -72,7 +73,6 @@ public class User implements UserDetails {
             boolean isEnabled, String username,
             String password,
             String email,
-            String publisherName,
             String firstName,
             String lastName,
             Set<Role> authorities,
@@ -85,7 +85,6 @@ public class User implements UserDetails {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.publisherName = publisherName;
         this.firstName = firstName;
         this.lastName = lastName;
         this.authorities = authorities;
@@ -130,14 +129,6 @@ public class User implements UserDetails {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPublisherName() {
-        return publisherName;
-    }
-
-    public void setPublisherName(String publisherName) {
-        this.publisherName = publisherName;
     }
 
     public String getFirstName() {
