@@ -40,6 +40,7 @@ dependencies {
 
     compile group: 'org.springframework.cloud', name: 'spring-cloud-gcp-starter'
     compile group: 'org.springframework.cloud', name: 'spring-cloud-gcp-starter-sql-mysql'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-security'
 
     runtime('mysql:mysql-connector-java')
 

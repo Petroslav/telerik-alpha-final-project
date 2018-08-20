@@ -5,16 +5,22 @@ import com.alpha.marketplace.models.binding.UserBindingModel;
 import com.alpha.marketplace.repositories.base.UserRepository;
 import com.alpha.marketplace.services.base.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository repository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository repository) {
+    public UserServiceImpl(UserRepository repository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.repository = repository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
@@ -25,9 +31,11 @@ public class UserServiceImpl implements UserService {
         }
         User u = new User();
         u.setEmail(model.getEmail());
+        u.setPublisherName(model.getPublisherName());
         u.setFirstName(model.getFirstName());
         u.setLastName(model.getLastName());
         u.setPassword(model.getPass1());
+        //ENCRYPT PASSWORDS AND THEN CHECK THEM
         if(!model.getPass1().equals(model.getPass2())){
             u = null;
         }
@@ -47,7 +55,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByPublisherName(String name) {
-        return null;
+        return repository.findByPublisherName(name);
     }
 
     @Override
@@ -68,5 +76,10 @@ public class UserServiceImpl implements UserService {
     private boolean validateReg(UserBindingModel model) {
         return (repository.findByEmail(model.getEmail()) == null) &&
                 (model.getPass1().equals(model.getPass2()));
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return null;
     }
 }
