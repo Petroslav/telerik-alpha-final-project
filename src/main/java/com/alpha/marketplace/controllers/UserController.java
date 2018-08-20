@@ -38,21 +38,4 @@ public class UserController {
 
         return "base-layout";
     }
-
-    @PostMapping("/login")
-    public String login(){
-
-
-        return "redirect:/";
-    }
-
-    @PostMapping("/logout")
-    public String logout(){
-        return "redirect:/logoutPage";
-    }
-
-    @GetMapping("/logoutPage")
-    public String logoutPage(){
-        return "services";
-    }
 }

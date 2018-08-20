@@ -16,32 +16,42 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    @Autowired
     private UserService userService;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(this.userService).passwordEncoder(encoder());
+        auth.userDetailsService(userService).passwordEncoder(encoder());
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/","/register", "/user/register", "/user/login" ).permitAll()
+                .antMatchers("/","/register", "/login", "/user/register", "/user/login").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().loginPage("/login").permitAll()
                 .usernameParameter("username")
-                .passwordParameter("password")
+                .passwordParameter("pass1")
                 .and()
                 .logout().logoutSuccessUrl("/logout?login").permitAll()
                 .and()
-                .exceptionHandling().accessDeniedPage("/unauthorized");
+                .exceptionHandling().accessDeniedPage("/unauthorized")
+                .and()
+                .csrf().disable();
     }
 
     @Bean
     BCryptPasswordEncoder encoder(){
         return new BCryptPasswordEncoder();
+    }
+
+    public UserService getUserService() {
+        return userService;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 }
