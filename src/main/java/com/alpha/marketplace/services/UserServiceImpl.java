@@ -7,13 +7,12 @@ import com.alpha.marketplace.services.base.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
     private final BCryptPasswordEncoder encoder;
@@ -55,15 +54,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return true;
     }
 
-    private boolean authenticateUser(String email, String password) {
-        User user = repository.findByEmail(email);
-        if(user == null){
-            return false;
-        }
-        //TODO add encryption to check hashed passwords
-        return false;
-    }
-
     private boolean validateReg(UserBindingModel model) {
         return (repository.findByEmail(model.getEmail()) == null) &&
                 (model.getPass1().equals(model.getPass2()));
@@ -71,6 +61,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+        return repository.findByUsername(username);
     }
 }

@@ -40,4 +40,11 @@ public class HomeController {
         model.addAttribute("user", new UserBindingModel());
         return "base-layout";
     }
+
+    @GetMapping("/unauthorized")
+    public String unauthorized(Model model){
+        model.addAttribute("view", "unauthorized");
+
+        return "base-layout";
+    }
 }

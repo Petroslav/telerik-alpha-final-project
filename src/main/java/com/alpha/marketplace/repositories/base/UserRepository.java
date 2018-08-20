@@ -8,6 +8,7 @@ public interface UserRepository {
 
     User findById(long id);
     User findByEmail(String email);
+    User findByUsername(String username);
     List<User> getAll();
     boolean save(User u);
     boolean update(User u);

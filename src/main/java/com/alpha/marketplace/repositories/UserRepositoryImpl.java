@@ -5,6 +5,7 @@ import com.alpha.marketplace.repositories.base.UserRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -50,6 +51,26 @@ public class UserRepositoryImpl implements UserRepository {
             e.printStackTrace();
         }
         return matches == null? null : matches.isEmpty() ? null : matches.get(0);
+    }
+
+    @Override
+    public User findByUsername(String username) throws UsernameNotFoundException {
+        List<User> matches = null;
+        try(Session sess = session.openSession()){
+            sess.beginTransaction();
+            matches = sess.createQuery("FROM User WHERE username = :usernameString", User.class)
+                    .setParameter("usernameString", username)
+                    .list();
+            sess.getTransaction().commit();
+            System.out.println("Search completed successfully.");
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        if(matches == null || matches.isEmpty()){
+            throw new UsernameNotFoundException("The username " + username + " does not exist");
+        }
+        return matches.get(0);
     }
 
     @Override

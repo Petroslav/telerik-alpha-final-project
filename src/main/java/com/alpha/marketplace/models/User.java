@@ -29,7 +29,7 @@ public class User implements UserDetails {
     @Column(name = "enabled")
     private boolean isEnabled;
 
-    @Column(name = "username")
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
 
     @Column(name = "password", nullable = false, length = 1000)
