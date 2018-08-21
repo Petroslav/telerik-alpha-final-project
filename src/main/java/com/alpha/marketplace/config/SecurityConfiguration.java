@@ -29,10 +29,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().loginPage("/login").permitAll()
+                .defaultSuccessUrl("/", true)
                 .usernameParameter("username")
                 .passwordParameter("pass1")
+
                 .and()
                 .csrf().disable();
+
     }
 
     @Bean

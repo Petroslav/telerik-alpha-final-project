@@ -43,9 +43,9 @@ public class HomeController {
     }
 
     @GetMapping(value = "/login")
-    public String login(Model model){
-        model.addAttribute("view", "login");
-        return "base-layout";
+        public String login(Model model){
+            model.addAttribute("view", "login");
+            return "base-layout";
     }
 
     @GetMapping("/unauthorized")
