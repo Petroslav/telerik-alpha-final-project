@@ -1,13 +1,14 @@
 <!DOCTYPE HTML>
-<html lang="en"
-      xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<html lang="en">
+      <!--xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"-->
+      <!--xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"-->
+
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
 </head>
 <body>
-<form th:action="@{/authenticateUser}" method="post">
+<form method="post">
     <label>Username
         <input type="text" name="username">
     </label>
