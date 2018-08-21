@@ -54,11 +54,4 @@ public class HomeController {
 
         return "base-layout";
     }
-
-    @GetMapping("/error")
-    public String errorPage(Model model){
-        model.addAttribute("view", "unauthorized");
-
-        return "base-layout";
-    }
 }
