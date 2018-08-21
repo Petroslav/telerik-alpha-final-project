@@ -7,6 +7,8 @@ import com.alpha.marketplace.repositories.base.ExtensionRepository;
 import com.alpha.marketplace.repositories.base.UserRepository;
 import com.alpha.marketplace.services.base.ExtensionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -53,11 +55,10 @@ public class ExtensionServiceImpl implements ExtensionService {
     public void createExtension(ExtensionBindingModel model) {
         //TODO implement validation
 
-        User u = userRepository.findById(1);
-        u.setEmail("testMail");
-        u.setFirstName("testFirstName");
-        u.setLastName("testLAstName");
-        u.setPassword("123");
+        UserDetails user = (UserDetails) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+
+        User u = userRepository.findByUsername(user.getUsername());
         Extension extension = new Extension();
         extension.setName(model.getName());
         extension.setDescription(model.getDescription());
@@ -95,4 +96,5 @@ public class ExtensionServiceImpl implements ExtensionService {
 
         extension.approve();
     }
+
 }
