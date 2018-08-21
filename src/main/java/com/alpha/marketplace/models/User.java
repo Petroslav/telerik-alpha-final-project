@@ -40,6 +40,9 @@ public class User implements UserDetails {
     @Email
     private String email;
 
+    @Column(name = "pic", nullable = false)
+    private String picURI;
+
     @Column(name = "first_name")
     private String firstName;
 
@@ -65,7 +68,9 @@ public class User implements UserDetails {
         this.isAccountNonLocked = true;
         this.isCredentialsNonExpired = true;
         this.isEnabled = true;
+        this.picURI = "https://vignette.wikia.nocookie.net/teamfourstar/images/7/7c/UnknownPerson.jpg/revision/latest?cb=20160521184455";
         extensions = new ArrayList<>();
+        authorities = new HashSet<>();
     }
 
     public User(
@@ -75,6 +80,7 @@ public class User implements UserDetails {
             boolean isEnabled, String username,
             String password,
             String email,
+            String picURI,
             String firstName,
             String lastName,
             Set<Role> authorities,
@@ -87,6 +93,7 @@ public class User implements UserDetails {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.picURI = picURI;
         this.firstName = firstName;
         this.lastName = lastName;
         this.authorities = authorities;
@@ -131,6 +138,14 @@ public class User implements UserDetails {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPicURI() {
+        return picURI;
+    }
+
+    public void setPicURI(String picURI) {
+        this.picURI = picURI;
     }
 
     public String getFirstName() {

@@ -48,6 +48,9 @@ public class Extension {
     @Column(name = "is_approved", nullable = false)
     private boolean isApproved;
 
+    @Column(name = "picture", nullable = false)
+    private String picURI;
+
     @Column(name = "dl_uri", nullable = false)
     private String dlURI;
 
@@ -68,6 +71,7 @@ public class Extension {
             Date addedOn,
             Date latestUpdate,
             boolean isApproved,
+            String picURI,
             String dlURI,
             String repoURL
         ) {
@@ -80,6 +84,7 @@ public class Extension {
         this.addedOn = addedOn;
         this.latestUpdate = latestUpdate;
         this.isApproved = isApproved;
+        this.picURI = picURI;
         this.dlURI = dlURI;
         this.repoURL = repoURL;
     }
@@ -162,6 +167,14 @@ public class Extension {
 
     public void setTags(List<Tag> tags) {
         this.tags = tags;
+    }
+
+    public String getPicURI() {
+        return picURI;
+    }
+
+    public void setPicURI(String picURI) {
+        this.picURI = picURI;
     }
 
     public String getDlURI() {

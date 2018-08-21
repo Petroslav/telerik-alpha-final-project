@@ -6,6 +6,7 @@ import com.alpha.marketplace.models.binding.ExtensionBindingModel;
 import com.alpha.marketplace.repositories.base.ExtensionRepository;
 import com.alpha.marketplace.repositories.base.UserRepository;
 import com.alpha.marketplace.services.base.ExtensionService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,11 +22,13 @@ import java.util.stream.Collectors;
 public class ExtensionServiceImpl implements ExtensionService {
     private ExtensionRepository repository;
     private UserRepository userRepository;
+    private final ModelMapper mapper;
 
     @Autowired
-    public ExtensionServiceImpl(ExtensionRepository repository, UserRepository userRepository) {
+    public ExtensionServiceImpl(ExtensionRepository repository, UserRepository userRepository, ModelMapper mapper) {
         this.repository = repository;
         this.userRepository = userRepository;
+        this.mapper = mapper;
     }
 
 

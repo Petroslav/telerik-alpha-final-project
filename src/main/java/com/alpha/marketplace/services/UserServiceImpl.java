@@ -1,7 +1,9 @@
 package com.alpha.marketplace.services;
 
+import com.alpha.marketplace.models.Role;
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.UserBindingModel;
+import com.alpha.marketplace.repositories.base.RoleRepository;
 import com.alpha.marketplace.repositories.base.UserRepository;
 import com.alpha.marketplace.services.base.UserService;
 import org.modelmapper.ModelMapper;
@@ -17,12 +19,14 @@ import javax.transaction.Transactional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
+    private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder encoder;
     private final ModelMapper mapper;
 
     @Autowired
-    public UserServiceImpl(UserRepository repository, BCryptPasswordEncoder encoder, ModelMapper mapper) {
+    public UserServiceImpl(UserRepository repository, RoleRepository roleRepository, BCryptPasswordEncoder encoder, ModelMapper mapper) {
         this.repository = repository;
+        this.roleRepository = roleRepository;
         this.encoder = encoder;
         this.mapper = mapper;
     }
@@ -34,8 +38,10 @@ public class UserServiceImpl implements UserService {
             return null;
         }
         User u = mapper.map(model, User.class);
+        Role role = roleRepository.findById(1);
         String encryptedPass = encoder.encode(model.getPass1());
         u.setPassword(encryptedPass);
+        u.getAuthorities().add(role);
         repository.save(u);
         return u;
     }
