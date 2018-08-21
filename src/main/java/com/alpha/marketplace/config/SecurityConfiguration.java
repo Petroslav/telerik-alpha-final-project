@@ -27,18 +27,22 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/","/register", "/login", "/user/register", "/user/login").permitAll()
+                .antMatchers("/","/register").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin().loginPage("/login").permitAll()
+                .formLogin()
+                .loginPage("/login")
+                .loginProcessingUrl("/authenticateUser")
+                .defaultSuccessUrl("/")
+                .permitAll()
                 .usernameParameter("username")
-                .passwordParameter("pass1")
-                .and()
-                .logout().logoutSuccessUrl("/logout?login").permitAll()
-                .and()
-                .exceptionHandling().accessDeniedPage("/unauthorized")
-                .and()
-                .csrf().disable();
+                .passwordParameter("pass1");
+//                .and()
+//                .logout().logoutSuccessUrl("/logout?login").permitAll();
+//                .and()
+//                .exceptionHandling().accessDeniedPage("/unauthorized");
+//                .and()
+//                .csrf().disable();
     }
 
     @Bean
