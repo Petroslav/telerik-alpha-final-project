@@ -1,11 +1,11 @@
-package com.alpha.marketplace.servicesImpl;
+package com.alpha.marketplace.services;
 
 import com.alpha.marketplace.models.Extension;
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.ExtensionBindingModel;
 import com.alpha.marketplace.repositories.base.ExtensionRepository;
 import com.alpha.marketplace.repositories.base.UserRepository;
-import com.alpha.marketplace.services.ExtensionService;
+import com.alpha.marketplace.services.base.ExtensionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

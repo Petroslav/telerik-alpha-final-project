@@ -5,6 +5,7 @@ import com.alpha.marketplace.repositories.base.UserRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 @Repository
 public class UserRepositoryImpl implements UserRepository {
 
-    private SessionFactory session;
+    private final SessionFactory session;
 
     @Autowired
     public UserRepositoryImpl(SessionFactory session) {
@@ -20,11 +21,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User findById(int id) {
+    public User findById(long id) {
         User u = null;
         try(Session sess = session.openSession()){
             sess.beginTransaction();
-            u = sess.get(User.class, (long)id);
+            u = sess.get(User.class, id);
             sess.getTransaction().commit();
             System.out.println("User retrieved successfully.");
         }catch(Exception e){
@@ -35,20 +36,41 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User getByEmail(String email) {
-        User u = null;
+    public User findByEmail(String email) {
+        List<User> matches = null;
         try(Session sess = session.openSession()){
             sess.beginTransaction();
-            u = (User) sess
-                    .createQuery("FROM User WHERE email = :emailString")
-                    .setParameter("emailString", email);
+            matches = sess.createQuery("FROM User WHERE email = :emailString", User.class)
+                    .setParameter("emailString", email)
+                    .list();
+
             sess.getTransaction().commit();
-            System.out.println("User retrieved successfully.");
+            System.out.println("Search completed successfully.");
         }catch(Exception e){
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
-        return u;
+        return matches == null? null : matches.isEmpty() ? null : matches.get(0);
+    }
+
+    @Override
+    public User findByUsername(String username) throws UsernameNotFoundException {
+        List<User> matches = null;
+        try(Session sess = session.openSession()){
+            sess.beginTransaction();
+            matches = sess.createQuery("FROM User WHERE username = :usernameString", User.class)
+                    .setParameter("usernameString", username)
+                    .list();
+            sess.getTransaction().commit();
+            System.out.println("Search completed successfully.");
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        if(matches == null || matches.isEmpty()){
+            throw new UsernameNotFoundException("The username " + username + " does not exist");
+        }
+        return matches.get(0);
     }
 
     @Override
@@ -97,7 +119,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean deleteById(int id) {
+    public boolean deleteById(long id) {
         try(Session sess = session.openSession()){
             sess.beginTransaction();
             sess.delete(findById(id));
@@ -106,8 +128,7 @@ public class UserRepositoryImpl implements UserRepository {
         }catch(Exception e){
             System.out.println(e.getMessage());
             e.printStackTrace();
-            return false;
-        }
+            return false;        }
         return true;
     }
 
@@ -115,7 +136,7 @@ public class UserRepositoryImpl implements UserRepository {
     public boolean deleteByEmail(String email) {
         try(Session sess = session.openSession()){
             sess.beginTransaction();
-            sess.delete(getByEmail(email));
+            sess.delete(findByEmail(email));
             sess.getTransaction().commit();
             System.out.println("User deleted successfully.");
         }catch(Exception e){

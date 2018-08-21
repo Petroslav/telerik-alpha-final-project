@@ -2,6 +2,7 @@ package com.alpha.marketplace.config;
 
 import com.alpha.marketplace.models.*;
 import org.hibernate.SessionFactory;
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,4 +19,10 @@ public class Config {
                 .addAnnotatedClass(Role.class)
                 .buildSessionFactory();
     }
+
+    @Bean
+    ModelMapper mapper(){
+        return new ModelMapper();
+    }
+
 }
