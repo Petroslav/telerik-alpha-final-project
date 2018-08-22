@@ -1,0 +1,8 @@
+<main>
+    <header>
+        <h2 th:text="${user.username}"></h2>
+        <h2 th:text="${user.firstName}"></h2>
+        <h2 th:text="${user.lastName}"></h2>
+        <img th:attr="src=@{${user.picURI}}">
+    </header>
+</main>
