@@ -48,6 +48,18 @@ dependencies {
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.security:spring-security-test')
+
+    // https://mvnrepository.com/artifact/org.springframework.social/spring-social-web
+    compile group: 'org.springframework.social', name: 'spring-social-web', version: '1.1.6.RELEASE'
+
+    // https://mvnrepository.com/artifact/org.springframework.social/spring-social-github
+    compile group: 'org.springframework.social', name: 'spring-social-github', version: '1.0.0.M4'
+
+    // https://mvnrepository.com/artifact/com.google.cloud/google-cloud-storage
+    compile group: 'com.google.cloud', name: 'google-cloud-storage', version: '1.40.0'
+
+
+
 }
 
 dependencyManagement {
