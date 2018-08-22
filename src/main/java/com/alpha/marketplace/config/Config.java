@@ -1,13 +1,25 @@
 package com.alpha.marketplace.config;
 
 import com.alpha.marketplace.models.*;
+import com.google.auth.Credentials;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.storage.*;
 import org.hibernate.SessionFactory;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.Resource;
+import java.io.FileInputStream;
+import java.io.IOException;
+
 @Configuration
 public class Config {
+
+    private final String pathToConfig = "telerikfinalproject-30ecbd8e72f6.json";
+    private final String projectId = "telerikfinalproject";
 
     @Bean
     SessionFactory getSessionFactory(){
@@ -23,6 +35,18 @@ public class Config {
     @Bean
     ModelMapper mapper(){
         return new ModelMapper();
+    }
+
+    @Bean
+    Storage getStorage() {
+        try{
+            Credentials credentials = GoogleCredentials.fromStream(new FileInputStream(pathToConfig));
+            return StorageOptions.newBuilder().setCredentials(credentials).setProjectId(projectId).build().getService();
+        }catch(IOException e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }
