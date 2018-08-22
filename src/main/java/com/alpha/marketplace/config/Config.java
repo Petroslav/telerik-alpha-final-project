@@ -6,19 +6,16 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.*;
 import org.hibernate.SessionFactory;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
 import java.io.FileInputStream;
 import java.io.IOException;
 
 @Configuration
 public class Config {
 
-    private final String pathToConfig = "telerikfinalproject-30ecbd8e72f6.json";
+    private final String pathToConfig = "C:\\Users\\luffy\\OneDrive\\Desktop\\marketplace\\src\\main\\resources\\telerikfinalproject-30ecbd8e72f6.json";
     private final String projectId = "telerikfinalproject";
 
     @Bean
