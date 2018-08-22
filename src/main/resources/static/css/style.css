@@ -1,8 +1,7 @@
 .nav{
     margin: 0 auto;
     display:block;
-    /* top:440px; */
-    bottom: 0;
+    top: 0;
     z-index: 10;
     position: absolute;
     width: 100%;

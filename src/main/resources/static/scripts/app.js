@@ -18,7 +18,7 @@ $(document).ready(function () {
             $('#stickyNav').css({
                 'position': 'absolute',
                 'top': '',
-                'bottom': 0
+
             })
         }
     });
