@@ -67,6 +67,7 @@ public class Extension {
         setAddedOn(new Date());
         setApproved(false);
         setTags(new ArrayList<>());
+        setPicURI("https://pbs.twimg.com/profile_images/932536730221133824/4XWcwfBt_400x400.jpg");
     }
 
     public Extension(
