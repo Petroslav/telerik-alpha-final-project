@@ -4,10 +4,11 @@ import com.alpha.marketplace.models.Extension;
 import com.alpha.marketplace.models.binding.UserBindingModel;
 import com.alpha.marketplace.services.base.ExtensionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -43,9 +44,17 @@ public class HomeController {
     }
 
     @GetMapping(value = "/login")
-        public String login(Model model){
-            model.addAttribute("view", "login");
-            return "base-layout";
+    public String login(Model model){
+        String view = "login";
+        UserDetails user = (UserDetails) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+        if(user == null){
+            view = "index";
+        }
+        model.addAttribute("view", view);
+        return "base-layout";
     }
 
     @GetMapping("/unauthorized")

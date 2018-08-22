@@ -25,14 +25,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/", "/register", "/user/register").permitAll()
+                .antMatchers("/", "/register", "/user/public/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().loginPage("/login").permitAll()
                 .defaultSuccessUrl("/", true)
                 .usernameParameter("username")
                 .passwordParameter("pass1")
-
                 .and()
                 .csrf().disable();
 

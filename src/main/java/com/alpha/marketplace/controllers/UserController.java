@@ -24,7 +24,7 @@ public class UserController {
         this.service = service;
     }
 
-    @PostMapping("/register")
+    @PostMapping("/public/register")
     public String regUser(Model model, @Valid @ModelAttribute UserBindingModel user, BindingResult result){
         System.out.println("Controller reached");
         User newUser = service.registerUser(user);

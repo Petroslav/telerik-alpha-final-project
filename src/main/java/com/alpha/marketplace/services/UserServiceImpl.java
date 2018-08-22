@@ -8,12 +8,11 @@ import com.alpha.marketplace.repositories.base.UserRepository;
 import com.alpha.marketplace.services.base.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -24,11 +23,15 @@ public class UserServiceImpl implements UserService {
     private final ModelMapper mapper;
 
     @Autowired
-    public UserServiceImpl(UserRepository repository, RoleRepository roleRepository, BCryptPasswordEncoder encoder, ModelMapper mapper) {
+    public UserServiceImpl(
+            UserRepository repository,
+            RoleRepository roleRepository,
+            ModelMapper mapper,
+            BCryptPasswordEncoder encoder) {
         this.repository = repository;
         this.roleRepository = roleRepository;
-        this.encoder = encoder;
         this.mapper = mapper;
+        this.encoder = encoder;
     }
 
     @Override
@@ -67,7 +70,6 @@ public class UserServiceImpl implements UserService {
                 (model.getPass1().equals(model.getPass2()));
     }
 
-    @Transactional
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return repository.findByUsername(username);

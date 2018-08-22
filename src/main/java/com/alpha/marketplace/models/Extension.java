@@ -1,6 +1,7 @@
 package com.alpha.marketplace.models;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,7 +30,9 @@ public class Extension {
     @Column(name = "version", nullable = false)
     private String version;
 
-    @ManyToMany( cascade = {
+    @ManyToMany(
+            fetch = FetchType.EAGER,
+            cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE,
     })
@@ -59,7 +62,12 @@ public class Extension {
 
     //TODO add GitHub API fields for pull requests, open issues and latest commit.
 
-    public Extension(){}
+    public Extension(){
+        setDownloads(0);
+        setAddedOn(new Date());
+        setApproved(false);
+        setTags(new ArrayList<>());
+    }
 
     public Extension(
             String name,

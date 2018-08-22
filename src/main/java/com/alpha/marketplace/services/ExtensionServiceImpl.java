@@ -62,7 +62,7 @@ public class ExtensionServiceImpl implements ExtensionService {
                 .getAuthentication().getPrincipal();
 
         User u = userRepository.findByUsername(user.getUsername());
-        Extension extension = new Extension();
+        Extension extension = mapper.map(model, Extension.class);
         extension.setName(model.getName());
         extension.setDescription(model.getDescription());
         extension.setApproved(true);
@@ -71,7 +71,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         extension.setAddedOn(new Date());
         extension.setVersion("1");
          extension.setPublisher(u);
-        //TODO get current logged user to set as publisher
+        //TODO get current logged user to set as publisherqqq
         extension.setDlURI(model.getDownloadLink());
         extension.setRepoURL(model.getRepositoryUrl());
 
