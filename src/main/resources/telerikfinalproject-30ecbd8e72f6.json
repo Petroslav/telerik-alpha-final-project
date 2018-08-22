@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "telerikfinalproject",
+  "private_key_id": "30ecbd8e72f612cb89d20704d04ba494a109873b",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCjD7Qq3Ldgk1M6\nP3WYQVmxcTZXlfAPG3NA2tEWPgYBULWCveg2gTP7I0ZyhBxTkMVnvHr45HwIH3Ji\nHiS0EHCjOg+kAktTtt7Qc2lKgUWDDcdNbdTtXdc3H1HQ8ws0NyRwwdGzVd1EHxKB\n7cNJbFwQM+oiRNbnFpDuUU0v7dDdsru+0tlMGr9TQccEo54KL9uyvlUhbkvbE/aw\nUG4tw/4BChNCy8/uOcwQm1eEcxIsFn/QgNqv71YtsKqz/jDehQFLVim3ZdYj0kgU\nR5ApHqA2hbGE4TdMOkm9k7lCG4VwVDlR+TdA6Zz1UQxOJH4vXoMyKoFF3NIhSyA5\n23ti5ylLAgMBAAECggEARQjG/EaJlGeLGuP3A0jXklod6aLfCWZTuydo0gPcQv5K\nelmwUDMPMMnUb3MjEvX9vVd8sJb7M+0sXgHpBBrZtSFFsegOwBhx6MqTzyk/pqZU\ntKFFPmE2Vm36E35yRd76nIpSH5zAmrCVA1EIFrO7nlh8TZnbaeaR4XOmPB5xCQqO\naqcD1QKFHgMzGgPHJoeqG2G0ZGBrYISH/eQq+K7cibM1y+3lR+BgudUgobgibUOB\n3OkqMXxfB5LRQcr3bAUTZUqGPWVk1qUgkd1LDMz6r9pTPuMFWwecj/k+TIWmtoEi\n3ny3wwGBPbYUwYGVcKcs/9iOVumODqqqs0iynECFQQKBgQDle0a3V5NHIAwHezyR\n/oYljAtz17Dx/K72XEf7uT60jcsP1WKgTUsWWEVtc8raXhTFlqA5yO63GlR5/ygn\nZ6QJNtaxR2JAeOJAskKWgKUkSAa6qtaM7c4MUCkMOae9271Yq3+N+ioj1E34lK+4\ncrBa0PH/jZvJZQfVEh1oBjdvkQKBgQC154bn64CaksHaNW7JXyMlRCIZWQxZ4Oeu\nd2M/M/kkie1mYYLveCLCsM7ew5JGoMwXocJMxMRGY/b3oBMDZxQNe3eO83oy9jCR\nDWnGsJM/1zLj8c6LBDvJLThaDTH25IxPR7jqjCzhHpUcU9Ay50hpFdzBkolvaA39\nBnVog6+VGwKBgFKwdA/Wh6RGYO9FMdMtkqru5qWMYB8iPO1a3TlQS88FlNkUu+Al\nWdwoXIQPCFZdNkDogL2xsIrb+vqmvZJNXydO0le48CdpJ6XGVgYjPt5u8bXLn1nS\nyr9XFyNnlxDroDPWQDUpoouckafz88mT0gY3aiv6m9sbA5J8X4o/SzRxAoGBAIq/\n2Gose0LsMEtGOIQHOmKhjrTw9HfWEkJEtIIwHZjeUCOou1v3seP5Q0ItwPR4kFRy\nQSeXavMaKvYEtpwA0w3ZoH98fjhDCxaJOaahZx/qANpXxijJiOTRxksCB5uABvou\nBgF5/H2WezxJPeSl/9iQIXvRT12X7BuVApc+4v4DAoGAE9FmhDUH7Ma9zwDRp4Hs\nRCqsKiwKgoUdm28tZrGUecSzEOJiayG9dW3xAgBNQSyHAUdsf2oe9SDnLskBkgk0\nf5T3cHLc9p0bB3Myah6xBn1mlViZ3Ffcj19hVoSak7iRFvcre4fsc3fcoQowdEzi\nUcW0c9IreQf+1k2+RfBdLIU=\n-----END PRIVATE KEY-----\n",
+  "client_email": "owner-775@telerikfinalproject.iam.gserviceaccount.com",
+  "client_id": "110718667253542615600",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/owner-775%40telerikfinalproject.iam.gserviceaccount.com"
+}

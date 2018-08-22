@@ -3,9 +3,8 @@ package com.alpha.marketplace.controllers;
 import com.alpha.marketplace.models.Extension;
 import com.alpha.marketplace.models.binding.UserBindingModel;
 import com.alpha.marketplace.services.base.ExtensionService;
+import com.alpha.marketplace.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,20 +39,17 @@ public class HomeController {
     public String register(Model model){
         model.addAttribute("view", "register");
         model.addAttribute("user", new UserBindingModel());
+
         return "base-layout";
     }
 
     @GetMapping(value = "/login")
     public String login(Model model){
-        String view = "login";
-        UserDetails user = (UserDetails) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
-        if(user == null){
-            view = "index";
+        if(!Utils.isUserNotAnonymous()){
+            return "redirect:/";
         }
-        model.addAttribute("view", view);
+        model.addAttribute("view", "login");
+
         return "base-layout";
     }
 

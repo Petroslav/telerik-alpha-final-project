@@ -35,13 +35,13 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-thymeleaf')
     compile("org.springframework.boot:spring-boot-starter-security")
     compile('org.springframework.boot:spring-boot-starter-web')
-
-//    compile('org.springframework.cloud:spring-cloud-gcp')
-//    compile('org.springframework.cloud:spring-cloud-gcp-starter')
-//    compile('org.springframework.cloud:spring-cloud-gcp-starter-storage')
-
-    compile group: 'org.springframework.cloud', name: 'spring-cloud-gcp-starter'
-    compile group: 'org.springframework.cloud', name: 'spring-cloud-gcp-starter-sql-mysql'
+    compile('org.springframework.cloud:spring-cloud-gcp')
+    compile('org.springframework.cloud:spring-cloud-gcp-starter')
+    compile('org.springframework.cloud:spring-cloud-gcp-starter-storage')
+    compile('org.springframework.cloud:spring-cloud-gcp-starter-sql-mysql')
+//
+//    compile group: 'org.springframework.cloud', name: 'spring-cloud-gcp-starter'
+//    compile group: 'org.springframework.cloud', name: 'spring-cloud-gcp-starter-sql-mysql'
     compile group: 'org.modelmapper', name: 'modelmapper', version: '2.2.0'
 
     runtime('mysql:mysql-connector-java')
