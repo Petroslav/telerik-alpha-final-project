@@ -1,0 +1,17 @@
+.nav{
+    margin: 0 auto;
+    display:block;
+    /* top:440px; */
+    bottom: 0;
+    z-index: 10;
+    position: absolute;
+    width: 100%;
+    height: auto;
+    border-radius: 3px;
+    background-color: rgb(27, 247, 170);
+}
+.nav a img{
+    float: right;
+    margin-right: 20px;
+    width: 60px;
+}
