@@ -7,7 +7,8 @@ public interface RoleRepository {
     Role findById(int id);
     Role findByName(String name);
     boolean addRole(String name);
-    boolean updateRole(String newName);
+    boolean updateRole(String roleName, String newName);
+    boolean deleteRole(Role role);
     boolean deleteRoleById(int id);
     boolean deleteRoleByName(String name);
 }

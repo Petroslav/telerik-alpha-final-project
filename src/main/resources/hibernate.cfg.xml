@@ -12,7 +12,9 @@
             com.mysql.jdbc.Driver
         </property>
 
-        <property name="hibernate.hbm2ddl.auto">update</property>
+        <property name="hibernate.hbm2ddl.auto">
+            update
+        </property>
 
         <property name = "hibernate.connection.url">
             jdbc:mysql://35.198.105.69:3306/marketplace?useSSL=false
