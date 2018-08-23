@@ -29,7 +29,6 @@ public class UserController {
 
     @PostMapping("/public/register")
     public String regUser(Model model, @Valid @ModelAttribute UserBindingModel user, BindingResult result){
-        System.out.println("Controller reached");
         User newUser = service.registerUser(user);
         if(newUser == null){
             model.addAttribute("view", "failReg");
