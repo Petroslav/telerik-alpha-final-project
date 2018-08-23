@@ -5,6 +5,7 @@ import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.UserBindingModel;
 import com.alpha.marketplace.repositories.base.RoleRepository;
 import com.alpha.marketplace.repositories.base.UserRepository;
+import com.alpha.marketplace.services.base.CloudUserService;
 import com.alpha.marketplace.services.base.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
+    private final CloudUserService cloudUserService;
     private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder encoder;
     private final ModelMapper mapper;
@@ -25,10 +27,12 @@ public class UserServiceImpl implements UserService {
     @Autowired
     public UserServiceImpl(
             UserRepository repository,
+            CloudUserService cloudUserService,
             RoleRepository roleRepository,
             ModelMapper mapper,
             BCryptPasswordEncoder encoder) {
         this.repository = repository;
+        this.cloudUserService = cloudUserService;
         this.roleRepository = roleRepository;
         this.mapper = mapper;
         this.encoder = encoder;
@@ -45,6 +49,7 @@ public class UserServiceImpl implements UserService {
         String encryptedPass = encoder.encode(model.getPass1());
         u.setPassword(encryptedPass);
         u.getAuthorities().add(role);
+        u.setPicURI(cloudUserService.getPROFILE_PICS_URL_PREFIX() + "new-user");
         repository.save(u);
         return u;
     }
