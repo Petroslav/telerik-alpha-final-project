@@ -49,7 +49,7 @@ public class ExtensionServiceImpl implements ExtensionService {
     @Override
     public List<Extension> getLatest() {
         return getAllApproved().stream()
-                .sorted(Comparator.comparing(Extension::getAddedOn))
+                .sorted(Comparator.comparing(Extension::getAddedOn).reversed())
                 .limit(10)
                 .collect(Collectors.toList());
     }
