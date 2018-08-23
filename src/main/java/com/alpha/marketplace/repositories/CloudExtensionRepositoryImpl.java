@@ -1,8 +1,8 @@
-package com.alpha.marketplace.services;
+package com.alpha.marketplace.repositories;
 
 
 import com.alpha.marketplace.exceptions.CannotFetchBytesException;
-import com.alpha.marketplace.services.base.CloudExtensionService;
+import com.alpha.marketplace.repositories.base.CloudExtensionRepository;
 import com.alpha.marketplace.utils.Utils;
 import com.google.cloud.storage.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import java.nio.ByteBuffer;
 
 
 @Service
-public class CloudExtensionServiceImpl implements CloudExtensionService {
+public class CloudExtensionRepositoryImpl implements CloudExtensionRepository {
 
     private final Storage storage;
 
@@ -24,7 +24,7 @@ public class CloudExtensionServiceImpl implements CloudExtensionService {
     private final Bucket extensionPicBucket;
 
     @Autowired
-    public CloudExtensionServiceImpl(Storage storage) {
+    public CloudExtensionRepositoryImpl(Storage storage) {
         //TODO REFACTOR AUTIWIRING FOR PROPER DI;
         this.storage = storage;
         this.extensionBucket = storage.get("marketplace-extensions");

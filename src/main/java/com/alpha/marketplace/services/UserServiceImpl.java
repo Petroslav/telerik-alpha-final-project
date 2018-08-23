@@ -7,7 +7,7 @@ import com.alpha.marketplace.models.binding.UserBindingModel;
 import com.alpha.marketplace.models.edit.UserEditModel;
 import com.alpha.marketplace.repositories.base.RoleRepository;
 import com.alpha.marketplace.repositories.base.UserRepository;
-import com.alpha.marketplace.services.base.CloudUserService;
+import com.alpha.marketplace.repositories.base.CloudUserRepository;
 import com.alpha.marketplace.services.base.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import java.io.IOException;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
-    private final CloudUserService cloudUserService;
+    private final CloudUserRepository cloudUserRepository;
     private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder encoder;
     private final ModelMapper mapper;
@@ -31,12 +31,12 @@ public class UserServiceImpl implements UserService {
     @Autowired
     public UserServiceImpl(
             UserRepository repository,
-            CloudUserService cloudUserService,
+            CloudUserRepository cloudUserRepository,
             RoleRepository roleRepository,
             ModelMapper mapper,
             BCryptPasswordEncoder encoder) {
         this.repository = repository;
-        this.cloudUserService = cloudUserService;
+        this.cloudUserRepository = cloudUserRepository;
         this.roleRepository = roleRepository;
         this.mapper = mapper;
         this.encoder = encoder;
@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
         String encryptedPass = encoder.encode(model.getPass1());
         u.setPassword(encryptedPass);
         u.getAuthorities().add(role);
-        u.setPicURI(cloudUserService.getPROFILE_PICS_URL_PREFIX() + "new-user");
+        u.setPicURI(cloudUserRepository.getPROFILE_PICS_URL_PREFIX() + "new-user");
         repository.save(u);
         return u;
     }
@@ -72,11 +72,13 @@ public class UserServiceImpl implements UserService {
     public boolean editUser(User u, UserEditModel edit) {
         u.setFirstName(edit.getFirstName());
         u.setLastName(edit.getLastName());
-        String oldPass = encoder.encode(edit.getOldPass());
-        if(!u.getPassword().equals(oldPass) || !edit.getNewPass().equals(edit.getNewPassConfirm())){
-            return false;
+        if(!edit.getOldPass().isEmpty()){
+            String oldPass = encoder.encode(edit.getOldPass());
+            if(!u.getPassword().equals(oldPass) || !edit.getNewPass().equals(edit.getNewPassConfirm())){
+                return false;
+            }
+            u.setPassword(encoder.encode(edit.getNewPass()));
         }
-        u.setPassword(encoder.encode(edit.getNewPass()));
         return repository.update(u);
     }
 
@@ -89,7 +91,7 @@ public class UserServiceImpl implements UserService {
             System.out.println(e.getMessage());
             return false;
         }
-        String picURI = cloudUserService.saveUserPic(String.valueOf(u.getId()), bytes, file.getContentType());
+        String picURI = cloudUserRepository.saveUserPic(String.valueOf(u.getId()), bytes, file.getContentType());
         if(picURI == null){
             return false;
         }
@@ -101,7 +103,7 @@ public class UserServiceImpl implements UserService {
     public boolean editUserPic(User u, String urlString) {
         String picURI;
         try{
-            picURI = cloudUserService.saveUserPicFromUrl(String.valueOf(u.getId()), urlString);
+            picURI = cloudUserRepository.saveUserPicFromUrl(String.valueOf(u.getId()), urlString);
         }catch(CannotFetchBytesException e){
             System.out.println(e.getMessage());
             return false;
@@ -110,13 +112,13 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
-    private boolean validateReg(UserBindingModel model) {
-        return (repository.findByEmail(model.getEmail()) == null) &&
-                (model.getPass1().equals(model.getPass2()));
-    }
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return repository.findByUsername(username);
+    }
+
+    private boolean validateReg(UserBindingModel model) {
+        return (repository.findByEmail(model.getEmail()) == null) &&
+                (model.getPass1().equals(model.getPass2()));
     }
 }

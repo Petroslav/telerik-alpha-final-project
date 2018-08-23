@@ -3,6 +3,7 @@ package com.alpha.marketplace.services;
 import com.alpha.marketplace.models.Extension;
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.ExtensionBindingModel;
+import com.alpha.marketplace.repositories.base.CloudExtensionRepository;
 import com.alpha.marketplace.repositories.base.ExtensionRepository;
 import com.alpha.marketplace.repositories.base.UserRepository;
 import com.alpha.marketplace.services.base.ExtensionService;
@@ -22,12 +23,14 @@ import java.util.stream.Collectors;
 public class ExtensionServiceImpl implements ExtensionService {
     private ExtensionRepository repository;
     private UserRepository userRepository;
+    private CloudExtensionRepository cloudExtensionRepository;
     private final ModelMapper mapper;
 
     @Autowired
-    public ExtensionServiceImpl(ExtensionRepository repository, UserRepository userRepository, ModelMapper mapper) {
+    public ExtensionServiceImpl(ExtensionRepository repository, UserRepository userRepository, CloudExtensionRepository cloudExtensionRepository, ModelMapper mapper) {
         this.repository = repository;
         this.userRepository = userRepository;
+        this.cloudExtensionRepository = cloudExtensionRepository;
         this.mapper = mapper;
     }
 

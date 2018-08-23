@@ -1,14 +1,14 @@
-package com.alpha.marketplace.services;
+package com.alpha.marketplace.repositories;
 
         import com.alpha.marketplace.exceptions.CannotFetchBytesException;
-        import com.alpha.marketplace.services.base.CloudUserService;
+        import com.alpha.marketplace.repositories.base.CloudUserRepository;
         import com.alpha.marketplace.utils.Utils;
         import com.google.cloud.storage.*;
         import org.springframework.beans.factory.annotation.Autowired;
         import org.springframework.stereotype.Service;
 
 @Service
-public class CloudUserServiceImpl implements CloudUserService {
+public class CloudUserRepositoryImpl implements CloudUserRepository {
     private final String FILE_NAME_PREFIX = "user-";
     private final String PROFILE_PICS_URL_PREFIX = "https://storage.googleapis.com/marketplace-user-pics/";
 
@@ -16,7 +16,7 @@ public class CloudUserServiceImpl implements CloudUserService {
     private final Bucket profileBucket;
 
     @Autowired
-    public CloudUserServiceImpl(Storage storage) {
+    public CloudUserRepositoryImpl(Storage storage) {
         this.storage = storage;
         this.profileBucket = storage.get("marketplace-user-pics");
     }
