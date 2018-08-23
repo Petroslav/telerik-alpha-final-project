@@ -1,18 +1,17 @@
 package com.alpha.marketplace.repositories;
 
-
 import com.alpha.marketplace.exceptions.CannotFetchBytesException;
 import com.alpha.marketplace.repositories.base.CloudExtensionRepository;
 import com.alpha.marketplace.utils.Utils;
 import com.google.cloud.storage.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
 
-@Service
+@Repository
 public class CloudExtensionRepositoryImpl implements CloudExtensionRepository {
 
     private final Storage storage;

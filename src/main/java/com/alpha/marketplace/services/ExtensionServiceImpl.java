@@ -7,6 +7,7 @@ import com.alpha.marketplace.repositories.base.CloudExtensionRepository;
 import com.alpha.marketplace.repositories.base.ExtensionRepository;
 import com.alpha.marketplace.repositories.base.UserRepository;
 import com.alpha.marketplace.services.base.ExtensionService;
+import com.google.cloud.storage.BlobId;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -73,7 +74,11 @@ public class ExtensionServiceImpl implements ExtensionService {
         extension.setTags(new ArrayList<>());
         extension.setAddedOn(new Date());
         extension.setVersion("1");
-         extension.setPublisher(u);
+        extension.setPublisher(u);
+        BlobId blobid = cloudExtensionRepository.saveExtension("1", extension.getName(), "contentType", new byte[24]);
+        extension.setBlobId(blobid);
+        String extensionURI = cloudExtensionRepository.getEXTENSION_URL_PREFIX() + blobid.getName();
+        extension.setDlURI(extensionURI);
         //TODO get current logged user to set as publisherqqq
         extension.setDlURI(model.getDownloadLink());
         extension.setRepoURL(model.getRepositoryUrl());
