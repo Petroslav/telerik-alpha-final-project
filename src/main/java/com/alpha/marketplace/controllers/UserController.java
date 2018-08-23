@@ -41,7 +41,10 @@ public class UserController {
     @GetMapping("/{id}")
     public String userDetails(Model model, @PathVariable("id") Integer id){
         User user = service.findById(id);
-
+        if(user == null){
+            model.addAttribute("view", "error/404");
+            return "base-layout";
+        }
         model.addAttribute("user", user);
         model.addAttribute("view", "user/details");
 

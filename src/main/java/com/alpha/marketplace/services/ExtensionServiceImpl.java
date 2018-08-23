@@ -100,4 +100,9 @@ public class ExtensionServiceImpl implements ExtensionService {
         extension.approve();
     }
 
+    @Override
+    public Extension getByName(String name) {
+        return repository.getByName(name);
+    }
+
 }

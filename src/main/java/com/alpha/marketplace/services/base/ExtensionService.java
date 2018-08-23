@@ -13,4 +13,5 @@ public interface ExtensionService {
     Extension getById(int id);
     List<Extension> getAllApproved();
     void approveExtensionById(int id);
+    Extension getByName(String name);
 }

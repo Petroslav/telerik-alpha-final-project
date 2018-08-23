@@ -42,6 +42,9 @@ public class HomeController {
 
     @GetMapping("/register")
     public String register(Model model) {
+        if (!Utils.isUserNotAnonymous()) {
+            return "redirect:/";
+        }
         model.addAttribute("view", "register");
         model.addAttribute("user", new UserBindingModel());
 

@@ -33,6 +33,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .usernameParameter("username")
                 .passwordParameter("pass1")
                 .and()
+                .exceptionHandling().accessDeniedPage("/error/403")
+                .and()
                 .csrf().disable();
 
     }
