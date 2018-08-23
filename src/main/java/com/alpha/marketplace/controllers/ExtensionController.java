@@ -3,7 +3,9 @@ package com.alpha.marketplace.controllers;
 import com.alpha.marketplace.models.Extension;
 import com.alpha.marketplace.models.binding.ExtensionBindingModel;
 import com.alpha.marketplace.services.base.ExtensionService;
+import com.alpha.marketplace.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,6 +38,9 @@ public class ExtensionController {
 
     @GetMapping("/create")
     public String createPage(Model model) {
+        if (Utils.isUserNotAnonymous()) {
+            return "redirect:/";
+        }
         model.addAttribute("view", "extensions/create");
         return "base-layout";
     }
