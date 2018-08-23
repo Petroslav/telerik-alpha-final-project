@@ -5,6 +5,7 @@ import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.ExtensionBindingModel;
 import com.alpha.marketplace.repositories.base.CloudExtensionRepository;
 import com.alpha.marketplace.repositories.base.ExtensionRepository;
+import com.alpha.marketplace.repositories.base.TagRepository;
 import com.alpha.marketplace.repositories.base.UserRepository;
 import com.alpha.marketplace.services.base.ExtensionService;
 import com.google.cloud.storage.BlobId;
@@ -24,14 +25,16 @@ import java.util.stream.Collectors;
 public class ExtensionServiceImpl implements ExtensionService {
     private ExtensionRepository repository;
     private UserRepository userRepository;
+    private TagRepository tagRepository;
     private CloudExtensionRepository cloudExtensionRepository;
     private final ModelMapper mapper;
 
     @Autowired
-    public ExtensionServiceImpl(ExtensionRepository repository, UserRepository userRepository, CloudExtensionRepository cloudExtensionRepository, ModelMapper mapper) {
+    public ExtensionServiceImpl(ExtensionRepository repository, UserRepository userRepository, CloudExtensionRepository cloudExtensionRepository, TagRepository tagRepository, ModelMapper mapper) {
         this.repository = repository;
         this.userRepository = userRepository;
         this.cloudExtensionRepository = cloudExtensionRepository;
+        this.tagRepository = tagRepository;
         this.mapper = mapper;
     }
 
@@ -65,6 +68,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         UserDetails user = (UserDetails) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
 
+        //Added cloud storage example to code -- to be refactored
         User u = userRepository.findByUsername(user.getUsername());
         Extension extension = mapper.map(model, Extension.class);
         extension.setName(model.getName());
