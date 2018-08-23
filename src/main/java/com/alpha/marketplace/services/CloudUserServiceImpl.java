@@ -5,8 +5,12 @@ package com.alpha.marketplace.services;
         import org.springframework.beans.factory.annotation.Autowired;
         import org.springframework.stereotype.Service;
 
+        import java.util.HashMap;
+        import java.util.Map;
+
 @Service
 public class CloudUserServiceImpl implements CloudUserService {
+    private final String FILE_NAME_PREFIX = "user-";
     private final String PROFILE_PICS_URL_PREFIX = "https://storage.googleapis.com/marketplace-user-pics/";
 
     private final Storage storage;
@@ -19,11 +23,10 @@ public class CloudUserServiceImpl implements CloudUserService {
     }
 
     @Override
-    public Blob saveUserPic(String userId, byte[] bytes){
-        String blobName = "user-" + userId;
+    public String saveUserPic(String userId, byte[] bytes, String contentType){
+        String blobName = FILE_NAME_PREFIX + userId;
         String blobPath = PROFILE_PICS_URL_PREFIX + blobName;
-        Blob blob = profileBucket.create(blobName, bytes);
-        BlobId blobId = blob.getBlobId();
-        return blob;
+        profileBucket.create(blobName, bytes, contentType);
+        return blobPath;
     }
 }

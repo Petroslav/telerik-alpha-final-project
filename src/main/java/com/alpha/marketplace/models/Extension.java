@@ -1,5 +1,7 @@
 package com.alpha.marketplace.models;
 
+import com.google.cloud.storage.BlobId;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,6 +31,9 @@ public class Extension {
 
     @Column(name = "version", nullable = false)
     private String version;
+
+    @Column(name = "blob_id")
+    private BlobId blobId;
 
     @ManyToMany(
             fetch = FetchType.EAGER,
@@ -76,6 +81,7 @@ public class Extension {
             User publisher,
             int downloads,
             String version,
+            BlobId blobId,
             List<Tag> tags,
             Date addedOn,
             Date latestUpdate,
@@ -89,6 +95,7 @@ public class Extension {
         this.publisher = publisher;
         this.downloads = downloads;
         this.version = version;
+        this.blobId = blobId;
         this.tags = tags;
         this.addedOn = addedOn;
         this.latestUpdate = latestUpdate;
@@ -144,6 +151,14 @@ public class Extension {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public BlobId getBlobId() {
+        return blobId;
+    }
+
+    public void setBlobId(BlobId blobId) {
+        this.blobId = blobId;
     }
 
     public Date getAddedOn() {

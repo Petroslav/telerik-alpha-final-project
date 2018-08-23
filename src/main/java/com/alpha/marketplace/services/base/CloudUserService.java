@@ -1,8 +1,8 @@
 package com.alpha.marketplace.services.base;
 
-import com.google.cloud.storage.Blob;
+import java.util.Map;
 
 public interface CloudUserService {
 
-    Blob saveUserPic(String userId, byte[] bytes);
+    String saveUserPic(String userId, byte[] bytes, String contentType);
 }
