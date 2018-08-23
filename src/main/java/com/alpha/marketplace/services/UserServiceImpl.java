@@ -1,19 +1,23 @@
 package com.alpha.marketplace.services;
 
+import com.alpha.marketplace.exceptions.CannotFetchBytesException;
 import com.alpha.marketplace.models.Role;
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.UserBindingModel;
+import com.alpha.marketplace.models.edit.UserEditModel;
 import com.alpha.marketplace.repositories.base.RoleRepository;
 import com.alpha.marketplace.repositories.base.UserRepository;
 import com.alpha.marketplace.services.base.CloudUserService;
 import com.alpha.marketplace.services.base.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -45,7 +49,7 @@ public class UserServiceImpl implements UserService {
             return null;
         }
         User u = mapper.map(model, User.class);
-        Role role = roleRepository.findById(1);
+        Role role = roleRepository.findByName("ROLE_USER");
         String encryptedPass = encoder.encode(model.getPass1());
         u.setPassword(encryptedPass);
         u.getAuthorities().add(role);
@@ -65,8 +69,44 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean editUser(User u) {
-        //TODO logic for editing user profile
+    public boolean editUser(User u, UserEditModel edit) {
+        u.setFirstName(edit.getFirstName());
+        u.setLastName(edit.getLastName());
+        String oldPass = encoder.encode(edit.getOldPass());
+        if(!u.getPassword().equals(oldPass) || !edit.getNewPass().equals(edit.getNewPassConfirm())){
+            return false;
+        }
+        u.setPassword(encoder.encode(edit.getNewPass()));
+        return repository.update(u);
+    }
+
+    @Override
+    public boolean editUserPic(User u, MultipartFile file) {
+        byte[] bytes;
+        try{
+            bytes = file.getBytes();
+        }catch(IOException e){
+            System.out.println(e.getMessage());
+            return false;
+        }
+        String picURI = cloudUserService.saveUserPic(String.valueOf(u.getId()), bytes, file.getContentType());
+        if(picURI == null){
+            return false;
+        }
+        u.setPicURI(picURI);
+        return true;
+    }
+
+    @Override
+    public boolean editUserPic(User u, String urlString) {
+        String picURI;
+        try{
+            picURI = cloudUserService.saveUserPicFromUrl(String.valueOf(u.getId()), urlString);
+        }catch(CannotFetchBytesException e){
+            System.out.println(e.getMessage());
+            return false;
+        }
+        u.setPicURI(picURI);
         return true;
     }
 

@@ -1,7 +1,7 @@
 package com.alpha.marketplace.services;
 
 
-import com.alpha.marketplace.errors.CannotFetchBytesException;
+import com.alpha.marketplace.exceptions.CannotFetchBytesException;
 import com.alpha.marketplace.services.base.CloudExtensionService;
 import com.alpha.marketplace.utils.Utils;
 import com.google.cloud.storage.*;

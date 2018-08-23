@@ -1,21 +1,11 @@
 package com.alpha.marketplace.services;
 
-        import com.alpha.marketplace.errors.CannotFetchBytesException;
+        import com.alpha.marketplace.exceptions.CannotFetchBytesException;
         import com.alpha.marketplace.services.base.CloudUserService;
         import com.alpha.marketplace.utils.Utils;
         import com.google.cloud.storage.*;
         import org.springframework.beans.factory.annotation.Autowired;
-        import org.springframework.core.io.Resource;
         import org.springframework.stereotype.Service;
-
-        import java.io.File;
-        import java.io.FileInputStream;
-        import java.io.FileNotFoundException;
-        import java.io.IOException;
-        import java.net.MalformedURLException;
-        import java.net.URL;
-        import java.util.HashMap;
-        import java.util.Map;
 
 @Service
 public class CloudUserServiceImpl implements CloudUserService {

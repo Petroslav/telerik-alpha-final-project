@@ -1,8 +1,6 @@
 package com.alpha.marketplace.services.base;
 
-import com.alpha.marketplace.errors.CannotFetchBytesException;
-
-import java.util.Map;
+import com.alpha.marketplace.exceptions.CannotFetchBytesException;
 
 public interface CloudUserService {
 

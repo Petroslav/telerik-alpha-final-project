@@ -1,4 +1,4 @@
-package com.alpha.marketplace.errors;
+package com.alpha.marketplace.exceptions;
 
 public class CannotFetchBytesException extends Exception {
 

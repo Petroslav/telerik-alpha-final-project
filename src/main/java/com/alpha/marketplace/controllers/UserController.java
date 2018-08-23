@@ -2,6 +2,7 @@ package com.alpha.marketplace.controllers;
 
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.UserBindingModel;
+import com.alpha.marketplace.models.edit.UserEditModel;
 import com.alpha.marketplace.services.base.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -54,15 +56,48 @@ public class UserController {
     @GetMapping("/profile")
     @PreAuthorize("isAuthenticated()")
     public String profile(Model model){
-        UserDetails user = (UserDetails) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
-
-        User u = (User)service.loadUserByUsername(user.getUsername());
-
+        User u = getUser();
 
         model.addAttribute("user", u);
         model.addAttribute("view", "user/profile");
 
         return "base-layout";
+    }
+
+    @PostMapping("/update")
+    @PreAuthorize("isAuthenticated()")
+    public String updateProfile(Model model, @ModelAttribute UserEditModel userEdit){
+        User u = getUser();
+        service.editUser(u, userEdit);
+        return  "redirect:/profile";
+    }
+
+
+    @PostMapping("/update/pic/file")
+    @PreAuthorize("isAuthenticated()")
+    public String updateProfile(Model model, @RequestParam("picFile") MultipartFile file){
+        User u = getUser();
+        service.editUserPic(u, file);
+        //TODO HANDLE ERROR IF FILE TOO BIG OR BAD FILE FORMAT
+
+        return  "redirect:/profile";
+    }
+
+    @PostMapping("/update/pic/url")
+    @PreAuthorize("isAuthenticated()")
+    public String updateProfile(Model model, @RequestParam("picUrl") String urlString){
+        User u = getUser();
+        service.editUserPic(u, urlString);
+        //TODO HANDLE ERROR IF BAD URL OR TOO BIG
+        return  "redirect:/profile";
+    }
+
+    private User getUser(){
+        UserDetails user = (UserDetails) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        return (User)service.loadUserByUsername(user.getUsername());
     }
 }

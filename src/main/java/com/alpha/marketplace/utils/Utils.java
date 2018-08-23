@@ -1,12 +1,10 @@
 package com.alpha.marketplace.utils;
 
-import com.alpha.marketplace.errors.CannotFetchBytesException;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 public class Utils {

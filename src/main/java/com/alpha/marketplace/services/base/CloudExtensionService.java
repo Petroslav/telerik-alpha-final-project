@@ -1,6 +1,6 @@
 package com.alpha.marketplace.services.base;
 
-import com.alpha.marketplace.errors.CannotFetchBytesException;
+import com.alpha.marketplace.exceptions.CannotFetchBytesException;
 import com.google.cloud.storage.BlobId;
 
 public interface CloudExtensionService {
