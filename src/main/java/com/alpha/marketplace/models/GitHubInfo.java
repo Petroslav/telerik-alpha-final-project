@@ -12,24 +12,24 @@ public class GitHubInfo {
     @Column(name = "id")
     private long id;
 
-    @OneToOne(mappedBy = "gitHubInfo")
-    private Extension extension;
+    @OneToOne
+    private Extension parent;
 
     @Column(name = "pulls")
-    private int pullCount;
+    private String pullCount;
 
     @Column(name = "issues")
-    private int issuesCount;
+    private String issuesCount;
 
     @Column(name = "latest_commit")
-    private Date lastCommit;
+    private String lastCommit;
 
     public GitHubInfo(){
 
     }
 
-    public GitHubInfo(Extension extension, int pullCount, int issuesCount, Date lastCommit) {
-        this.extension = extension;
+    public GitHubInfo(Extension parent, String pullCount, String issuesCount, String lastCommit) {
+        this.parent = parent;
         this.pullCount = pullCount;
         this.issuesCount = issuesCount;
         this.lastCommit = lastCommit;
@@ -43,35 +43,35 @@ public class GitHubInfo {
         this.id = id;
     }
 
-    public Extension getExtension() {
-        return extension;
+    public Extension getParent() {
+        return parent;
     }
 
-    public void setExtension(Extension extension) {
-        this.extension = extension;
+    public void setParent(Extension parent) {
+        this.parent = parent;
     }
 
-    public int getPullCount() {
+    public String getPullCount() {
         return pullCount;
     }
 
-    public void setPullCount(int pullCount) {
+    public void setPullCount(String pullCount) {
         this.pullCount = pullCount;
     }
 
-    public int getIssuesCount() {
+    public String getIssuesCount() {
         return issuesCount;
     }
 
-    public void setIssuesCount(int issuesCount) {
+    public void setIssuesCount(String issuesCount) {
         this.issuesCount = issuesCount;
     }
 
-    public Date getLastCommit() {
+    public String getLastCommit() {
         return lastCommit;
     }
 
-    public void setLastCommit(Date lastCommit) {
+    public void setLastCommit(String lastCommit) {
         this.lastCommit = lastCommit;
     }
 }

@@ -47,12 +47,14 @@ public class ExtensionController {
         model.addAttribute("view", "extensions/create");
         return "base-layout";
     }
+
     @PostMapping("/create")
     public String create(ExtensionBindingModel model){
         extensionService.createExtension(model);
 
         return "redirect:/";
     }
+
     @GetMapping("/{id}")
     public String viewExtension(@PathVariable String id, Model model){
 
