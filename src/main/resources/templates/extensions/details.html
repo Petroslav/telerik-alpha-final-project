@@ -4,7 +4,7 @@
         <h2 th:text="${extension.description}"></h2>
         <h2 th:text="${extension.downloads}"></h2>
         <a th:href="@{/user/{id}(id=${extension.publisher.id})}">
-            <h3 th:text="${extension.publisher.id}"></h3>
+            <h3 th:text="${extension.publisher.username}"></h3>
         </a>
         <h2 th:text="${extension.version}"></h2>
         <h2 th:text="${extension.addedOn}"></h2>

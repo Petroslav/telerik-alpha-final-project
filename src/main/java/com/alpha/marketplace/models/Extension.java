@@ -22,7 +22,7 @@ public class Extension {
     @Column(name = "description", nullable = false, length = 5000)
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User publisher;
 

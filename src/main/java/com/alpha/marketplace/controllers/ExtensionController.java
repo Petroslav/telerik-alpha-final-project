@@ -3,6 +3,7 @@ package com.alpha.marketplace.controllers;
 import com.alpha.marketplace.models.Extension;
 import com.alpha.marketplace.models.binding.ExtensionBindingModel;
 import com.alpha.marketplace.services.base.ExtensionService;
+import com.alpha.marketplace.services.base.UserService;
 import com.alpha.marketplace.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,11 +20,13 @@ import java.util.List;
 @RequestMapping("/extension")
 public class ExtensionController {
 
+    private UserService userService;
     private ExtensionService extensionService;
 
     @Autowired
-    public ExtensionController(ExtensionService extensionService) {
+    public ExtensionController(UserService userService, ExtensionService extensionService) {
         this.extensionService = extensionService;
+        this.userService = userService;
     }
 
     @GetMapping("/all")
@@ -68,7 +71,6 @@ public class ExtensionController {
 
         model.addAttribute("view", "extensions/details");
         model.addAttribute("approved", approved);
-        model.addAttribute("publisher", extension.getPublisher());
         model.addAttribute("extension", extension);
         return "base-layout";
     }
