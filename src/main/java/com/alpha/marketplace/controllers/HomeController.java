@@ -31,6 +31,7 @@ public class HomeController {
         List<Extension> newestExtensions = extensionService.getLatest();
         List<Extension> selectedByAdmin = extensionService.getAdminSelection();
         List<Extension> mostPopular = extensionService.getMostPopular();
+        test();
 
         model.addAttribute("view", "index");
         model.addAttribute("newest", newestExtensions);
@@ -66,5 +67,12 @@ public class HomeController {
         model.addAttribute("view", "unauthorized");
 
         return "base-layout";
+    }
+
+    public void test() {
+        GitHub gitHub = new GitHubTemplate();
+
+        GitHubRepo repo = gitHub.repoOperations().getRepo("Petroslav", "telerik-alpha-final-project");
+        gitHub.repoOperations();
     }
 }

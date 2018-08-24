@@ -3,10 +3,7 @@ package com.alpha.marketplace.services;
 import com.alpha.marketplace.models.Extension;
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.ExtensionBindingModel;
-import com.alpha.marketplace.repositories.base.CloudExtensionRepository;
-import com.alpha.marketplace.repositories.base.ExtensionRepository;
-import com.alpha.marketplace.repositories.base.TagRepository;
-import com.alpha.marketplace.repositories.base.UserRepository;
+import com.alpha.marketplace.repositories.base.*;
 import com.alpha.marketplace.services.base.ExtensionService;
 import com.google.cloud.storage.BlobId;
 import org.modelmapper.ModelMapper;
@@ -28,14 +25,21 @@ public class ExtensionServiceImpl implements ExtensionService {
     private TagRepository tagRepository;
     private CloudExtensionRepository cloudExtensionRepository;
     private final ModelMapper mapper;
+    private GitHubRepository gitHubRepository;
 
     @Autowired
-    public ExtensionServiceImpl(ExtensionRepository repository, UserRepository userRepository, CloudExtensionRepository cloudExtensionRepository, TagRepository tagRepository, ModelMapper mapper) {
+    public ExtensionServiceImpl(ExtensionRepository repository,
+                                UserRepository userRepository,
+                                CloudExtensionRepository cloudExtensionRepository,
+                                TagRepository tagRepository,
+                                ModelMapper mapper,
+                                GitHubRepository gitHubRepository) {
         this.repository = repository;
         this.userRepository = userRepository;
         this.cloudExtensionRepository = cloudExtensionRepository;
         this.tagRepository = tagRepository;
         this.mapper = mapper;
+        this.gitHubRepository = gitHubRepository;
     }
 
 

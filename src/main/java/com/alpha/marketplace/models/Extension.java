@@ -65,6 +65,9 @@ public class Extension {
     @Column(name = "repo_url", nullable = false)
     private String repoURL;
 
+    @OneToOne
+    private GitHubInfo gitHubInfo;
+
     //TODO add GitHub API fields for pull requests, open issues and latest commit.
 
     public Extension(){
@@ -88,7 +91,8 @@ public class Extension {
             boolean isApproved,
             String picURI,
             String dlURI,
-            String repoURL
+            String repoURL,
+            GitHubInfo gitHubInfo
         ) {
         this.name = name;
         this.description = description;
@@ -103,6 +107,7 @@ public class Extension {
         this.picURI = picURI;
         this.dlURI = dlURI;
         this.repoURL = repoURL;
+        this.gitHubInfo = gitHubInfo;
     }
 
     public long getId() {
@@ -217,7 +222,16 @@ public class Extension {
         this.repoURL = repoURL;
     }
 
+    public GitHubInfo getGitHubInfo() {
+        return gitHubInfo;
+    }
+
+    public void setGitHubInfo(GitHubInfo gitHubInfo) {
+        this.gitHubInfo = gitHubInfo;
+    }
+
     public void approve(){
         isApproved = true;
     }
+
 }

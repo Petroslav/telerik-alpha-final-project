@@ -30,6 +30,7 @@ public class Config {
                 .addAnnotatedClass(Extension.class)
                 .addAnnotatedClass(Tag.class)
                 .addAnnotatedClass(Role.class)
+                .addAnnotatedClass(GitHubInfo.class)
                 .buildSessionFactory();
     }
 
