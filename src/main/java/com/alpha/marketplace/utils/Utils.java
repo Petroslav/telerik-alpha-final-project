@@ -1,9 +1,12 @@
 package com.alpha.marketplace.utils;
 
 import com.alpha.marketplace.models.GitHubInfo;
+import com.alpha.marketplace.repositories.base.ExtensionRepository;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StreamUtils;
@@ -61,7 +64,6 @@ public class Utils {
             while(sc.hasNextLine()){
                 result.append(sc.nextLine());
             }
-            System.out.println("Result = " + result);
             //return the jsp showing this response
 
             String json = result.toString();
@@ -115,8 +117,6 @@ public class Utils {
             connection.setRequestMethod("GET");
             connection.connect();
             //work with the response
-            System.out.println("STATUS CODE = " + connection.getResponseCode());
-            System.out.println("response length = " + connection.getContentLength());
             sc = new Scanner(connection.getInputStream());
             StringBuilder result = new StringBuilder();
             while(sc.hasNextLine()){

@@ -10,6 +10,7 @@ import com.alpha.marketplace.utils.Utils;
 import com.google.cloud.storage.BlobId;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -126,6 +127,35 @@ public class ExtensionServiceImpl implements ExtensionService {
     @Override
     public Extension getByName(String name) {
         return repository.getByName(name);
+    }
+
+
+    //TODO add logging for github sync
+    @Override
+    public void sync(int id) {
+        Extension extension = getById(id);
+        GitHubInfo info = extension.getGitHubInfo();
+        Date currentTime = new Date();
+        System.out.println("["+currentTime+"]"+"Admin syncing for" + extension.getName()+":");
+        Utils.setGithubInfo(info);
+        gitHubRepository.update(info);
+        System.out.println("--Updated info for "+extension.getName());
+    }
+
+    @Scheduled(fixedRate = 7200000)
+    public void syncAll(){
+        Date currentTime = new Date();
+        List<Extension> extensions = getAllApproved();
+        System.out.println("["+currentTime+"]"+"Syncing:");
+        for(Extension e : extensions){
+            if(e.getGitHubInfo() == null){
+                continue;
+            }
+            GitHubInfo ginfo = e.getGitHubInfo();
+            Utils.setGithubInfo(ginfo);
+            gitHubRepository.update(ginfo);
+            System.out.println("--Updated info for "+e.getName());
+        }
     }
 
 }

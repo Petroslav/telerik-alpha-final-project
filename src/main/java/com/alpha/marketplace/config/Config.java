@@ -8,6 +8,7 @@ import org.hibernate.SessionFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
 
 
@@ -16,6 +17,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 @Configuration
+@EnableScheduling
 public class Config {
 
     private final String pathToConfig = "C:\\Users\\luffy\\OneDrive\\Desktop\\marketplace\\src\\main\\resources\\telerikfinalproject-30ecbd8e72f6.json";
