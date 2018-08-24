@@ -1,10 +1,12 @@
 package com.alpha.marketplace.services;
 
 import com.alpha.marketplace.models.Extension;
+import com.alpha.marketplace.models.GitHubInfo;
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.ExtensionBindingModel;
 import com.alpha.marketplace.repositories.base.*;
 import com.alpha.marketplace.services.base.ExtensionService;
+import com.alpha.marketplace.utils.Utils;
 import com.google.cloud.storage.BlobId;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,15 +85,20 @@ public class ExtensionServiceImpl implements ExtensionService {
         extension.setAddedOn(new Date());
         extension.setVersion("1");
         extension.setPublisher(u);
-        BlobId blobid = cloudExtensionRepository.saveExtension("1", extension.getName(), "contentType", new byte[24]);
-        extension.setBlobId(blobid);
-        String extensionURI = cloudExtensionRepository.getEXTENSION_URL_PREFIX() + blobid.getName();
-        extension.setDlURI(extensionURI);
+//        BlobId blobid = cloudExtensionRepository.saveExtension("1", extension.getName(), "contentType", new byte[24]);
+//        extension.setBlobId(blobid);
+//        String extensionURI = cloudExtensionRepository.getEXTENSION_URL_PREFIX() + blobid.getName();
+//        extension.setDlURI(extensionURI);
         //TODO get current logged user to set as publisherqqq
         extension.setDlURI(model.getDownloadLink());
         extension.setRepoURL(model.getRepositoryUrl());
-
+        //TODO FIX PEASANT STYLE CODE
         repository.save(extension);
+        extension.setGitHubInfo(new GitHubInfo());
+        extension.getGitHubInfo().setParent(extension);
+        Utils.setGithubInfo(extension.getGitHubInfo());
+        gitHubRepository.save(extension.getGitHubInfo());
+        repository.update(extension);
     }
 
     @Override

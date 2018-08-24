@@ -11,6 +11,7 @@ import java.util.Scanner;
 
 public class testwtf {
     public static void main(String[] args) {
-        System.out.println(Utils.commitDate("telerik-alpha-final-project", "Petroslav"));
+        System.out.println(Utils.getOwnerFromGitURL("https://github.com/adriyanmihaylov/NGPuppies"));
+        System.out.println(Utils.getRepoFromGitURL("https://github.com/adriyanmihaylov/NGPuppies"));
     }
 }

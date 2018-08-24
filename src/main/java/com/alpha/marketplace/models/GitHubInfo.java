@@ -12,7 +12,7 @@ public class GitHubInfo {
     @Column(name = "id")
     private long id;
 
-    @OneToOne
+    @OneToOne(mappedBy = "gitHubInfo")
     private Extension parent;
 
     @Column(name = "pulls")

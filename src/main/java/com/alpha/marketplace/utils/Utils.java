@@ -1,5 +1,6 @@
 package com.alpha.marketplace.utils;
 
+import com.alpha.marketplace.models.GitHubInfo;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -75,7 +76,7 @@ public class Utils {
         return openIssues;
     }
 
-    public static String commitDate(String repo, String owner){
+    public static String commitDate(String owner, String repo){
         String commitDate = null;
         Scanner sc = null;
         try{
@@ -104,7 +105,7 @@ public class Utils {
         return commitDate;
     }
 
-    public static void pullsCount(String owner, String repo){
+    public static String pullsCount(String owner, String repo){
         String pullCount = null;
         Scanner sc = null;
         try{
@@ -123,12 +124,33 @@ public class Utils {
             }
             String json = result.toString();
             JsonArray jsonObj = new JsonParser().parse(json).getAsJsonArray();
-            System.out.println(jsonObj.size());
+            pullCount = String.valueOf(jsonObj.size());
         }catch(Exception e){
             System.out.println("Sadface");
             System.out.println(e.getMessage());
         }finally{
             if(sc != null) sc.close();
         }
+        return pullCount;
+    }
+
+    public static String getRepoFromGitURL(String url){
+        return url.substring(url.lastIndexOf("/")+1);
+    }
+    public static String getOwnerFromGitURL(String url){
+        String owner = url.substring(19);
+        owner = owner.substring(0, owner.indexOf("/"));
+        return owner;
+    }
+
+    public static void setGithubInfo(GitHubInfo info){
+        String url = info.getParent().getRepoURL();
+        String owner = getOwnerFromGitURL(url);
+        String repo = getRepoFromGitURL(url);
+
+        info.setIssuesCount(openIssues(owner, repo));
+        info.setLastCommit(commitDate(owner, repo));
+        info.setPullCount(pullsCount(owner, repo));
+
     }
 }

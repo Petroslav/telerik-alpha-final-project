@@ -65,7 +65,12 @@ public class Extension {
     @Column(name = "repo_url", nullable = false)
     private String repoURL;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE,
+            })
+    @JoinColumn(name = "git_info_id")
     private GitHubInfo gitHubInfo;
 
     //TODO add GitHub API fields for pull requests, open issues and latest commit.
