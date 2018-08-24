@@ -76,4 +76,11 @@ public class ExtensionController {
         model.addAttribute("extension", extension);
         return "base-layout";
     }
+    @PostMapping("/sync/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String syncExtension(Model model, @PathVariable("id") String id){
+        extensionService.sync(Integer.parseInt(id));
+
+        return "redirect:/extension/"+id;
+    }
 }
