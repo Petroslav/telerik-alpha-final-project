@@ -62,7 +62,7 @@ public class Utils {
     private static GitHub getGHConnection(){
         GitHub gh = null;
         try {
-            gh = GitHub.connectUsingOAuth("52e50d653b3a02439c6e3c59784e70695c541b40");
+            gh = GitHub.connectUsingOAuth("5c1a77eec3047ae6b562a55a7c0e4d4735cb38ef");
         } catch (IOException e) {
             e.printStackTrace();
         }
