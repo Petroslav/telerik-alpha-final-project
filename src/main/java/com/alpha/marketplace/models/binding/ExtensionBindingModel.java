@@ -4,6 +4,7 @@ import org.hibernate.validator.constraints.URL;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 public class ExtensionBindingModel {
 
@@ -23,11 +24,15 @@ public class ExtensionBindingModel {
     @NotEmpty
     private String downloadLink;
 
-    public ExtensionBindingModel(String name, String description, String repositoryUrl,  String downloadLink) {
+    @NotEmpty
+    private List<String> tags;
+
+    public ExtensionBindingModel(String name, String description, String repositoryUrl,  String downloadLink, List<String> tags) {
         this.name = name;
         this.description = description;
         this.repositoryUrl = repositoryUrl;
         this.downloadLink = downloadLink;
+        this.tags = tags;
     }
 
     public String getName() {
@@ -60,5 +65,13 @@ public class ExtensionBindingModel {
 
     public void setDownloadLink(String downloadLink) {
         this.downloadLink = downloadLink;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 }

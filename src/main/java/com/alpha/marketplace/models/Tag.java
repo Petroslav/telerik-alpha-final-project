@@ -15,7 +15,8 @@ public class Tag {
     @Column(name = "tag_name", unique = true)
     private String name;
 
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany(fetch = FetchType.EAGER,
+            mappedBy = "tags")
     private List<Extension> taggedExtensions;
 
     public Tag(){}

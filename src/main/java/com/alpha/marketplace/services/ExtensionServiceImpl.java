@@ -23,20 +23,23 @@ import java.util.stream.Collectors;
 
 @Service
 public class ExtensionServiceImpl implements ExtensionService {
-    private ExtensionRepository repository;
-    private UserRepository userRepository;
-    private TagRepository tagRepository;
-    private CloudExtensionRepository cloudExtensionRepository;
+
+    private final ExtensionRepository repository;
+    private final UserRepository userRepository;
+    private final TagRepository tagRepository;
+    private final CloudExtensionRepository cloudExtensionRepository;
     private final ModelMapper mapper;
-    private GitHubRepository gitHubRepository;
+    private final GitHubRepository gitHubRepository;
 
     @Autowired
-    public ExtensionServiceImpl(ExtensionRepository repository,
-                                UserRepository userRepository,
-                                CloudExtensionRepository cloudExtensionRepository,
-                                TagRepository tagRepository,
-                                ModelMapper mapper,
-                                GitHubRepository gitHubRepository) {
+    public ExtensionServiceImpl(
+            ExtensionRepository repository,
+            UserRepository userRepository,
+            CloudExtensionRepository cloudExtensionRepository,
+            TagRepository tagRepository,
+            ModelMapper mapper,
+            GitHubRepository gitHubRepository
+    ) {
         this.repository = repository;
         this.userRepository = userRepository;
         this.cloudExtensionRepository = cloudExtensionRepository;
@@ -93,7 +96,6 @@ public class ExtensionServiceImpl implements ExtensionService {
         //TODO get current logged user to set as publisherqqq
         extension.setDlURI(model.getDownloadLink());
         extension.setRepoURL(model.getRepositoryUrl());
-        //TODO FIX PEASANT STYLE CODE
         repository.save(extension);
         extension.setGitHubInfo(new GitHubInfo());
         extension.getGitHubInfo().setParent(extension);
@@ -142,7 +144,8 @@ public class ExtensionServiceImpl implements ExtensionService {
         System.out.println("--Updated info for "+extension.getName());
     }
 
-    @Scheduled(fixedRate = 7200000)
+    //Current sync set at 2 hours
+    @Scheduled(fixedRate = 2 * 60 * 60 * 1000)
     public void syncAll(){
         Date currentTime = new Date();
         List<Extension> extensions = getAllApproved();

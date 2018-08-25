@@ -34,7 +34,8 @@ public class UserServiceImpl implements UserService {
             CloudUserRepository cloudUserRepository,
             RoleRepository roleRepository,
             ModelMapper mapper,
-            BCryptPasswordEncoder encoder) {
+            BCryptPasswordEncoder encoder
+    ) {
         this.repository = repository;
         this.cloudUserRepository = cloudUserRepository;
         this.roleRepository = roleRepository;

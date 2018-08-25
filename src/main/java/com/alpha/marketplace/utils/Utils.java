@@ -16,6 +16,8 @@ import org.springframework.util.StreamUtils;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 
 public class Utils {
@@ -85,8 +87,10 @@ public class Utils {
     private static String commitDate(String url){
         GitHub gh = getGHConnection();
         String commitDate = null;
+        String pattern = "yyyy/MM/dd, hh:mm:ss a";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         try {
-            commitDate = String.valueOf(gh.getRepository(url).listCommits().asList().get(0).getCommitDate().toString());
+            commitDate = simpleDateFormat.format(new Date(gh.getRepository(url).listCommits().asList().get(0).getCommitDate().getTime()));
         } catch (IOException e) {
             e.printStackTrace();
         }
