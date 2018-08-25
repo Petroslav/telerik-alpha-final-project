@@ -73,7 +73,7 @@ public class Extension {
     @JoinColumn(name = "git_info_id")
     private GitHubInfo gitHubInfo;
 
-    //TODO add GitHub API fields for pull requests, open issues and latest commit.
+    //TODO fix peasant way of getting githubinfo
 
     public Extension(){
         setDownloads(0);

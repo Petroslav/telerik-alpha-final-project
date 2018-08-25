@@ -5,6 +5,8 @@ import com.alpha.marketplace.repositories.base.ExtensionRepository;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.kohsuke.github.GHIssueState;
+import org.kohsuke.github.GitHub;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -48,109 +50,62 @@ public class Utils {
         return contentType;
     }
 
+    public static void setGithubInfo(GitHubInfo info){
+        String url = removePrefix(info.getParent().getRepoURL());
 
-    public static String openIssues(String owner, String repo){
-        String openIssues = null;
-        Scanner sc = null;
-        try{
-            //make a separate HTTP request to a public api
-            URL url = new URL("https://api.github.com/repos/" + owner +"/" + repo);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.connect();
-            //work with the response
-            sc = new Scanner(connection.getInputStream());
-            StringBuilder result = new StringBuilder();
-            while(sc.hasNextLine()){
-                result.append(sc.nextLine());
-            }
-            //return the jsp showing this response
+        info.setIssuesCount(openIssues(url));
+        info.setLastCommit(commitDate(url));
+        info.setPullCount(pullsCount(url));
 
-            String json = result.toString();
-            JsonObject jsonObj = new JsonParser().parse(json).getAsJsonObject();
-            openIssues = jsonObj.get("open_issues_count").getAsString();
-        }catch(Exception e){
-            System.out.println("Sadface");
-            System.out.println(e.getMessage());
-        }finally{
-            if(sc != null) sc.close();
+    }
+
+    private static GitHub getGHConnection(){
+        GitHub gh = null;
+        try {
+            gh = GitHub.connectUsingOAuth("52e50d653b3a02439c6e3c59784e70695c541b40");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return gh;
+    }
+
+
+    private static String openIssues(String url){
+        GitHub gh = getGHConnection();
+        String openIssues = null;
+        try {
+            openIssues = String.valueOf(gh.getRepository(url).getOpenIssueCount());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return openIssues;
     }
 
-    public static String commitDate(String owner, String repo){
+    private static String commitDate(String url){
+        GitHub gh = getGHConnection();
         String commitDate = null;
-        Scanner sc = null;
-        try{
-            //make a separate HTTP request to a public api
-            URL url = new URL("https://api.github.com/repos/" + owner +"/" + repo + "/commits");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.connect();
-            //work with the response
-            sc = new Scanner(connection.getInputStream());
-            StringBuilder result = new StringBuilder();
-            while(sc.hasNextLine()){
-                result.append(sc.nextLine());
-            }
-            String json = result.toString();
-            JsonArray jsonObj = new JsonParser().parse(json).getAsJsonArray();
-            commitDate = jsonObj.get(0).getAsJsonObject().get("commit").getAsJsonObject().get("author").getAsJsonObject().get("date").getAsString();
-            commitDate = commitDate.substring(0, 10) + ", " + commitDate.substring(11, commitDate.length()-1);
-
-        }catch(Exception e){
-            System.out.println("Sadface");
-            System.out.println(e.getMessage());
-        }finally{
-            if(sc != null) sc.close();
+        try {
+            commitDate = String.valueOf(gh.getRepository(url).listCommits().asList().get(0).getCommitDate().toString());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return commitDate;
     }
 
-    public static String pullsCount(String owner, String repo){
+    private static String pullsCount(String url){
+        GitHub gh = getGHConnection();
         String pullCount = null;
-        Scanner sc = null;
-        try{
-            //make a separate HTTP request to a public api
-            URL url = new URL("https://api.github.com/repos/" + owner +"/" + repo + "/pulls?q=is%3Aopen+is%3Apr");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.connect();
-            //work with the response
-            sc = new Scanner(connection.getInputStream());
-            StringBuilder result = new StringBuilder();
-            while(sc.hasNextLine()){
-                result.append(sc.nextLine());
-            }
-            String json = result.toString();
-            JsonArray jsonObj = new JsonParser().parse(json).getAsJsonArray();
-            pullCount = String.valueOf(jsonObj.size());
-        }catch(Exception e){
-            System.out.println("Sadface");
-            System.out.println(e.getMessage());
-        }finally{
-            if(sc != null) sc.close();
+        try {
+            pullCount = String.valueOf(gh.getRepository(url).getPullRequests(GHIssueState.OPEN).size());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return pullCount;
     }
 
-    public static String getRepoFromGitURL(String url){
-        return url.substring(url.lastIndexOf("/")+1);
-    }
-    public static String getOwnerFromGitURL(String url){
-        String owner = url.substring(19);
-        owner = owner.substring(0, owner.indexOf("/"));
-        return owner;
-    }
-
-    public static void setGithubInfo(GitHubInfo info){
-        String url = info.getParent().getRepoURL();
-        String owner = getOwnerFromGitURL(url);
-        String repo = getRepoFromGitURL(url);
-
-        info.setIssuesCount(openIssues(owner, repo));
-        info.setLastCommit(commitDate(owner, repo));
-        info.setPullCount(pullsCount(owner, repo));
-
+    private static String removePrefix(String url){
+        String prefix = "https://github.com/";
+        return url.substring(prefix.length());
     }
 }

@@ -49,8 +49,7 @@ dependencies {
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.security:spring-security-test')
 
-    // https://mvnrepository.com/artifact/org.kohsuke/github-api
-    compile group: 'org.kohsuke', name: 'github-api', version: '1.8'
+    compile group: 'org.kohsuke', name: 'github-api', version: '1.93'
 
 
     // https://mvnrepository.com/artifact/com.google.cloud/google-cloud-storage
