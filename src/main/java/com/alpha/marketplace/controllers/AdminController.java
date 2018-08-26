@@ -59,7 +59,7 @@ public class AdminController {
         return "base-layout";
     }
 
-    @PostMapping("users/ban/{id}")
+    @PostMapping("/ban/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public String banUser(Model model, @PathVariable("id") long id){
         User gettingBanned = userService.findById(id);
@@ -74,7 +74,7 @@ public class AdminController {
         return "base-layout";
     }
 
-    @PostMapping("users/unban/{id}")
+    @PostMapping("/unban/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public String unbanUser(Model model, @PathVariable("id") long id){
         User gettingUnbanned = userService.findById(id);
