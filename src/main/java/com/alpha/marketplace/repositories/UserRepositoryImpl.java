@@ -1,5 +1,6 @@
 package com.alpha.marketplace.repositories;
 
+import com.alpha.marketplace.exceptions.ErrorMessages;
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.repositories.base.UserRepository;
 import org.hibernate.Session;
@@ -68,7 +69,7 @@ public class UserRepositoryImpl implements UserRepository {
             e.printStackTrace();
         }
         if(matches == null || matches.isEmpty()){
-            throw new UsernameNotFoundException("The username " + username + " does not exist");
+            throw new UsernameNotFoundException(ErrorMessages.USERNAME_DOES_NOT_EXIST);
         }
         return matches.get(0);
     }

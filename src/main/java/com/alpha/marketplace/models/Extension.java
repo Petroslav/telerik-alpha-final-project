@@ -239,6 +239,8 @@ public class Extension {
         isApproved = true;
     }
 
+    public void forbid() {isApproved = false;}
+
     public boolean isUnApproved(){
         return !isApproved;
     }

@@ -31,11 +31,11 @@ public class UserController {
     }
 
     @PostMapping("/public/register")
-    public String regUser(Model model, @Valid @ModelAttribute UserBindingModel user, BindingResult result){
-        User newUser = service.registerUser(user);
-        if(newUser == null){
-            model.addAttribute("view", "failReg");
-            return "failReg";
+    public String regUser(Model model, @Valid @ModelAttribute UserBindingModel user, BindingResult errors){
+
+        User newUser = service.registerUser(user, errors);
+        if(errors.hasErrors()){
+            return "register";
         }
         model.addAttribute("user", newUser);
         model.addAttribute("view", "successfulReg");
@@ -110,7 +110,7 @@ public class UserController {
     @GetMapping("/profile/edit")
     @PreAuthorize("isAuthenticated()")
     public String editProfilePage(Model model){
-        if (Utils.isUserNotAnonymous()) {
+        if (Utils.userIsAnonymous()) {
             return "redirect:/";
         }
         model.addAttribute("view", "user/edit");

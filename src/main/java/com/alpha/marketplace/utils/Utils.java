@@ -1,28 +1,20 @@
 package com.alpha.marketplace.utils;
 
 import com.alpha.marketplace.models.GitHubInfo;
-import com.alpha.marketplace.repositories.base.ExtensionRepository;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.kohsuke.github.GHIssueState;
 import org.kohsuke.github.GitHub;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Scanner;
 
 public class Utils {
 
-    public static boolean isUserNotAnonymous() {
+    public static boolean userIsAnonymous() {
         return AnonymousAuthenticationToken.class ==
                 SecurityContextHolder
                         .getContext()

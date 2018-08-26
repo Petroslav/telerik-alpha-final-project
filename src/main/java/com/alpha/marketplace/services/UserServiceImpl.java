@@ -17,13 +17,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Service
 public class UserServiceImpl implements UserService {
+    private final String VALID_EMAIL_ADDRESS_REGEX = "^[\\\\w!#$%&'*+/=?`{|}~^-]+(?:\\\\.[\\\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\\\.)+[a-zA-Z]{2,6}$";
 
     private final UserRepository repository;
     private final CloudUserRepository cloudUserRepository;
@@ -47,9 +51,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User registerUser(UserBindingModel model) {
-        if(!validateReg(model)) {
-            //TODO Error handling
+    public List<User> getAll() {
+        return repository.getAll();
+    }
+
+    private boolean validateEmail(String email){
+        Pattern p =Pattern.compile(VALID_EMAIL_ADDRESS_REGEX, Pattern.CASE_INSENSITIVE);
+        return p.matcher(email).find();
+    }
+
+    @Override
+    public User registerUser(UserBindingModel model, BindingResult errors) {
+        if(!validateReg(model, errors)) {
             return null;
         }
         User u = mapper.map(model, User.class);
@@ -120,13 +133,9 @@ public class UserServiceImpl implements UserService {
         return repository.findByUsername(username);
     }
 
-    private boolean validateReg(UserBindingModel model) {
-        return (repository.findByEmail(model.getEmail()) == null) &&
-                (model.getPass1().equals(model.getPass2()));
-    }
     @Override
     public User currentUser() {
-        if(Utils.isUserNotAnonymous()){
+        if(Utils.userIsAnonymous()){
             return null;
         }
         UserDetails user = (UserDetails) SecurityContextHolder.getContext()
@@ -134,9 +143,21 @@ public class UserServiceImpl implements UserService {
         return repository.findByUsername(user.getUsername());
     }
 
-    @Override
-    public List<User> getAll() {
-        return repository.getAll();
+    private boolean validateReg(UserBindingModel model, BindingResult errors) {
+        boolean valid = true;
+        if (!validateEmail(model.getEmail())) {
+            errors.addError(new ObjectError("invalidEmail", "Please input a valid e-mail"));
+            valid = false;
+        }
+        if(repository.findByEmail(model.getEmail()) != null){
+            errors.addError(new ObjectError("registeredEmail", "A user with that e-mail already exists."));
+            valid = false;
+        }
+        if(model.getPass1().equals(model.getPass2())){
+            errors.addError(new ObjectError("passwordMismatch", "Passwords do not match"));
+            valid = false;
+        }
+        return valid;
     }
 
 }

@@ -210,7 +210,7 @@ public class ExtensionServiceImpl implements ExtensionService {
 
     @Override
     public boolean isUserPublisherOrAdmin(Extension extension) {
-        if(Utils.isUserNotAnonymous()){
+        if(Utils.userIsAnonymous()){
             return false;
         }
         User u = currentUser();
@@ -219,7 +219,7 @@ public class ExtensionServiceImpl implements ExtensionService {
 
     @Override
     public User currentUser() {
-        if(Utils.isUserNotAnonymous()){
+        if(Utils.userIsAnonymous()){
             return null;
         }
         UserDetails user = (UserDetails) SecurityContextHolder.getContext()

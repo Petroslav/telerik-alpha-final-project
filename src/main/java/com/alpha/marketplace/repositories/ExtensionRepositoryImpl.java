@@ -50,7 +50,8 @@ public class ExtensionRepositoryImpl implements ExtensionRepository {
             //TODO ask about casting good practices
 
             sess.getTransaction().commit();
-            System.out.println("Extension " + extension.getName() + " retrieved successfully");
+            System.out.println("Extension " + extension.getName() + " with ID = " + extension.getId() + " retrieved successfully");
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace();

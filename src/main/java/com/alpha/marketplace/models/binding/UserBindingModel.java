@@ -13,17 +13,20 @@ public class UserBindingModel {
 
     @NotEmpty
     @Email(message = "Please provide a valid e-mail")
-    @Size(min = 5, max = 36)
+    @Size(min = 5, max = 36, message = "Please input an e-mail between 5 and 36 characters.")
     private String email;
 
+    @Size(max = 30, message = "Cannot be more than 30 characters")
     private String firstName;
+
+    @Size(max = 30, message = "Cannot be more than 30 characters")
     private String lastName;
 
     @NotEmpty
-    @Size(min = 6, max = 36, message = "Password too short, must be between 6 and 36 symbols")
+    @Size(min = 6, max = 16, message = "Password must be between 6 and 16 symbols")
     private String pass1;
     @NotEmpty
-    @Size(min = 6, max = 36, message = "Password too short, must be between 6 and 36 symbols")
+    @Size(min = 6, max = 16, message = "Password must be between 6 and 16 symbols")
     private String pass2;
 
     public UserBindingModel(){}

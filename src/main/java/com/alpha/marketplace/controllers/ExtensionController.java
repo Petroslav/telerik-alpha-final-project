@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +41,7 @@ public class ExtensionController {
 
     @GetMapping("/create")
     public String createPage(Model model) {
-        if (Utils.isUserNotAnonymous()) {
+        if (Utils.userIsAnonymous()) {
             return "redirect:/";
         }
         model.addAttribute("view", "extensions/create");
@@ -110,7 +109,7 @@ public class ExtensionController {
 
         Extension extension = extensionService.getById(id);
         if (!extensionService.isUserPublisherOrAdmin(extension)) {
-            return "redirect :/extension/" + id;
+            return "redirect:/extension/" + id;
         }
         extensionService.delete(id);
 

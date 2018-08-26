@@ -1,5 +1,6 @@
 package com.alpha.marketplace.controllers;
 
+import com.alpha.marketplace.exceptions.ErrorMessages;
 import com.alpha.marketplace.models.Extension;
 import com.alpha.marketplace.models.binding.UserBindingModel;
 import com.alpha.marketplace.services.base.ExtensionService;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -37,7 +39,7 @@ public class HomeController {
 
     @GetMapping("/register")
     public String register(Model model) {
-        if (!Utils.isUserNotAnonymous()) {
+        if (!Utils.userIsAnonymous()) {
             return "redirect:/";
         }
         model.addAttribute("view", "register");
@@ -47,9 +49,12 @@ public class HomeController {
     }
 
     @GetMapping(value = "/login")
-    public String login(Model model) {
-        if (!Utils.isUserNotAnonymous()) {
+    public String login(Model model, @RequestParam(required = false) String error) {
+        if (!Utils.userIsAnonymous()) {
             return "redirect:/";
+        }
+        if(error != null){
+            model.addAttribute("error", ErrorMessages.INVALID_CREDENTIALS);
         }
         model.addAttribute("view", "login");
 

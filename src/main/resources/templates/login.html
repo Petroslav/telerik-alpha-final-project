@@ -5,6 +5,7 @@
         <h1>TEST</h1>
         <h1>TEST</h1>
         <h1>TEST</h1>
+        <div th:if="${error} != null" th:text="${error}"></div>
         <form method="post">
             <label>Username
                 <input type="text" name="username">
