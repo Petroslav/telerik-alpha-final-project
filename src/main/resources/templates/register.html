@@ -7,7 +7,7 @@
 </head>
 <body>
 
-<form action="/user/public/register" method="POST">
+<form action="#" th:action="@{/register}"  th:object="${user}" method="POST" >
     <label for="username">Username</label>
     <span th:errors="*{username}"></span>
     <input type="text" name="Username" id="username">
@@ -21,12 +21,12 @@
     <span th:errors="*{lastName}"></span>
     <input type="text" name="lastName" id="lastName">
     <label for="pass1">Password</label>
-    <span th:errors="*{pass1}"></span>
-    <span th:errors="*{passMismatch}"></span>
+    <!--<span th:errors="*{pass1}"></span>-->
+    <!--<span th:errors="*{passMismatch}"></span>-->
     <input type="password" name="pass1" id="pass1">
     <label for="pass2">Repeat Password</label>
-    <span th:errors="*{pass2}"></span>
-    <span th:errors="*{passMismatch}"></span>
+    <!--<span th:errors="*{pass2}"></span>-->
+    <!--<span th:errors="*{passMismatch}"></span>-->
     <input type="password" name="pass2" id="pass2">
     <input type="submit" value="Register">
 </form>

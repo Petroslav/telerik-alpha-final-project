@@ -23,12 +23,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private final String VALID_EMAIL_ADDRESS_REGEX = "^[\\\\w!#$%&'*+/=?`{|}~^-]+(?:\\\\.[\\\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\\\.)+[a-zA-Z]{2,6}$";
+    private final String VALID_EMAIL_ADDRESS_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9]+.[a-z.]+$";
 
     private final UserRepository repository;
     private final CloudUserRepository cloudUserRepository;
@@ -56,14 +55,10 @@ public class UserServiceImpl implements UserService {
         return repository.getAll();
     }
 
-    private boolean validateEmail(String email){
-        Pattern p =Pattern.compile(VALID_EMAIL_ADDRESS_REGEX, Pattern.CASE_INSENSITIVE);
-        return p.matcher(email).find();
-    }
-
     @Override
     public User registerUser(UserBindingModel model, BindingResult errors) {
         if(!validateReg(model, errors)) {
+            System.out.println("stuff is shit");
             return null;
         }
         User u = mapper.map(model, User.class);
@@ -72,6 +67,9 @@ public class UserServiceImpl implements UserService {
         u.setPassword(encryptedPass);
         u.getAuthorities().add(role);
         u.setPicURI(cloudUserRepository.getPROFILE_PICS_URL_PREFIX() + "new-user");
+        if(errors.hasErrors()){
+            return null;
+        }
         repository.save(u);
         return u;
     }
@@ -149,23 +147,6 @@ public class UserServiceImpl implements UserService {
         return repository.findByUsername(user.getUsername());
     }
 
-    private boolean validateReg(UserBindingModel model, BindingResult errors) {
-        boolean valid = true;
-        if (!validateEmail(model.getEmail())) {
-            errors.addError(new ObjectError("email", "Please input a valid e-mail"));
-            valid = false;
-        }
-        if(repository.findByEmail(model.getEmail()) != null){
-            errors.addError(new ObjectError("email", "A user with that e-mail already exists."));
-            valid = false;
-        }
-        if(model.getPass1().equals(model.getPass2())){
-            errors.addError(new ObjectError("passMismatch", "Passwords do not match"));
-            valid = false;
-        }
-        return valid;
-    }
-
     @Override
     public boolean addRoleToUser(long id, String role){
         try{
@@ -194,5 +175,26 @@ public class UserServiceImpl implements UserService {
             e.printStackTrace();
             return false;
         }
+    }
+
+    private boolean validateReg(UserBindingModel model, BindingResult errors) {
+        boolean valid = true;
+        if (!validateEmail(model.getEmail())) {
+            errors.addError(new ObjectError("email", "Please input a valid e-mail"));
+            valid = false;
+        }
+        if(repository.findByEmail(model.getEmail()) != null){
+            errors.addError(new ObjectError("email", "A user with that e-mail already exists."));
+            valid = false;
+        }
+        if(!model.getPass1().equals(model.getPass2())){
+            errors.addError(new ObjectError("passMismatch", "Passwords do not match"));
+            valid = false;
+        }
+        return valid;
+    }
+
+    private boolean validateEmail(String email){
+        return email.matches(VALID_EMAIL_ADDRESS_REGEX);
     }
 }

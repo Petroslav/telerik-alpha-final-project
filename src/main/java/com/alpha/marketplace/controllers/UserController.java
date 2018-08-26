@@ -32,18 +32,6 @@ public class UserController {
         this.service = service;
     }
 
-    @PostMapping("/public/register")
-    public String regUser(Model model, @Valid @ModelAttribute UserBindingModel user, BindingResult errors){
-
-        User newUser = service.registerUser(user, errors);
-        if(errors.hasErrors()){
-            return "register";
-        }
-        model.addAttribute("user", newUser);
-        model.addAttribute("view", "successfulReg");
-
-        return "base-layout";
-    }
     @GetMapping("/{id}")
     public String userDetails(Model model, @PathVariable("id") Integer id){
         User user = service.findById(id);
