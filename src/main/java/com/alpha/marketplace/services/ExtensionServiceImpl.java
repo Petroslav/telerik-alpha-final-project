@@ -2,6 +2,7 @@ package com.alpha.marketplace.services;
 
 import com.alpha.marketplace.models.Extension;
 import com.alpha.marketplace.models.GitHubInfo;
+import com.alpha.marketplace.models.Tag;
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.ExtensionBindingModel;
 import com.alpha.marketplace.repositories.base.*;
@@ -94,8 +95,15 @@ public class ExtensionServiceImpl implements ExtensionService {
 
     @Override
     public void createExtension(ExtensionBindingModel model, BindingResult errors) {
-        Extension extension = mapper.map(model, Extension.class);
+        List<Tag> tags;
+        tags = model.getTags().stream()
+                .map(Tag::new)
+                .collect(Collectors.toList());
+        tags.forEach(tagRepository::saveTag);
         User publisher = currentUser();
+        BlobId blobid = null;
+        Extension extension = mapper.map(model, Extension.class);
+        extension.setTags(tags);
         extension.setPublisher(publisher);
         if(!validateRepoUrl(model.getRepositoryUrl())){
             errors.addError(new ObjectError("link", "Repository URL is invalid"));
@@ -103,7 +111,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         }
         extension.setRepoURL(model.getRepositoryUrl());
         try {
-            BlobId blobid = cloudExtensionRepository.saveExtension(String.valueOf(publisher.getId()), extension.getName(), model.getFile().getContentType(), model.getFile().getBytes());
+            blobid = cloudExtensionRepository.saveExtension(String.valueOf(publisher.getId()), extension.getName(), model.getFile().getContentType(), model.getFile().getBytes());
             extension.setBlobId(blobid);
             String extensionURI = cloudExtensionRepository.getEXTENSION_URL_PREFIX() + blobid.getName();
             extension.setDlURI(extensionURI);
@@ -113,6 +121,9 @@ public class ExtensionServiceImpl implements ExtensionService {
         }catch(IOException e){
             //Could replace this with a log entry
             System.out.println(e.getMessage());
+            if(blobid != null){
+                cloudExtensionRepository.delete(blobid);
+            }
             errors.addError(new ObjectError("fileProblem", "Failed to upload file"));
             return;
         }

@@ -11,4 +11,5 @@ public interface CloudExtensionRepository {
     String saveExtensionPicFromUrl(String userId, String extensionName, String urlString) throws CannotFetchBytesException;
     String getEXTENSION_URL_PREFIX();
     String getEXTENSION_PIC_URL_PREFIX();
+    boolean delete(BlobId blobid);
 }

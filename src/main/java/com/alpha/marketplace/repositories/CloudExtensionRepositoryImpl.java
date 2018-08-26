@@ -87,5 +87,10 @@ public class CloudExtensionRepositoryImpl implements CloudExtensionRepository {
     public String getEXTENSION_PIC_URL_PREFIX() {
         return EXTENSION_PIC_URL_PREFIX;
     }
+
+    @Override
+    public boolean delete(BlobId blobid) {
+        return storage.delete(blobid);
+    }
 }
 

@@ -1,6 +1,7 @@
 package com.alpha.marketplace.models;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,6 +21,11 @@ public class Tag {
     private List<Extension> taggedExtensions;
 
     public Tag(){}
+
+    public Tag(String name){
+        this.name = name;
+        taggedExtensions = new ArrayList<>();
+    }
 
     public Tag(String name, List<Extension> taggedExtensions) {
         this.name = name;

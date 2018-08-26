@@ -1,5 +1,6 @@
 package com.alpha.marketplace.models.binding;
 
+import com.alpha.marketplace.models.Tag;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.web.multipart.MultipartFile;
 
