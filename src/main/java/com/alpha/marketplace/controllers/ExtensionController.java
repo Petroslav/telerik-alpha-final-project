@@ -116,4 +116,9 @@ public class ExtensionController {
 
         return "redirect :/";
     }
+
+    @GetMapping("/wtf")
+    public String watifak(Model model){
+        return "redirect:/extension/17";
+    }
 }

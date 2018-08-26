@@ -20,12 +20,12 @@ import java.io.IOException;
 @EnableScheduling
 public class Config {
 
-    private final String pathToConfig = "C:\\Users\\luffy\\OneDrive\\Desktop\\marketplace\\src\\main\\resources\\telerikfinalproject-30ecbd8e72f6.json";
-    private final String secondPathToConfig = "C:\\Users\\Fast1r1s\\Desktop\\telerik-alpha-final-project\\src\\main\\resources\\telerikfinalproject-30ecbd8e72f6.json";
-    private final String projectId = "telerikfinalproject";
+    private final String PATH_TO_CONFIG = "C:\\Users\\luffy\\OneDrive\\Desktop\\marketplace\\src\\main\\resources\\telerikfinalproject-30ecbd8e72f6.json";
+    private final String PATH_TO_CONFIG_2 = "C:\\Users\\Fast1r1s\\Desktop\\telerik-alpha-final-project\\src\\main\\resources\\telerikfinalproject-30ecbd8e72f6.json";
+    private final String PROJECT_ID = "telerikfinalproject";
 
     @Bean
-    SessionFactory getSessionFactory(){
+    SessionFactory getSessionFactory() {
         return new org.hibernate.cfg.Configuration()
                 .configure()
                 .addAnnotatedClass(User.class)
@@ -37,29 +37,29 @@ public class Config {
     }
 
     @Bean
-    ModelMapper mapper(){
+    ModelMapper mapper() {
         return new ModelMapper();
     }
 
     @Bean
     Storage getStorage() {
-        String actualPath = pathToConfig;
-        try{
+        String actualPath = PATH_TO_CONFIG;
+        try {
             File file = new File(actualPath);
-            if(!file.exists()){
-
-                actualPath = secondPathToConfig;
+            if (!file.exists()) {
+                actualPath = PATH_TO_CONFIG_2;
             }
             Credentials credentials = GoogleCredentials.fromStream(new FileInputStream(actualPath));
-            return StorageOptions.newBuilder().setCredentials(credentials).setProjectId(projectId).build().getService();
-        }catch(IOException e){
+            return StorageOptions.newBuilder().setCredentials(credentials).setProjectId(PROJECT_ID).build().getService();
+        } catch (IOException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
         return null;
     }
+
     @Bean
-    public SpringSecurityDialect springSecurityDialect(){
+    public SpringSecurityDialect springSecurityDialect() {
         return new SpringSecurityDialect();
     }
 

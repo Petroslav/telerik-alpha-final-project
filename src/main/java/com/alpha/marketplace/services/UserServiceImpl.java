@@ -76,9 +76,7 @@ public class UserServiceImpl implements UserService {
         u.setFirstName(edit.getFirstName());
         u.setLastName(edit.getLastName());
         if(!edit.getOldPass().isEmpty()){
-            String oldPass = encoder.encode(edit.getOldPass());
-            //!u.getPassword().equals(oldPass) || (was in if... gotta fix later)//TODO
-            if(!edit.getNewPass().equals(edit.getNewPassConfirm())){
+            if(!encoder.matches(edit.getOldPass(), u.getPassword()) ||!edit.getNewPass().equals(edit.getNewPassConfirm())){
                 return false;
             }
             u.setPassword(encoder.encode(edit.getNewPass()));
