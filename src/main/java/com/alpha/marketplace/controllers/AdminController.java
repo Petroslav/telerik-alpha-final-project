@@ -66,7 +66,7 @@ public class AdminController {
         if(!gettingBanned.isAdmin()){
             gettingBanned.ban();
         }else{
-            System.out.println("Cant ban the guy, he's an admin");
+            System.out.println("Can't ban the guy, he's an admin");
         }
         return "redirect:/admin/users";
     }
