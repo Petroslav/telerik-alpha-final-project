@@ -160,4 +160,18 @@ public class UserServiceImpl implements UserService {
         return valid;
     }
 
+    @Override
+    public boolean addRoleToUser(String username, String role){
+        try{
+            User u = ((User)loadUserByUsername(username));
+            u.getAuthorities().add(roleRepository.findByName(role));
+            repository.update(u);
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
 }

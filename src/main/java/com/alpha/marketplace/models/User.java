@@ -211,6 +211,17 @@ public class User implements UserDetails {
         return isEnabled;
     }
 
+    public void ban(){
+        isAccountNonLocked = false;
+        extensions.forEach(Extension::forbid);
+    }
+
+    public void unban(){
+        //TODO might have to rethink this in case there were pending extensions before the ban
+        isAccountNonLocked = true;
+        extensions.forEach(Extension::approve);
+    }
+
     @Transient
     public boolean isAdmin(){
         return this.getAuthorities()

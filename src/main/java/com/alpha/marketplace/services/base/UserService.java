@@ -19,4 +19,5 @@ public interface UserService extends UserDetailsService {
     boolean editUser(User u, UserEditModel edit);
     boolean editUserPic(User u, MultipartFile file);
     boolean editUserPic(User u, String urlString);
+    boolean addRoleToUser(String username, String role);
 }

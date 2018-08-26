@@ -6,10 +6,15 @@ import com.alpha.marketplace.services.base.ExtensionService;
 import com.alpha.marketplace.services.base.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -56,5 +61,20 @@ public class AdminController {
 
 
         return "base-layout";
+    }
+
+    @PostMapping("users/ban")
+    @PreAuthorize("hasRole('Admin')")
+    public String banUser(Model model, @RequestParam("id") long id){
+        User gettingBanned = userService.findById(id);
+        if(!gettingBanned.isAdmin()){
+            gettingBanned.ban();
+        }else{
+            System.out.println("Cant ban the guy, he's an admin");
+        }
+
+        model.addAttribute("view", "index");
+
+        return "index";
     }
 }
