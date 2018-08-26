@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -49,8 +50,8 @@ public class ExtensionController {
     }
 
     @PostMapping("/create")
-    public String create(ExtensionBindingModel model) {
-        extensionService.createExtension(model);
+    public String create(ExtensionBindingModel model, BindingResult errors) {
+        extensionService.createExtension(model, errors);
 
         return "redirect:/";
     }

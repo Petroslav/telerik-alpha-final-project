@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Utils {
+    public static final String GITHUB_URL_PREFIX = "https://github.com/";
 
     public static boolean userIsAnonymous() {
         return AnonymousAuthenticationToken.class ==
@@ -44,7 +45,7 @@ public class Utils {
         return contentType;
     }
 
-    public static void setGithubInfo(GitHubInfo info){
+    public static void updateGithubInfo(GitHubInfo info){
         String url = removePrefix(info.getParent().getRepoURL());
 
         info.setIssuesCount(openIssues(url));
@@ -102,7 +103,6 @@ public class Utils {
     }
 
     private static String removePrefix(String url){
-        String prefix = "https://github.com/";
-        return url.substring(prefix.length());
+        return url.substring(GITHUB_URL_PREFIX.length());
     }
 }

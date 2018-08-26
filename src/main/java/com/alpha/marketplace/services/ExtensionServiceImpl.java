@@ -7,13 +7,17 @@ import com.alpha.marketplace.models.binding.ExtensionBindingModel;
 import com.alpha.marketplace.repositories.base.*;
 import com.alpha.marketplace.services.base.ExtensionService;
 import com.alpha.marketplace.utils.Utils;
+import com.google.cloud.storage.BlobId;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -22,6 +26,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class ExtensionServiceImpl implements ExtensionService {
+
+    private final String git = "https://github.com/";
 
     private final ExtensionRepository repository;
     private final UserRepository userRepository;
@@ -87,38 +93,42 @@ public class ExtensionServiceImpl implements ExtensionService {
     }
 
     @Override
-    public void createExtension(ExtensionBindingModel model) {
-        //TODO implement validation
-
+    public void createExtension(ExtensionBindingModel model, BindingResult errors) {
         Extension extension = mapper.map(model, Extension.class);
-        extension.setName(model.getName());
-        extension.setDescription(model.getDescription());
-        extension.setApproved(false);
-        extension.setDownloads(0);
-        extension.setTags(new ArrayList<>());
-        extension.setAddedOn(new Date());
-        extension.setVersion("1");
-        extension.setPublisher(currentUser());
-//        BlobId blobid = cloudExtensionRepository.saveExtension("1", extension.getName(), "contentType", new byte[24]);
-//        extension.setBlobId(blobid);
-//        String extensionURI = cloudExtensionRepository.getEXTENSION_URL_PREFIX() + blobid.getName();
-//        extension.setDlURI(extensionURI);
-        //TODO get current logged user to set as publisherqqq
-        extension.setDlURI(model.getDownloadLink());
-        extension.setRepoURL(model.getRepositoryUrl());
-        repository.save(extension);
+        User publisher = currentUser();
+        extension.setPublisher(publisher);
+        if(!validateRepoUrl(model.getRepositoryUrl())){
+            errors.addError(new ObjectError("link", "Repository URL is invalid"));
+        }else{
+            extension.setRepoURL(model.getRepositoryUrl());
+        }
+        try {
+            BlobId blobid = cloudExtensionRepository.saveExtension(String.valueOf(publisher.getId()), extension.getName(), model.getFile().getContentType(), model.getFile().getBytes());
+            extension.setBlobId(blobid);
+            String extensionURI = cloudExtensionRepository.getEXTENSION_URL_PREFIX() + blobid.getName();
+            extension.setDlURI(extensionURI);
+            extension.setBlobId(blobid);
+            String picURI = cloudExtensionRepository.saveExtensionPic(String.valueOf(publisher.getId()), extension.getName(), model.getPic().getContentType(), model.getPic().getBytes());
+            extension.setPicURI(picURI);
+        }catch(IOException e){
+            //Could replace this with a log entry
+            System.out.println(e.getMessage());
+            errors.addError(new ObjectError("fileProblem", "Failed to upload file"));
+        }
+        if(errors.hasErrors()){
+            return;
+        }
         extension.setGitHubInfo(new GitHubInfo());
         extension.getGitHubInfo().setParent(extension);
-        Utils.setGithubInfo(extension.getGitHubInfo());
+        Utils.updateGithubInfo(extension.getGitHubInfo());
         gitHubRepository.save(extension.getGitHubInfo());
-        repository.update(extension);
+        repository.save(extension);
         reloadLists();
     }
 
     @Override
     public Extension getById(int id) {
         if (id < 0) {
-            //TODO error handling
             return null;
         }
         return repository.getById(id);
@@ -154,7 +164,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         GitHubInfo info = extension.getGitHubInfo();
         Date currentTime = new Date();
         System.out.println("[" + currentTime + "]" + "Admin syncing for " + extension.getName() + ":");
-        Utils.setGithubInfo(info);
+        Utils.updateGithubInfo(info);
         gitHubRepository.update(info);
         System.out.println("--Updated info for " + extension.getName());
     }
@@ -176,7 +186,7 @@ public class ExtensionServiceImpl implements ExtensionService {
                 continue;
             }
             GitHubInfo ginfo = e.getGitHubInfo();
-            Utils.setGithubInfo(ginfo);
+            Utils.updateGithubInfo(ginfo);
             gitHubRepository.update(ginfo);
             System.out.println("--Updated info for " + e.getName());
         }
@@ -225,6 +235,15 @@ public class ExtensionServiceImpl implements ExtensionService {
         UserDetails user = (UserDetails) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
       return userRepository.findByUsername(user.getUsername());
+    }
+
+    private boolean validateRepoUrl(String repo){
+        if(!repo.startsWith(git)){
+            return false;
+        }
+        repo = repo.substring(Utils.GITHUB_URL_PREFIX.length());
+        String[] words = repo.split("/");
+        return words.length == 2;
     }
 
 }

@@ -51,6 +51,7 @@ public class CloudExtensionRepositoryImpl implements CloudExtensionRepository {
         return blob.getBlobId();
     }
 
+    @Override
     public BlobId updateExtension(BlobId blobId, String userId, String extensionName, String contentType, byte[] bytes){
         Blob blob = storage.get(blobId);
         try{
@@ -62,6 +63,7 @@ public class CloudExtensionRepositoryImpl implements CloudExtensionRepository {
         return blob.getBlobId();
     }
 
+    @Override
     public String saveExtensionPic(String userId, String extensionName, String contentType, byte[] bytes){
         String name = userId + "-" + extensionName;
         Blob blob = extensionBucket.create(name, bytes, contentType, Bucket.BlobTargetOption.doesNotExist());

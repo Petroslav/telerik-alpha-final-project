@@ -31,7 +31,15 @@ public class UserBindingModel {
 
     public UserBindingModel(){}
 
-    public UserBindingModel(String username, String email, String firstName, String lastName, String pass1, String pass2) {
+    public UserBindingModel(
+            @NotBlank @Size(min = 4, max = 20, message = "Username must be between 4 and 20 characters") String username,
+            @NotEmpty @Email(message = "Please provide a valid e-mail")
+            @Size(min = 5, max = 36, message = "Please input an e-mail between 5 and 36 characters.") String email,
+            @Size(max = 30, message = "Cannot be more than 30 characters") String firstName,
+            @Size(max = 30, message = "Cannot be more than 30 characters") String lastName,
+            @NotEmpty @Size(min = 6, max = 16, message = "Password must be between 6 and 16 symbols") String pass1,
+            @NotEmpty @Size(min = 6, max = 16, message = "Password must be between 6 and 16 symbols") String pass2
+    ) {
         this.username = username;
         this.email = email;
         this.firstName = firstName;

@@ -11,10 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -59,22 +56,28 @@ public class AdminController {
         model.addAttribute("users", users);
         model.addAttribute("view", "/admin/users");
 
-
         return "base-layout";
     }
 
-    @PostMapping("users/ban")
-    @PreAuthorize("hasRole('Admin')")
-    public String banUser(Model model, @RequestParam("id") long id){
+    @PostMapping("users/ban/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String banUser(Model model, @PathVariable("id") long id){
         User gettingBanned = userService.findById(id);
         if(!gettingBanned.isAdmin()){
             gettingBanned.ban();
         }else{
             System.out.println("Cant ban the guy, he's an admin");
         }
+        return "redirect:/admin/users";
+    }
 
+    @PostMapping("users/unban/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String unbanUser(Model model, @PathVariable("id") long id){
+        User gettingUnbanned = userService.findById(id);
+        gettingUnbanned.unban();
         model.addAttribute("view", "index");
 
-        return "index";
+        return "redirect:/admin/users";
     }
 }
