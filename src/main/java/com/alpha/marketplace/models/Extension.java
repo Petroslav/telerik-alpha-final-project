@@ -66,10 +66,8 @@ public class Extension {
     private String repoURL;
 
     @OneToOne(fetch = FetchType.EAGER,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE,
-            })
+            cascade = CascadeType.ALL
+    )
     @JoinColumn(name = "git_info_id")
     private GitHubInfo gitHubInfo;
 
@@ -80,7 +78,6 @@ public class Extension {
         setAddedOn(new Date());
         setApproved(false);
         setTags(new ArrayList<>());
-        setPicURI("https://pbs.twimg.com/profile_images/932536730221133824/4XWcwfBt_400x400.jpg");
     }
 
     public Extension(

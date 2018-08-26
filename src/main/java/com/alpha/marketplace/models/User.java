@@ -235,6 +235,7 @@ public class User implements UserDetails {
                 .stream()
                 .anyMatch(authority -> authority.getAuthority().equals("ROLE_OWNER"));
     }
+
     @Transient
     public boolean isPublisher(Extension extension){
         return (extension.getPublisher().getId() == this.getId());

@@ -22,10 +22,6 @@ public class ExtensionBindingModel {
     @NotEmpty
     private String repositoryUrl;
 
-    @URL
-    @NotEmpty
-    private String downloadLink;
-
     @NotEmpty
     private String version;
 
@@ -42,7 +38,6 @@ public class ExtensionBindingModel {
             @NotEmpty @Size(min = 5, max = 10) String name,
             @NotEmpty @Size(min = 20, max = 5000) String description,
             @URL @NotEmpty String repositoryUrl,
-            @URL @NotEmpty String downloadLink,
             @NotEmpty String version,
             @NotEmpty List<String> tags,
             @NotEmpty MultipartFile file,
@@ -51,7 +46,6 @@ public class ExtensionBindingModel {
         this.name = name;
         this.description = description;
         this.repositoryUrl = repositoryUrl;
-        this.downloadLink = downloadLink;
         this.version = version;
         this.tags = tags;
         this.file = file;
@@ -80,14 +74,6 @@ public class ExtensionBindingModel {
 
     public void setRepositoryUrl(String repositoryUrl) {
         this.repositoryUrl = repositoryUrl;
-    }
-
-    public String getDownloadLink() {
-        return downloadLink;
-    }
-
-    public void setDownloadLink(String downloadLink) {
-        this.downloadLink = downloadLink;
     }
 
     public String getVersion() {

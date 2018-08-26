@@ -100,6 +100,15 @@ public class ExtensionServiceImpl implements ExtensionService {
                 .map(Tag::new)
                 .collect(Collectors.toList());
         tags.forEach(tagRepository::saveTag);
+
+        //TODO SWAP TO STREAM
+        for(int i = 0; i < tags.size(); i++){
+            Tag t = tags.get(i);
+            if(t.getId() < 1){
+                tags.set(i, tagRepository.findByName(t.getName()));
+            }
+        }
+
         User publisher = currentUser();
         BlobId blobid = null;
         Extension extension = mapper.map(model, Extension.class);
