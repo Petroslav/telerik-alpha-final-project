@@ -27,12 +27,12 @@ public class CloudExtensionRepositoryImpl implements CloudExtensionRepository {
         //TODO REFACTOR AUTIWIRING FOR PROPER DI;
         this.storage = storage;
         this.extensionBucket = storage.get("marketplace-extensions");
-        this.extensionPicBucket = storage.get("marketplace-extensions-pics");
+        this.extensionPicBucket = storage.get("marketplace-extension-pics");
     }
 
     public BlobId saveExtension(String userId, String extensionName, String contentType, byte[] bytes){
         String name = userId + "-" + extensionName;
-        Blob blob = extensionBucket.create(name, bytes, contentType, Bucket.BlobTargetOption.doesNotExist());
+        Blob blob = extensionBucket.create(name, bytes, contentType);
         return blob.getBlobId();
     }
 
@@ -66,7 +66,7 @@ public class CloudExtensionRepositoryImpl implements CloudExtensionRepository {
     @Override
     public String saveExtensionPic(String userId, String extensionName, String contentType, byte[] bytes){
         String name = userId + "-" + extensionName;
-        Blob blob = extensionBucket.create(name, bytes, contentType, Bucket.BlobTargetOption.doesNotExist());
+        Blob blob = extensionPicBucket.create(name, bytes, contentType);
         return EXTENSION_URL_PREFIX + blob.getName();
     }
 

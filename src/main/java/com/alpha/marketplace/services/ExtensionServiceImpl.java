@@ -95,24 +95,24 @@ public class ExtensionServiceImpl implements ExtensionService {
 
     @Override
     public void createExtension(ExtensionBindingModel model, BindingResult errors) {
-        List<Tag> tags;
-        tags = model.getTags().stream()
-                .map(Tag::new)
-                .collect(Collectors.toList());
-        tags.forEach(tagRepository::saveTag);
-
-        //TODO SWAP TO STREAM
-        for(int i = 0; i < tags.size(); i++){
-            Tag t = tags.get(i);
-            if(t.getId() < 1){
-                tags.set(i, tagRepository.findByName(t.getName()));
-            }
-        }
+//        List<Tag> tags;
+//        tags = model.getTags().stream()
+//                .map(Tag::new)
+//                .collect(Collectors.toList());
+//        tags.forEach(tagRepository::saveTag);
+//
+//        //TODO SWAP TO STREAM
+//        for(int i = 0; i < tags.size(); i++){
+//            Tag t = tags.get(i);
+//            if(t.getId() < 1){
+//                tags.set(i, tagRepository.findByName(t.getName()));
+//            }
+//        }
 
         User publisher = currentUser();
         BlobId blobid = null;
         Extension extension = mapper.map(model, Extension.class);
-        extension.setTags(tags);
+//        extension.setTags(tags);
         extension.setPublisher(publisher);
         if(!validateRepoUrl(model.getRepositoryUrl())){
             errors.addError(new ObjectError("link", "Repository URL is invalid"));
@@ -137,11 +137,12 @@ public class ExtensionServiceImpl implements ExtensionService {
             return;
         }
         //Very high chance it will break from here
+        repository.save(extension);
         extension.setGitHubInfo(new GitHubInfo());
         extension.getGitHubInfo().setParent(extension);
         Utils.updateGithubInfo(extension.getGitHubInfo());
         gitHubRepository.save(extension.getGitHubInfo());
-        repository.save(extension);
+        repository.update(extension);
         //to here, might have to revert it after testing - no testing as of yet
         reloadLists();
     }

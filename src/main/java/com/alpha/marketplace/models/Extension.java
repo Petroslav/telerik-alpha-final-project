@@ -32,7 +32,7 @@ public class Extension {
     @Column(name = "version", nullable = false)
     private String version;
 
-    @Column(name = "blob_id")
+    @Column(name = "blob_id", columnDefinition = "LONGBLOB")
     private BlobId blobId;
 
     @ManyToMany(

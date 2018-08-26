@@ -1,13 +1,17 @@
 <main>
-    <form action="/extension/create" method="POST">
+    <form action="/extension/create" method="POST" enctype="multipart/form-data">
         <label for="name">Name</label>
         <input type="text" name="name" id="name">
         <label for="description">description</label>
         <input type="text" name="description" id="description">
         <label for="repositoryUrl">repositoryUrl</label>
         <input type="url" name="repositoryUrl" id="repositoryUrl">
-        <label for="downloadLink">downloadLink</label>
-        <input type="url" name="downloadLink" id="downloadLink">
-        <input type="submit" value="Register">
+        <label for="version">Version</label>
+        <input type="text" name="version" id="version">
+        <label for="file">File</label>
+        <input type="file" name="file" id="file">
+        <label for="pic">Picture</label>
+        <input type="file" name="pic" id="pic" />
+        <input type="submit" value="Submit">
     </form>
 </main>
