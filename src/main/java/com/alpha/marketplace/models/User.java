@@ -210,4 +210,15 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return isEnabled;
     }
+
+    @Transient
+    public boolean isAdmin(){
+        return this.getAuthorities()
+                .stream()
+                .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
+    }
+    @Transient
+    public boolean isPublisher(Extension extension){
+        return (extension.getPublisher().getId() == this.getId());
+    }
 }

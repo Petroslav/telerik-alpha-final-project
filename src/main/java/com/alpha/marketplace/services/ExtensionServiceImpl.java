@@ -88,11 +88,6 @@ public class ExtensionServiceImpl implements ExtensionService {
     public void createExtension(ExtensionBindingModel model) {
         //TODO implement validation
 
-        UserDetails user = (UserDetails) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
-
-        //Added cloud storage example to code -- to be refactored
-        User u = userRepository.findByUsername(user.getUsername());
         Extension extension = mapper.map(model, Extension.class);
         extension.setName(model.getName());
         extension.setDescription(model.getDescription());
@@ -101,7 +96,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         extension.setTags(new ArrayList<>());
         extension.setAddedOn(new Date());
         extension.setVersion("1");
-        extension.setPublisher(u);
+        extension.setPublisher(currentUser());
 //        BlobId blobid = cloudExtensionRepository.saveExtension("1", extension.getName(), "contentType", new byte[24]);
 //        extension.setBlobId(blobid);
 //        String extensionURI = cloudExtensionRepository.getEXTENSION_URL_PREFIX() + blobid.getName();
@@ -161,6 +156,12 @@ public class ExtensionServiceImpl implements ExtensionService {
         System.out.println("--Updated info for " + extension.getName());
     }
 
+    @Override
+    public void delete(int id) {
+        repository.delete(id);
+        reloadLists();
+    }
+
     //Current sync set at 2 hours
     @Scheduled(fixedRate = 2 * 60 * 60 * 1000)
     public void syncAll() {
@@ -189,6 +190,26 @@ public class ExtensionServiceImpl implements ExtensionService {
         mostPopular = getMostPopular();
         latest = getLatest();
         System.out.println("Lists reloaded");
+    }
+
+
+    @Override
+    public boolean isUserPublisherOrAdmin(Extension extension) {
+        if(Utils.isUserNotAnonymous()){
+            return false;
+        }
+        User u = currentUser();
+        return u.isAdmin() || u.isPublisher(extension);
+    }
+
+    @Override
+    public User currentUser() {
+        if(Utils.isUserNotAnonymous()){
+            return null;
+        }
+        UserDetails user = (UserDetails) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+      return userRepository.findByUsername(user.getUsername());
     }
 
 }

@@ -1,0 +1,8 @@
+<main>
+    <h1>Are you sure you wish to delete:</h1>
+    <h2 th:text = "${extension.name}"></h2>
+    <form th:action="@{/extension/delete/{id} (id=${extension.id})}" method="POST">
+        <a th:href="@{/extension/{id}(id = ${extension.id})}">No</a>
+        <input type="submit" value="Yes"/>
+    </form>
+</main>

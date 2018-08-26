@@ -16,5 +16,9 @@
         <form th:action="@{/extension/sync/{id} (id=${extension.id})}" method="POST">
             <button sec:authorize="hasRole('ADMIN')">Sync</button>
         </form>
+        <th:block sec:authorize="isAuthenticated()"
+                  th:if="${user.isAdmin() OR user.isPublisher(extension)}">
+        <a th:href="@{/extension/delete/{id}(id = ${extension.id})}">Delete</a>
+        </th:block>
     </header>
 </main>
