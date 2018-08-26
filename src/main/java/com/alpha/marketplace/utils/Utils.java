@@ -78,6 +78,7 @@ public class Utils {
         try {
             openIssues = String.valueOf(gh.getRepository(url).getOpenIssueCount());
         } catch (IOException e) {
+            System.out.println(e.getMessage());
             e.printStackTrace();
         }
 

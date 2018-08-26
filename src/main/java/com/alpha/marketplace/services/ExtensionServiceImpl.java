@@ -58,7 +58,7 @@ public class ExtensionServiceImpl implements ExtensionService {
 
     @Override
     public List<Extension> getMostPopular() {
-        if (mostPopular.isEmpty() || mostPopular == null) {
+        if (mostPopular.isEmpty()) {
             mostPopular = approved.stream()
                     .sorted(Comparator.comparing(Extension::getDownloads).reversed())
                     .limit(10)
@@ -75,7 +75,7 @@ public class ExtensionServiceImpl implements ExtensionService {
 
     @Override
     public List<Extension> getLatest() {
-        if (latest.isEmpty() || latest == null) {
+        if (latest.isEmpty()) {
             latest = approved.stream()
                     .sorted(Comparator.comparing(Extension::getAddedOn).reversed())
                     .limit(10)
@@ -129,7 +129,7 @@ public class ExtensionServiceImpl implements ExtensionService {
 
     @Override
     public List<Extension> getAllApproved() {
-        if (approved.isEmpty() || approved == null) {
+        if (approved.isEmpty()) {
             approved =  all.stream()
                     .filter(Extension::isApproved).collect(Collectors.toList());
         }
@@ -155,7 +155,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         Extension extension = getById(id);
         GitHubInfo info = extension.getGitHubInfo();
         Date currentTime = new Date();
-        System.out.println("[" + currentTime + "]" + "Admin syncing for" + extension.getName() + ":");
+        System.out.println("[" + currentTime + "]" + "Admin syncing for " + extension.getName() + ":");
         Utils.setGithubInfo(info);
         gitHubRepository.update(info);
         System.out.println("--Updated info for " + extension.getName());

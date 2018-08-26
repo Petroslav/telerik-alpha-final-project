@@ -46,11 +46,11 @@ public class ExtensionRepositoryImpl implements ExtensionRepository {
         try (Session sess = session.openSession()) {
             sess.beginTransaction();
 
-            extension = sess.get(Extension.class, (long)id);
+            extension = sess.get(Extension.class, (long) id);
             //TODO ask about casting good practices
 
             sess.getTransaction().commit();
-            System.out.println("Extension retrieved successfully");
+            System.out.println("Extension " + extension.getName() + " retrieved successfully");
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -69,7 +69,7 @@ public class ExtensionRepositoryImpl implements ExtensionRepository {
                     .setParameter("inputName", name);
 
             sess.getTransaction().commit();
-            System.out.println("User retrieved successfully");
+            System.out.println("Extension " + extension.getName() + " retrieved successfully");
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -89,7 +89,7 @@ public class ExtensionRepositoryImpl implements ExtensionRepository {
                     .list();
 
             sess.getTransaction().commit();
-            System.out.println("User retrieved successfully");
+            System.out.println("Extensions retrieved successfully");
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -109,7 +109,7 @@ public class ExtensionRepositoryImpl implements ExtensionRepository {
                     .list();
 
             sess.getTransaction().commit();
-            System.out.println("User retrieved successfully");
+            System.out.println("Extensions retrieved successfully");
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -131,7 +131,7 @@ public class ExtensionRepositoryImpl implements ExtensionRepository {
             sess.save(extension);
 
             sess.getTransaction().commit();
-            System.out.println("Extension saved successfully.");
+            System.out.println("Extension " + extension.getName() + " saved successfully");
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -148,7 +148,7 @@ public class ExtensionRepositoryImpl implements ExtensionRepository {
             sess.update(extension);
 
             sess.getTransaction().commit();
-            System.out.println("Extension updated successfully.");
+            System.out.println("Extension " + extension.getName() + " updated successfully");
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
