@@ -146,15 +146,15 @@ public class UserServiceImpl implements UserService {
     private boolean validateReg(UserBindingModel model, BindingResult errors) {
         boolean valid = true;
         if (!validateEmail(model.getEmail())) {
-            errors.addError(new ObjectError("invalidEmail", "Please input a valid e-mail"));
+            errors.addError(new ObjectError("email", "Please input a valid e-mail"));
             valid = false;
         }
         if(repository.findByEmail(model.getEmail()) != null){
-            errors.addError(new ObjectError("registeredEmail", "A user with that e-mail already exists."));
+            errors.addError(new ObjectError("email", "A user with that e-mail already exists."));
             valid = false;
         }
         if(model.getPass1().equals(model.getPass2())){
-            errors.addError(new ObjectError("passwordMismatch", "Passwords do not match"));
+            errors.addError(new ObjectError("passMismatch", "Passwords do not match"));
             valid = false;
         }
         return valid;

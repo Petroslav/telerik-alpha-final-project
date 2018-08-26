@@ -9,19 +9,26 @@
 
 <form action="/user/public/register" method="POST">
     <label for="username">Username</label>
+    <span th:errors="*{username}"></span>
     <input type="text" name="Username" id="username">
     <label for="email">Email</label>
+    <span th:errors="*{email}"></span>
     <input type="text" name="email" id="email">
     <label for="firstName">First Name</label>
+    <span th:errors="*{firstName}"></span>
     <input type="text" name="firstName" id="firstName">
     <label for="lastName">Last Name</label>
+    <span th:errors="*{lastName}"></span>
     <input type="text" name="lastName" id="lastName">
     <label for="pass1">Password</label>
+    <span th:errors="*{pass1}"></span>
+    <span th:errors="*{passMismatch}"></span>
     <input type="password" name="pass1" id="pass1">
     <label for="pass2">Repeat Password</label>
+    <span th:errors="*{pass2}"></span>
+    <span th:errors="*{passMismatch}"></span>
     <input type="password" name="pass2" id="pass2">
     <input type="submit" value="Register">
 </form>
-
 </body>
 </html>
