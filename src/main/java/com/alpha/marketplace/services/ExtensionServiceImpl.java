@@ -119,8 +119,14 @@ public class ExtensionServiceImpl implements ExtensionService {
             return;
         }
         extension.setRepoURL(model.getRepositoryUrl());
+        String[] words = model.getFile().getOriginalFilename().split(".");
+        String fileext = "";
+        if(words.length > 1){
+            fileext = words[words.length-1];
+        }
         try {
-            blobid = cloudExtensionRepository.saveExtension(String.valueOf(publisher.getId()), extension.getName(), model.getFile().getContentType(), model.getFile().getBytes());
+            //TODO FIND WHY FILES DOWNLOAD AS FILE INSTEAD OF ACTUAL TYPE EVEN WITH CONTENT TYPE IN
+            blobid = cloudExtensionRepository.saveExtension(String.valueOf(publisher.getId()), extension.getName() + fileext, model.getFile().getContentType(), model.getFile().getBytes());
             extension.setBlobId(blobid);
             String extensionURI = cloudExtensionRepository.getEXTENSION_URL_PREFIX() + blobid.getName();
             extension.setDlURI(extensionURI);
