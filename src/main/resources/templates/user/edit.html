@@ -1,0 +1,15 @@
+<main>
+    <form th:action="@{/user/profile/edit}" method="post">
+        <label for="firstName">First Name</label>
+        <input type="text" name="firstName" id="firstName">
+        <label for="lastName">Last Name</label>
+        <input type="text" name="lastName" id="lastName">
+        <label for="oldPass">Old Password</label>
+        <input type="password" name="oldPass" id="oldPass">
+        <label for="newPass">New Password</label>
+        <input type="password" name="newPass" id="newPass">
+        <label for="newPassConfirm">Repeat New Password</label>
+        <input type="password" name="newPassConfirm" id="newPassConfirm">
+        <input type="submit" value="Save">
+    </form>
+</main>

@@ -4,6 +4,7 @@ import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.UserBindingModel;
 import com.alpha.marketplace.models.edit.UserEditModel;
 import com.alpha.marketplace.services.base.UserService;
+import com.alpha.marketplace.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 
 @Controller
-@RequestMapping("user")
+@RequestMapping("/user")
 public class UserController {
 
     private final UserService service;
@@ -98,5 +99,24 @@ public class UserController {
                 .getPrincipal();
 
         return (User)service.loadUserByUsername(user.getUsername());
+    }
+
+    @GetMapping("/profile/edit")
+    @PreAuthorize("isAuthenticated()")
+    public String editProfilePage(Model model){
+        if (Utils.isUserNotAnonymous()) {
+            return "redirect:/";
+        }
+        model.addAttribute("view", "user/edit");
+        return "base-layout";
+    }
+
+    @PostMapping("/profile/edit")
+    @PreAuthorize("isAuthenticated()")
+    public String editProfile(Model model, UserEditModel editModel){
+
+        service.editUser(service.currentUser(), editModel);
+
+        return "redirect:/user/profile";
     }
 }

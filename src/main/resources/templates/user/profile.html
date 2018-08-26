@@ -4,5 +4,6 @@
         <h2 th:text="${user.firstName}"></h2>
         <h2 th:text="${user.lastName}"></h2>
         <img th:attr="src=@{${user.picURI}}">
+        <a th:href="@{/user/profile/edit}">Edit</a>
     </header>
 </main>

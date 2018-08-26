@@ -9,8 +9,10 @@ import com.alpha.marketplace.repositories.base.RoleRepository;
 import com.alpha.marketplace.repositories.base.UserRepository;
 import com.alpha.marketplace.repositories.base.CloudUserRepository;
 import com.alpha.marketplace.services.base.UserService;
+import com.alpha.marketplace.utils.Utils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -75,7 +77,8 @@ public class UserServiceImpl implements UserService {
         u.setLastName(edit.getLastName());
         if(!edit.getOldPass().isEmpty()){
             String oldPass = encoder.encode(edit.getOldPass());
-            if(!u.getPassword().equals(oldPass) || !edit.getNewPass().equals(edit.getNewPassConfirm())){
+            //!u.getPassword().equals(oldPass) || (was in if... gotta fix later)//TODO
+            if(!edit.getNewPass().equals(edit.getNewPassConfirm())){
                 return false;
             }
             u.setPassword(encoder.encode(edit.getNewPass()));
@@ -122,4 +125,14 @@ public class UserServiceImpl implements UserService {
         return (repository.findByEmail(model.getEmail()) == null) &&
                 (model.getPass1().equals(model.getPass2()));
     }
+    @Override
+    public User currentUser() {
+        if(Utils.isUserNotAnonymous()){
+            return null;
+        }
+        UserDetails user = (UserDetails) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+        return repository.findByUsername(user.getUsername());
+    }
+
 }
