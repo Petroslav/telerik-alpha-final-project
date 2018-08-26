@@ -1,0 +1,9 @@
+<main>
+    <div th:each="user : ${users}">
+        <header>
+            <a th:href="@{/user/{id}(id=${user.id})}">
+                <h2 th:text=${user.username}></h2>
+            </a>
+        </header>
+    </div>
+</main>

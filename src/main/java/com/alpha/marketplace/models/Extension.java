@@ -239,4 +239,8 @@ public class Extension {
         isApproved = true;
     }
 
+    public boolean isUnApproved(){
+        return !isApproved;
+    }
+
 }

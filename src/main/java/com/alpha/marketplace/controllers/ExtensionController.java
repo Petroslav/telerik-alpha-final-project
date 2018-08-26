@@ -96,7 +96,7 @@ public class ExtensionController {
         Extension extension = extensionService.getById(id);
 
         if (!extensionService.isUserPublisherOrAdmin(extension)) {
-            return "redirect :/extension/" + id;
+            return "redirect:/extension/" + id;
         }
         model.addAttribute("view", "/extensions/delete");
         model.addAttribute("extension", extension);
@@ -114,6 +114,18 @@ public class ExtensionController {
         }
         extensionService.delete(id);
 
-        return "redirect :/";
+        return "redirect:/";
+    }
+
+    @PostMapping("/approve/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String approveExtension(Model model, @PathVariable("id") Integer id) {
+
+
+        extensionService.approveExtensionById(id);
+
+        extensionService.reloadLists();
+
+        return "redirect:/extension/" + id;
     }
 }

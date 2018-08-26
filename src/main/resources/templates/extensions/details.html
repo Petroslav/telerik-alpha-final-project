@@ -18,7 +18,12 @@
         </form>
         <th:block sec:authorize="isAuthenticated()"
                   th:if="${user.isAdmin() OR user.isPublisher(extension)}">
-        <a th:href="@{/extension/delete/{id}(id = ${extension.id})}">Delete</a>
+            <a th:href="@{/extension/delete/{id}(id = ${extension.id})}">Delete</a>
         </th:block>
+        <form th:action="@{/extension/approve/{id} (id=${extension.id})}" method="POST">
+            <th:block th:if="${extension.isUnApproved()}">
+                <button sec:authorize="hasRole('ADMIN')">Approve</button>
+            </th:block>
+        </form>
     </header>
 </main>

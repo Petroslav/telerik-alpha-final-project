@@ -33,6 +33,7 @@ public class ExtensionServiceImpl implements ExtensionService {
     private List<Extension> approved;
     private List<Extension> latest;
     private List<Extension> mostPopular;
+    private List<Extension> unApproved;
 
     @Autowired
     public ExtensionServiceImpl(
@@ -53,6 +54,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         this.approved = new ArrayList<>();
         this.latest = new ArrayList<>();
         this.mostPopular = new ArrayList<>();
+        this.unApproved = new ArrayList<>();
     }
 
 
@@ -91,7 +93,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         Extension extension = mapper.map(model, Extension.class);
         extension.setName(model.getName());
         extension.setDescription(model.getDescription());
-        extension.setApproved(true);
+        extension.setApproved(false);
         extension.setDownloads(0);
         extension.setTags(new ArrayList<>());
         extension.setAddedOn(new Date());
@@ -133,9 +135,10 @@ public class ExtensionServiceImpl implements ExtensionService {
 
     @Override
     public void approveExtensionById(int id) {
-        Extension extension = getById(id);
 
+        Extension extension = getById(id);
         extension.approve();
+        repository.update(extension);
     }
 
     @Override
@@ -180,16 +183,28 @@ public class ExtensionServiceImpl implements ExtensionService {
         reloadLists();
     }
 
-    private void reloadLists() {
+    @Override
+    public void reloadLists() {
         all.clear();
         approved.clear();
         mostPopular.clear();
         latest.clear();
+        unApproved.clear();
         all = repository.getAll();
         approved = getAllApproved();
         mostPopular = getMostPopular();
         latest = getLatest();
+        unApproved = getUnapproved();
         System.out.println("Lists reloaded");
+    }
+
+    @Override
+    public List<Extension> getUnapproved() {
+        if (unApproved.isEmpty()) {
+            unApproved =  all.stream()
+                    .filter(extension -> !extension.isApproved()).collect(Collectors.toList());
+        }
+        return unApproved;
     }
 
 

@@ -1,0 +1,5 @@
+<main>
+    <a sec:authorize="hasRole('ADMIN')"  th:href="@{/admin/unapproved}">unapproved</a>
+    <a sec:authorize="hasRole('OWNER')"  th:href="@{/admin/userEdit}">editUserRoles</a>
+    <a sec:authorize="hasRole('ADMIN')"  th:href="@{/admin/users}">Users</a>
+</main>

@@ -12,6 +12,9 @@
         <a sec:authorize="isAnonymous()" th:href="@{/register}">
             <img src="http://www.seawindbandtravel.com/kailuais/kauai2018/_content/portfolio/Registration.png">
         </a>
+        <a sec:authorize="hasRole('ADMIN')"  th:href="@{/admin/panel}">
+            <img src="http://www.muller.ru/i/social/Admin.png">
+        </a>
         <a sec:authorize="isAuthenticated()"  th:href="@{/user/profile}">
             <img src="http://pluspng.com/img-png/png-user-icon-account-friend-human-man-member-person-profile-user-256.png">
         </a>

@@ -19,4 +19,6 @@ public interface ExtensionService {
     void delete(int id);
     boolean isUserPublisherOrAdmin(Extension extension);
     User currentUser();
+    void reloadLists();
+    List<Extension> getUnapproved();
 }
