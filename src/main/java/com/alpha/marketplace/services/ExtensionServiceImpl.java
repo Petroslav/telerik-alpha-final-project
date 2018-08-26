@@ -7,7 +7,6 @@ import com.alpha.marketplace.models.binding.ExtensionBindingModel;
 import com.alpha.marketplace.repositories.base.*;
 import com.alpha.marketplace.services.base.ExtensionService;
 import com.alpha.marketplace.utils.Utils;
-import com.google.cloud.storage.BlobId;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -30,6 +29,10 @@ public class ExtensionServiceImpl implements ExtensionService {
     private final CloudExtensionRepository cloudExtensionRepository;
     private final ModelMapper mapper;
     private final GitHubRepository gitHubRepository;
+    private List<Extension> all;
+    private List<Extension> approved;
+    private List<Extension> latest;
+    private List<Extension> mostPopular;
 
     @Autowired
     public ExtensionServiceImpl(
@@ -46,15 +49,22 @@ public class ExtensionServiceImpl implements ExtensionService {
         this.tagRepository = tagRepository;
         this.mapper = mapper;
         this.gitHubRepository = gitHubRepository;
+        this.all = repository.getAll();
+        this.approved = new ArrayList<>();
+        this.latest = new ArrayList<>();
+        this.mostPopular = new ArrayList<>();
     }
 
 
     @Override
     public List<Extension> getMostPopular() {
-        return getAllApproved().stream()
-                .sorted(Comparator.comparing(Extension::getDownloads).reversed())
-                .limit(10)
-                .collect(Collectors.toList());
+        if (mostPopular.isEmpty() || mostPopular == null) {
+            mostPopular = approved.stream()
+                    .sorted(Comparator.comparing(Extension::getDownloads).reversed())
+                    .limit(10)
+                    .collect(Collectors.toList());
+        }
+        return mostPopular;
     }
 
     @Override
@@ -65,10 +75,13 @@ public class ExtensionServiceImpl implements ExtensionService {
 
     @Override
     public List<Extension> getLatest() {
-        return getAllApproved().stream()
-                .sorted(Comparator.comparing(Extension::getAddedOn).reversed())
-                .limit(10)
-                .collect(Collectors.toList());
+        if (latest.isEmpty() || latest == null) {
+            latest = approved.stream()
+                    .sorted(Comparator.comparing(Extension::getAddedOn).reversed())
+                    .limit(10)
+                    .collect(Collectors.toList());
+        }
+        return latest;
     }
 
     @Override
@@ -102,6 +115,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         Utils.setGithubInfo(extension.getGitHubInfo());
         gitHubRepository.save(extension.getGitHubInfo());
         repository.update(extension);
+        reloadLists();
     }
 
     @Override
@@ -115,8 +129,11 @@ public class ExtensionServiceImpl implements ExtensionService {
 
     @Override
     public List<Extension> getAllApproved() {
-        return repository.getAll().stream()
-                .filter(Extension::isApproved).collect(Collectors.toList());
+        if (approved.isEmpty() || approved == null) {
+            approved =  all.stream()
+                    .filter(Extension::isApproved).collect(Collectors.toList());
+        }
+        return approved;
     }
 
     @Override
@@ -138,27 +155,40 @@ public class ExtensionServiceImpl implements ExtensionService {
         Extension extension = getById(id);
         GitHubInfo info = extension.getGitHubInfo();
         Date currentTime = new Date();
-        System.out.println("["+currentTime+"]"+"Admin syncing for" + extension.getName()+":");
+        System.out.println("[" + currentTime + "]" + "Admin syncing for" + extension.getName() + ":");
         Utils.setGithubInfo(info);
         gitHubRepository.update(info);
-        System.out.println("--Updated info for "+extension.getName());
+        System.out.println("--Updated info for " + extension.getName());
     }
 
     //Current sync set at 2 hours
     @Scheduled(fixedRate = 2 * 60 * 60 * 1000)
-    public void syncAll(){
+    public void syncAll() {
         Date currentTime = new Date();
         List<Extension> extensions = getAllApproved();
-        System.out.println("["+currentTime+"]"+"Syncing:");
-        for(Extension e : extensions){
-            if(e.getGitHubInfo() == null){
+        System.out.println("[" + currentTime + "]" + "Syncing:");
+        for (Extension e : extensions) {
+            if (e.getGitHubInfo() == null) {
                 continue;
             }
             GitHubInfo ginfo = e.getGitHubInfo();
             Utils.setGithubInfo(ginfo);
             gitHubRepository.update(ginfo);
-            System.out.println("--Updated info for "+e.getName());
+            System.out.println("--Updated info for " + e.getName());
         }
+        reloadLists();
+    }
+
+    private void reloadLists() {
+        all.clear();
+        approved.clear();
+        mostPopular.clear();
+        latest.clear();
+        all = repository.getAll();
+        approved = getAllApproved();
+        mostPopular = getMostPopular();
+        latest = getLatest();
+        System.out.println("Lists reloaded");
     }
 
 }
