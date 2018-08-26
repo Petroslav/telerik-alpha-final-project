@@ -1,13 +1,17 @@
 package com.alpha.marketplace.controllers;
 
+import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.services.base.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/owner")
@@ -20,18 +24,27 @@ public class OwnerController {
         this.service = service;
     }
 
-    @PostMapping("/assignAdmin")
+    @PostMapping("/assignAdmin/{id}")
     @PreAuthorize("hasRole('OWNER')")
-    public String assignRole(Model model, @RequestParam("username") String username){
-        service.addRoleToUser(username, "ROLE_ADMIN");
+    public String assignRole(Model model, @PathVariable("id") long id){
+        service.addRoleToUser(id, "ROLE_ADMIN");
         return "redirect:/admin/users";
     }
 
-    @PostMapping("/ban")
+    @PostMapping("/removeAdmin/{id}")
     @PreAuthorize("hasRole('OWNER')")
-    public String banAccount(Model model, @RequestParam("id") long id){
-        service.findById(id).ban();
-        return "redirect:/admin/users";
+    public String removeAdmin(Model model, @PathVariable("id") long id){
+        User u = service.findById(id);
+        if(!u.isAdmin()){
+            return "redirect:/";
+        }
+        u.setAuthorities(u.getAuthorities()
+                .stream()
+                .filter(role -> !role.getAuthority().equals("ROLE_ADMIN"))
+                .collect(Collectors.toSet())
+        );
+        model.addAttribute("view", "panel");
+        return "base-layout";
     }
 
 }

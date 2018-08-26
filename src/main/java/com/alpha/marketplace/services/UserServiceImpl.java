@@ -161,9 +161,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean addRoleToUser(String username, String role){
+    public boolean addRoleToUser(long id, String role){
         try{
-            User u = ((User)loadUserByUsername(username));
+            User u = findById(id);
             u.getAuthorities().add(roleRepository.findByName(role));
             repository.update(u);
         }catch(Exception e){

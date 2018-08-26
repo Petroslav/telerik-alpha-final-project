@@ -99,9 +99,9 @@ public class ExtensionServiceImpl implements ExtensionService {
         extension.setPublisher(publisher);
         if(!validateRepoUrl(model.getRepositoryUrl())){
             errors.addError(new ObjectError("link", "Repository URL is invalid"));
-        }else{
-            extension.setRepoURL(model.getRepositoryUrl());
+            return;
         }
+        extension.setRepoURL(model.getRepositoryUrl());
         try {
             BlobId blobid = cloudExtensionRepository.saveExtension(String.valueOf(publisher.getId()), extension.getName(), model.getFile().getContentType(), model.getFile().getBytes());
             extension.setBlobId(blobid);
@@ -114,15 +114,15 @@ public class ExtensionServiceImpl implements ExtensionService {
             //Could replace this with a log entry
             System.out.println(e.getMessage());
             errors.addError(new ObjectError("fileProblem", "Failed to upload file"));
-        }
-        if(errors.hasErrors()){
             return;
         }
+        //Very high chance it will break from here
         extension.setGitHubInfo(new GitHubInfo());
         extension.getGitHubInfo().setParent(extension);
         Utils.updateGithubInfo(extension.getGitHubInfo());
         gitHubRepository.save(extension.getGitHubInfo());
         repository.save(extension);
+        //to here, might have to revert it after testing - no testing as of yet
         reloadLists();
     }
 
