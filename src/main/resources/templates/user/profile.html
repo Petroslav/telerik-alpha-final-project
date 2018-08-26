@@ -1,9 +1,15 @@
 <main>
-    <header>
-        <h2 th:text="${user.username}"></h2>
-        <h2 th:text="${user.firstName}"></h2>
-        <h2 th:text="${user.lastName}"></h2>
-        <img th:attr="src=@{${user.picURI}}">
-        <a th:href="@{/user/profile/edit}">Edit</a>
-    </header>
+    <h2 th:text="${user.username}"></h2>
+    <h2 th:text="${user.firstName}"></h2>
+    <h2 th:text="${user.lastName}"></h2>
+    <img th:attr="src=@{${user.picURI}}">
+    <a th:href="@{/user/profile/edit}">Edit</a>
+    <h2>Extensions: </h2>
+    <div th:each="extension : ${extensions}">
+        <header>
+            <a th:href="@{/extension/{id}(id=${extension.id})}">
+                <h2 th:text=${extension.name}></h2>
+            </a>
+        </header>
+    </div>
 </main>

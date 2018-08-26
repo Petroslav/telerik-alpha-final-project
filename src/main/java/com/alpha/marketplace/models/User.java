@@ -60,7 +60,7 @@ public class User implements UserDetails {
     )
     private Set<Role> authorities;
 
-    @OneToMany(mappedBy = "publisher")
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "publisher")
     private List<Extension> extensions;
 
     public User(){

@@ -1,5 +1,6 @@
 package com.alpha.marketplace.controllers;
 
+import com.alpha.marketplace.models.Extension;
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.UserBindingModel;
 import com.alpha.marketplace.models.edit.UserEditModel;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping("/user")
@@ -58,7 +60,11 @@ public class UserController {
     public String profile(Model model){
         User u = getUser();
 
+        List<Extension> extensions = u.getExtensions();
+
+
         model.addAttribute("user", u);
+        model.addAttribute("extensions", extensions);
         model.addAttribute("view", "user/profile");
 
         return "base-layout";
