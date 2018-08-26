@@ -38,11 +38,7 @@ public class OwnerController {
         if(!u.isAdmin()){
             return "redirect:/";
         }
-        u.setAuthorities(u.getAuthorities()
-                .stream()
-                .filter(role -> !role.getAuthority().equals("ROLE_ADMIN"))
-                .collect(Collectors.toSet())
-        );
+        service.removeRoleFromUser(id, "ROLE_ADMIN");
         model.addAttribute("view", "panel");
         return "base-layout";
     }

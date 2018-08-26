@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -83,6 +84,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByEmail(String email) {
         return repository.findByEmail(email);
+    }
+
+    @Override
+    public boolean updateUser(User u) {
+        return repository.update(u);
     }
 
     @Override
@@ -165,13 +171,28 @@ public class UserServiceImpl implements UserService {
         try{
             User u = findById(id);
             u.getAuthorities().add(roleRepository.findByName(role));
-            repository.update(u);
+            return repository.update(u);
         }catch(Exception e){
             System.out.println(e.getMessage());
             e.printStackTrace();
             return false;
         }
-        return true;
     }
 
+    @Override
+    public boolean removeRoleFromUser(long id, String role) {
+        try{
+            User u = findById(id);
+            u.setAuthorities(u.getAuthorities()
+                    .stream()
+                    .filter(r -> !r.getAuthority().equals(role))
+                    .collect(Collectors.toSet())
+            );
+            return repository.update(u);
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
