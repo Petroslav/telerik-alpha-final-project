@@ -75,7 +75,6 @@ public class ExtensionController {
             approved = "Approved";
         }
         //TODO remove after tags are changed to Set
-        extension.removeDuplicateTags();
 
         model.addAttribute("view", "extensions/details");
         model.addAttribute("approved", approved);

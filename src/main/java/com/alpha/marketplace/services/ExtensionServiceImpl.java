@@ -273,7 +273,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         String[] words = repo.split("/");
         return words.length == 2;
     }
-    public List<Tag> handleTags(String tagString, Extension extension){
+    public Set<Tag> handleTags(String tagString, Extension extension){
         String [] tagArray = tagString.split(", ");
         Set<Tag> tags = new HashSet<>();
 
@@ -290,7 +290,7 @@ public class ExtensionServiceImpl implements ExtensionService {
                 tags.add(t);
             }
         }
-        return new ArrayList<>(tags);
+        return tags;
     }
 
 }

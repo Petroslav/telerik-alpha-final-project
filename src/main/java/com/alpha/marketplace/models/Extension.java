@@ -3,11 +3,8 @@ package com.alpha.marketplace.models;
 import com.google.cloud.storage.BlobId;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-//TODO chamge tags from list to Set
+import java.util.*;
+
 @Entity
 @Table(name = "extensions")
 public class Extension {
@@ -46,7 +43,7 @@ public class Extension {
             joinColumns = @JoinColumn(name = "extension_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    private List<Tag> tags;
+    private Set<Tag> tags;
 
     @Column(name = "publish_date", nullable = false)
     private Date addedOn;
@@ -78,7 +75,7 @@ public class Extension {
         setDownloads(0);
         setAddedOn(new Date());
         setApproved(false);
-        setTags(new ArrayList<>());
+        setTags(new HashSet<>());
     }
 
     public Extension(
@@ -88,7 +85,7 @@ public class Extension {
             int downloads,
             String version,
             BlobId blobId,
-            List<Tag> tags,
+            Set<Tag> tags,
             Date addedOn,
             Date latestUpdate,
             boolean isApproved,
@@ -193,11 +190,11 @@ public class Extension {
         isApproved = approved;
     }
 
-    public List<Tag> getTags() {
+    public Set<Tag> getTags() {
         return tags;
     }
 
-    public void setTags(List<Tag> tags) {
+    public void setTags(Set<Tag> tags) {
         this.tags = tags;
     }
 
@@ -241,11 +238,6 @@ public class Extension {
 
     public boolean isUnApproved(){
         return !isApproved;
-    }
-
-    //TODO remove after tags are changed to Set
-    public void removeDuplicateTags(){
-        tags = new ArrayList<>(new HashSet<>(tags));
     }
 
 }
