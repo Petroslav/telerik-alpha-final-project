@@ -4,5 +4,17 @@
         <h2 th:text="${user.firstName}"></h2>
         <h2 th:text="${user.lastName}"></h2>
         <img th:attr="src=@{${user.picURI}}">
+
+        <form th:action="@{/admin/unban/{id} (id=${user.id})}" method="POST">
+            <th:block th:if="${user.isBanned()}">
+                <button sec:authorize="hasRole('ADMIN')">Unban</button>
+            </th:block>
+        </form>
+
+        <form th:action="@{/admin/ban/{id} (id=${user.id})}" method="POST">
+            <th:block th:if="${!user.isBanned()}">
+                <button sec:authorize="hasRole('ADMIN')">Ban</button>
+            </th:block>
+        </form>
     </header>
 </main>

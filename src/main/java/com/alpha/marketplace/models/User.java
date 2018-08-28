@@ -240,4 +240,9 @@ public class User implements UserDetails {
     public boolean isPublisher(Extension extension){
         return (extension.getPublisher().getId() == this.getId());
     }
+
+    @Transient
+    public boolean isBanned(){
+        return !isAccountNonLocked;
+    }
 }

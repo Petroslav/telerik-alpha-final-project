@@ -70,8 +70,7 @@ public class AdminController {
             System.out.println("Can't ban the guy, he's an admin");
             return "redirect:/admin/users";
         }
-        model.addAttribute("view", "panel");
-        return "base-layout";
+        return "redirect:/user/"+id;
     }
 
     @PostMapping("/unban/{id}")
@@ -82,6 +81,6 @@ public class AdminController {
         userService.updateUser(gettingUnbanned);
         model.addAttribute("view", "index");
 
-        return "redirect:/admin/users";
+        return "redirect:/user/"+id;
     }
 }
