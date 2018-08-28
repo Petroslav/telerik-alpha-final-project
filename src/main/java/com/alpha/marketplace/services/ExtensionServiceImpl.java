@@ -117,11 +117,13 @@ public class ExtensionServiceImpl implements ExtensionService {
             return;
         }
         extension.setRepoURL(model.getRepositoryUrl());
-        String[] words = model.getFile().getOriginalFilename().split(".");
-        String fileext = "";
-        if(words.length > 1){
-            fileext = words[words.length-1];
+        if(model.getFile().isEmpty() || model.getPic().isEmpty()){
+            errors.addError(new ObjectError("noFile", "No file received."));
         }
+        String fileext = model.getFile().getOriginalFilename();
+        String picext = model.getFile().getOriginalFilename();
+        fileext = fileext.substring(fileext.lastIndexOf("."));
+        picext = picext.substring(picext.lastIndexOf("."));
         try {
             //TODO FIND WHY FILES DOWNLOAD AS FILE INSTEAD OF ACTUAL TYPE EVEN WITH CONTENT TYPE IN
             blobid = cloudExtensionRepository.saveExtension(String.valueOf(publisher.getId()), extension.getName() + fileext, model.getFile().getContentType(), model.getFile().getBytes());
@@ -129,7 +131,7 @@ public class ExtensionServiceImpl implements ExtensionService {
             String extensionURI = cloudExtensionRepository.getEXTENSION_URL_PREFIX() + blobid.getName();
             extension.setDlURI(extensionURI);
             extension.setBlobId(blobid);
-            String picURI = cloudExtensionRepository.saveExtensionPic(String.valueOf(publisher.getId()), extension.getName(), model.getPic().getContentType(), model.getPic().getBytes());
+            String picURI = cloudExtensionRepository.saveExtensionPic(String.valueOf(publisher.getId()), extension.getName() + picext, model.getPic().getContentType(), model.getPic().getBytes());
             extension.setPicURI(picURI);
         }catch(IOException e){
             //Could replace this with a log entry

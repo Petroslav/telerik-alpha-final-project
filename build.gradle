@@ -24,7 +24,6 @@ repositories {
     maven { url "https://repo.spring.io/milestone" }
 }
 
-
 ext {
     springCloudGcpVersion = '1.0.0.RELEASE'
     springCloudVersion = 'Finchley.SR1'

@@ -57,18 +57,13 @@ public class HomeController {
     }
 
     @PostMapping("/register")
-    public String regUser(Model model, @Valid @ModelAttribute UserBindingModel user, BindingResult errors){
-
-
-        if(errors.hasErrors()){
-            return "register";
-        }else{
-            service.registerUser(user, errors);
-        }
+    public String regUser(@Valid @ModelAttribute UserBindingModel user, BindingResult errors, Model model){
+        service.registerUser(user, errors);
         if (errors.hasErrors()) {
-            return "redirect:/register";
+            model.addAttribute("view", "register");
+            return "base-layout";
         }
-        model.addAttribute("user", user);
+
         return "redirect:/";
     }
 
