@@ -5,6 +5,7 @@ import com.google.cloud.storage.BlobId;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 //TODO chamge tags from list to Set
 @Entity
@@ -240,6 +241,11 @@ public class Extension {
 
     public boolean isUnApproved(){
         return !isApproved;
+    }
+
+    //TODO remove after tags are changed to Set
+    public void removeDuplicateTags(){
+        tags = new ArrayList<>(new HashSet<>(tags));
     }
 
 }
