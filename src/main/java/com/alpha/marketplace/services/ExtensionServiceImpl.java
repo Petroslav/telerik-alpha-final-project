@@ -19,10 +19,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -109,6 +106,7 @@ public class ExtensionServiceImpl implements ExtensionService {
 //            }
 //        }
 
+
         User publisher = currentUser();
         BlobId blobid = null;
         Extension extension = mapper.map(model, Extension.class);
@@ -148,6 +146,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         extension.getGitHubInfo().setParent(extension);
         Utils.updateGithubInfo(extension.getGitHubInfo());
         gitHubRepository.save(extension.getGitHubInfo());
+        extension.setTags(handleTags(model.getTagString()));
         repository.update(extension);
         //to here, might have to revert it after testing - no testing as of yet
         reloadLists();
@@ -271,6 +270,21 @@ public class ExtensionServiceImpl implements ExtensionService {
         repo = repo.substring(Utils.GITHUB_URL_PREFIX.length());
         String[] words = repo.split("/");
         return words.length == 2;
+    }
+    public List<Tag> handleTags(String tagString){
+        String [] tagArray = tagString.split(", ");
+        Set<Tag> tags = new HashSet<>();
+
+        for (String tag: tagArray) {
+            Tag t = tagRepository.findByName(tag);
+
+            if(t == null){
+                Tag newTag = new Tag(tag);
+                tagRepository.saveTag(newTag);
+                tags.add(newTag);
+            }
+        }
+        return new ArrayList<>(tags);
     }
 
 }

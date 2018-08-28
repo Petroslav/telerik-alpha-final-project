@@ -57,7 +57,7 @@ public class HomeController {
     }
 
     @PostMapping("/register")
-    public String regUser(@Valid @ModelAttribute UserBindingModel user, BindingResult errors){
+    public String regUser(Model model, @Valid @ModelAttribute UserBindingModel user, BindingResult errors){
 
 
         if(errors.hasErrors()){
@@ -66,9 +66,9 @@ public class HomeController {
             service.registerUser(user, errors);
         }
         if (errors.hasErrors()) {
-            return "register";
+            return "redirect:/register";
         }
-
+        model.addAttribute("user", user);
         return "redirect:/";
     }
 

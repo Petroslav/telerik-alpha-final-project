@@ -34,6 +34,9 @@ public class ExtensionBindingModel {
     @NotEmpty
     private MultipartFile pic;
 
+    @NotEmpty
+    private String tagString;
+
     public ExtensionBindingModel(
             @NotEmpty @Size(min = 5, max = 10) String name,
             @NotEmpty @Size(min = 20, max = 5000) String description,
@@ -41,7 +44,8 @@ public class ExtensionBindingModel {
             @NotEmpty String version,
             @NotEmpty List<String> tags,
             @NotEmpty MultipartFile file,
-            @NotEmpty MultipartFile pic
+            @NotEmpty MultipartFile pic,
+            @NotEmpty String tagString
     ) {
         this.name = name;
         this.description = description;
@@ -50,6 +54,7 @@ public class ExtensionBindingModel {
         this.tags = tags;
         this.file = file;
         this.pic = pic;
+        this.tagString = tagString;
     }
 
     public String getName() {
@@ -106,5 +111,13 @@ public class ExtensionBindingModel {
 
     public void setPic(MultipartFile pic) {
         this.pic = pic;
+    }
+
+    public String getTagString() {
+        return tagString;
+    }
+
+    public void setTagString(String tagString) {
+        this.tagString = tagString;
     }
 }
