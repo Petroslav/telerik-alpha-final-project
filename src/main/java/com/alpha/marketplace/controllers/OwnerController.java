@@ -28,7 +28,7 @@ public class OwnerController {
     @PreAuthorize("hasRole('OWNER')")
     public String assignRole(Model model, @PathVariable("id") long id){
         service.addRoleToUser(id, "ROLE_ADMIN");
-        return "redirect:/admin/users";
+        return "redirect:/user/"+id;
     }
 
     @PostMapping("/removeAdmin/{id}")
@@ -39,8 +39,7 @@ public class OwnerController {
             return "redirect:/";
         }
         service.removeRoleFromUser(id, "ROLE_ADMIN");
-        model.addAttribute("view", "panel");
-        return "base-layout";
+        return "redirect:/user/"+id;
     }
 
 }
