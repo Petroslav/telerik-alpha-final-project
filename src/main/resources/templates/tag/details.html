@@ -1,0 +1,10 @@
+<main>
+    <h1>All extensions with tag <th:block th:text="${tag.name}"></th:block> : </h1>
+    <div th:each="extension : ${extensions}">
+        <header>
+            <a th:href="@{/extension/{id}(id=${extension.id})}">
+                <h2 th:text=${extension.name}></h2>
+            </a>
+        </header>
+    </div>
+</main>

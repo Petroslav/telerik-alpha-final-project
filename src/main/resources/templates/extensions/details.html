@@ -12,6 +12,14 @@
         <h2 th:text="${extension.gitHubInfo.pullCount}"></h2>
         <h2 th:text="${extension.gitHubInfo.issuesCount}"></h2>
         <h2 th:text="${extension.gitHubInfo.lastCommit}"></h2>
+        <h2>Tags: </h2>
+        <ul th:each="tag : ${tags}">
+            <li>
+                <a th:href="@{/tag/{name}(name=${tag.name})}">
+                    <h2 th:text=${tag.name}></h2>
+                </a>
+            </li>
+        </ul>
 
         <form th:action="@{/extension/sync/{id} (id=${extension.id})}" method="POST">
             <button sec:authorize="hasRole('ADMIN')">Sync</button>

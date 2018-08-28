@@ -148,7 +148,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         extension.getGitHubInfo().setParent(extension);
         Utils.updateGithubInfo(extension.getGitHubInfo());
         gitHubRepository.save(extension.getGitHubInfo());
-        extension.setTags(handleTags(model.getTagString()));
+        extension.setTags(handleTags(model.getTagString(), extension));
         repository.update(extension);
         //to here, might have to revert it after testing - no testing as of yet
         reloadLists();
@@ -273,7 +273,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         String[] words = repo.split("/");
         return words.length == 2;
     }
-    public List<Tag> handleTags(String tagString){
+    public List<Tag> handleTags(String tagString, Extension extension){
         String [] tagArray = tagString.split(", ");
         Set<Tag> tags = new HashSet<>();
 
@@ -283,7 +283,11 @@ public class ExtensionServiceImpl implements ExtensionService {
             if(t == null){
                 Tag newTag = new Tag(tag);
                 tagRepository.saveTag(newTag);
-                tags.add(newTag);
+            }
+            else {
+                t.getTaggedExtensions().add(extension);
+
+                tags.add(t);
             }
         }
         return new ArrayList<>(tags);

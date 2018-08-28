@@ -78,6 +78,7 @@ public class ExtensionController {
 
         model.addAttribute("view", "extensions/details");
         model.addAttribute("approved", approved);
+        model.addAttribute("tags", extension.getTags());
         model.addAttribute("extension", extension);
         return "base-layout";
     }

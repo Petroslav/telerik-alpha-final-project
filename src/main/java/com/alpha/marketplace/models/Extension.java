@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
+//TODO chamge tags from list to Set
 @Entity
 @Table(name = "extensions")
 public class Extension {
