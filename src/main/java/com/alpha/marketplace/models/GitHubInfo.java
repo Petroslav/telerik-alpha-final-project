@@ -1,6 +1,7 @@
 package com.alpha.marketplace.models;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Entity
@@ -23,13 +24,13 @@ public class GitHubInfo {
     private String issuesCount;
 
     @Column(name = "latest_commit")
-    private String lastCommit;
+    private Date lastCommit;
 
     public GitHubInfo(){
 
     }
 
-    public GitHubInfo(Extension parent, String pullCount, String issuesCount, String lastCommit) {
+    public GitHubInfo(Extension parent, String pullCount, String issuesCount, Date lastCommit) {
         this.parent = parent;
         this.pullCount = pullCount;
         this.issuesCount = issuesCount;
@@ -68,11 +69,17 @@ public class GitHubInfo {
         this.issuesCount = issuesCount;
     }
 
-    public String getLastCommit() {
+    public Date getLastCommit() {
         return lastCommit;
     }
 
-    public void setLastCommit(String lastCommit) {
+    public void setLastCommit(Date lastCommit) {
         this.lastCommit = lastCommit;
+    }
+
+    public String getLastCommitToString(){
+        String pattern = "yyyy/MM/dd, hh:mm:ss a";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        return simpleDateFormat.format(lastCommit);
     }
 }

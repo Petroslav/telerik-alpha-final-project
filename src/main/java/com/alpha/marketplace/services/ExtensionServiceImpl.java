@@ -17,12 +17,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class ExtensionServiceImpl implements ExtensionService {
+    private static Thread syncManager;
+    private static long delay = 2 * 60 * 60 * 1000;
 
     private final String git = "https://github.com/";
 
@@ -38,7 +41,6 @@ public class ExtensionServiceImpl implements ExtensionService {
     private List<Extension> latest;
     private List<Extension> mostPopular;
     private List<Extension> unApproved;
-    private static Thread syncManager;
 
     @Autowired
     public ExtensionServiceImpl(
@@ -94,22 +96,37 @@ public class ExtensionServiceImpl implements ExtensionService {
     @Override
     public void createExtension(ExtensionBindingModel model, BindingResult errors) {
 
-        User publisher = currentUser();
-        BlobId blobid = null;
-        Extension extension = mapper.map(model, Extension.class);
-        extension.setPublisher(publisher);
-
         if(!validateRepoUrl(model.getRepositoryUrl())){
             errors.addError(new ObjectError("link", "Repository URL is invalid"));
             return;
         }
 
-        extension.setRepoURL(model.getRepositoryUrl());
-
         if(model.getFile().isEmpty() || model.getPic().isEmpty()){
             errors.addError(new ObjectError("noFile", "No file received."));
+            return;
         }
 
+        User publisher = currentUser();
+        Extension extension = mapper.map(model, Extension.class);
+        extension.setPublisher(publisher);
+
+        extension.setRepoURL(model.getRepositoryUrl());
+
+        BlobId blobid = storeFiles(extension, model, errors);
+
+        repository.save(extension);
+        extension.setGitHubInfo(new GitHubInfo());
+        extension.getGitHubInfo().setParent(extension);
+        Utils.updateGithubInfo(extension.getGitHubInfo());
+        gitHubRepository.save(extension.getGitHubInfo());
+        extension.setTags(handleTags(model.getTagString(), extension));
+        repository.update(extension);
+        reloadLists();
+    }
+
+    private BlobId storeFiles(Extension extension, ExtensionBindingModel model,  BindingResult errors) {
+
+        BlobId blobid = null;
         String fileext = model.getFile().getOriginalFilename();
         String picext = model.getFile().getOriginalFilename();
         fileext = fileext.substring(fileext.lastIndexOf("."));
@@ -117,7 +134,7 @@ public class ExtensionServiceImpl implements ExtensionService {
 
         try {
             blobid = cloudExtensionRepository.saveExtension(
-                    String.valueOf(publisher.getId()),
+                    String.valueOf(extension.getPublisher().getId()),
                     extension.getName() + fileext,
                     model.getFile().getContentType(),
                     model.getFile().getBytes()
@@ -126,7 +143,7 @@ public class ExtensionServiceImpl implements ExtensionService {
             extension.setDlURI(cloudExtensionRepository.getEXTENSION_URL_PREFIX() + blobid.getName());
             extension.setBlobId(blobid);
             String picURI = cloudExtensionRepository.saveExtensionPic(
-                    String.valueOf(publisher.getId()),
+                    String.valueOf(extension.getPublisher().getId()),
                     extension.getName() + picext,
                     model.getPic().getContentType(),
                     model.getPic().getBytes()
@@ -137,19 +154,13 @@ public class ExtensionServiceImpl implements ExtensionService {
             System.out.println(e.getMessage());
             if(blobid != null){
                 cloudExtensionRepository.delete(blobid);
+                errors.addError(new ObjectError("picProblem", "Failed to upload picture"));
+            }else {
+                errors.addError(new ObjectError("fileProblem", "Failed to upload file"));
             }
-            errors.addError(new ObjectError("fileProblem", "Failed to upload file"));
-            return;
+            return null;
         }
-
-        repository.save(extension);
-        extension.setGitHubInfo(new GitHubInfo());
-        extension.getGitHubInfo().setParent(extension);
-        Utils.updateGithubInfo(extension.getGitHubInfo());
-        gitHubRepository.save(extension.getGitHubInfo());
-        extension.setTags(handleTags(model.getTagString(), extension));
-        repository.update(extension);
-        reloadLists();
+        return blobid;
     }
 
     @Override
@@ -201,22 +212,6 @@ public class ExtensionServiceImpl implements ExtensionService {
         reloadLists();
     }
 
-    public void syncAll() {
-        Date currentTime = new Date();
-        List<Extension> extensions = getAllApproved();
-        System.out.println("[" + currentTime + "]" + "Syncing:");
-        for (Extension e : extensions) {
-            if (e.getGitHubInfo() == null) {
-                continue;
-            }
-            GitHubInfo ginfo = e.getGitHubInfo();
-            Utils.updateGithubInfo(ginfo);
-            gitHubRepository.update(ginfo);
-            System.out.println("--Updated info for " + e.getName());
-        }
-        reloadLists();
-    }
-
     @Override
     public void reloadLists() {
         all.clear();
@@ -261,6 +256,54 @@ public class ExtensionServiceImpl implements ExtensionService {
       return userRepository.findByUsername(user.getUsername());
     }
 
+    @PostConstruct
+    public void initializeSync(){
+        //HERE WE ACTUALLY FETCH THE DELAY FROM THE DB AND UPDATE IT
+        setSync(delay);
+    }
+
+    private void syncAll() {
+        Date currentTime = new Date();
+        List<Extension> extensions = getAllApproved();
+        System.out.println("[" + currentTime + "]" + "Syncing:");
+        for (Extension e : extensions) {
+            if (e.getGitHubInfo() == null) {
+                continue;
+            }
+            GitHubInfo ginfo = e.getGitHubInfo();
+            Utils.updateGithubInfo(ginfo);
+            gitHubRepository.update(ginfo);
+            System.out.println("--Updated info for " + e.getName());
+        }
+        reloadLists();
+    }
+
+    public void setSync(long period){
+        if(syncManager != null){
+            try {
+                if(!syncManager.isInterrupted()) syncManager.wait();
+                syncManager.interrupt();
+            } catch (InterruptedException e) {
+                System.out.println("Interrupted syncing thread successfully. Creating new thread.");
+                e.printStackTrace();
+            }
+        }
+        //here we update the db with the new delay period
+        syncManager = new Thread(() -> {
+            while(true){
+                try {
+                    syncAll();
+                    Thread.sleep(period);
+                } catch (InterruptedException e) {
+                    //add to logger entry
+                    System.out.println("Thread interrupted");
+                }
+            }
+        });
+        syncManager.setDaemon(true);
+        syncManager.start();
+    }
+
     private boolean validateRepoUrl(String repo){
         if(!repo.startsWith(git)){
             return false;
@@ -285,27 +328,10 @@ public class ExtensionServiceImpl implements ExtensionService {
                 t.getTaggedExtensions().add(extension);
 
                 tags.add(t);
+                tagRepository.updateTag(t);
             }
         }
         return tags;
-    }
-
-    public void setSync(long period){
-        if(syncManager != null){
-            syncManager.interrupt();
-        }
-        syncManager = new Thread(() -> {
-            while(true){
-                syncAll();
-                try {
-                    Thread.sleep(period);
-                } catch (InterruptedException e) {
-                    System.out.println("Thread interrupted");
-                }
-            }
-        });
-        syncManager.setDaemon(true);
-        syncManager.start();
     }
 
 }

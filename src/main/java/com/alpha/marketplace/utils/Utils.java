@@ -14,6 +14,7 @@ import java.util.Date;
 
 public class Utils {
     public static final String GITHUB_URL_PREFIX = "https://github.com/";
+    private static GitHub GITHUB_CONNECTION;
 
     public static boolean userIsAnonymous() {
         return AnonymousAuthenticationToken.class ==
@@ -55,13 +56,14 @@ public class Utils {
     }
 
     private static GitHub getGHConnection(){
-        GitHub gh = null;
         try {
-            gh = GitHub.connectUsingOAuth("5c1a77eec3047ae6b562a55a7c0e4d4735cb38ef");
+            if(GITHUB_CONNECTION == null){
+                GITHUB_CONNECTION = GitHub.connectUsingOAuth("baaf4d97deaba2886b58fdeb52236dfdbe373eb5 ");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return gh;
+        return GITHUB_CONNECTION;
     }
 
 
@@ -78,13 +80,11 @@ public class Utils {
         return openIssues;
     }
 
-    private static String commitDate(String url){
+    private static Date commitDate(String url){
         GitHub gh = getGHConnection();
-        String commitDate = null;
-        String pattern = "yyyy/MM/dd, hh:mm:ss a";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        Date commitDate = null;
         try {
-            commitDate = simpleDateFormat.format(new Date(gh.getRepository(url).listCommits().asList().get(0).getCommitDate().getTime()));
+            commitDate = gh.getRepository(url).listCommits().asList().get(0).getCommitDate();
         } catch (IOException e) {
             e.printStackTrace();
         }
