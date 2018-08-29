@@ -304,6 +304,7 @@ public class ExtensionServiceImpl implements ExtensionService {
                 }
             }
         });
+        syncManager.setDaemon(true);
         syncManager.start();
     }
 
