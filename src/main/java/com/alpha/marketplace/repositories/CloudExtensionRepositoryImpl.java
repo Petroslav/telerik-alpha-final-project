@@ -24,7 +24,6 @@ public class CloudExtensionRepositoryImpl implements CloudExtensionRepository {
 
     @Autowired
     public CloudExtensionRepositoryImpl(Storage storage) {
-        //TODO REFACTOR AUTIWIRING FOR PROPER DI;
         this.storage = storage;
         this.extensionBucket = storage.get("marketplace-extensions");
         this.extensionPicBucket = storage.get("marketplace-extension-pics");
@@ -64,6 +63,11 @@ public class CloudExtensionRepositoryImpl implements CloudExtensionRepository {
     }
 
     @Override
+    public boolean delete(BlobId blobid) {
+        return storage.delete(blobid);
+    }
+
+    @Override
     public String saveExtensionPic(String userId, String extensionName, String contentType, byte[] bytes){
         String name = userId + "-" + extensionName;
         Blob blob = extensionPicBucket.create(name, bytes, contentType);
@@ -80,17 +84,15 @@ public class CloudExtensionRepositoryImpl implements CloudExtensionRepository {
         return saveExtensionPic(userId, extensionName, contentType, bytes);
     }
 
+    @Override
     public String getEXTENSION_URL_PREFIX() {
         return EXTENSION_URL_PREFIX;
     }
 
+    @Override
     public String getEXTENSION_PIC_URL_PREFIX() {
         return EXTENSION_PIC_URL_PREFIX;
     }
 
-    @Override
-    public boolean delete(BlobId blobid) {
-        return storage.delete(blobid);
-    }
 }
 

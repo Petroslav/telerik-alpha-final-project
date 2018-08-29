@@ -11,7 +11,6 @@ import com.alpha.marketplace.utils.Utils;
 import com.google.cloud.storage.BlobId;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -33,11 +32,13 @@ public class ExtensionServiceImpl implements ExtensionService {
     private final CloudExtensionRepository cloudExtensionRepository;
     private final ModelMapper mapper;
     private final GitHubRepository gitHubRepository;
+
     private List<Extension> all;
     private List<Extension> approved;
     private List<Extension> latest;
     private List<Extension> mostPopular;
     private List<Extension> unApproved;
+    private static Thread syncManager;
 
     @Autowired
     public ExtensionServiceImpl(
@@ -92,46 +93,44 @@ public class ExtensionServiceImpl implements ExtensionService {
 
     @Override
     public void createExtension(ExtensionBindingModel model, BindingResult errors) {
-//        List<Tag> tags;
-//        tags = model.getTags().stream()
-//                .map(Tag::new)
-//                .collect(Collectors.toList());
-//        tags.forEach(tagRepository::saveTag);
-//
-//        //TODO SWAP TO STREAM
-//        for(int i = 0; i < tags.size(); i++){
-//            Tag t = tags.get(i);
-//            if(t.getId() < 1){
-//                tags.set(i, tagRepository.findByName(t.getName()));
-//            }
-//        }
-
 
         User publisher = currentUser();
         BlobId blobid = null;
         Extension extension = mapper.map(model, Extension.class);
-//        extension.setTags(tags);
         extension.setPublisher(publisher);
+
         if(!validateRepoUrl(model.getRepositoryUrl())){
             errors.addError(new ObjectError("link", "Repository URL is invalid"));
             return;
         }
+
         extension.setRepoURL(model.getRepositoryUrl());
+
         if(model.getFile().isEmpty() || model.getPic().isEmpty()){
             errors.addError(new ObjectError("noFile", "No file received."));
         }
+
         String fileext = model.getFile().getOriginalFilename();
         String picext = model.getFile().getOriginalFilename();
         fileext = fileext.substring(fileext.lastIndexOf("."));
         picext = picext.substring(picext.lastIndexOf("."));
+
         try {
-            //TODO FIND WHY FILES DOWNLOAD AS FILE INSTEAD OF ACTUAL TYPE EVEN WITH CONTENT TYPE IN
-            blobid = cloudExtensionRepository.saveExtension(String.valueOf(publisher.getId()), extension.getName() + fileext, model.getFile().getContentType(), model.getFile().getBytes());
+            blobid = cloudExtensionRepository.saveExtension(
+                    String.valueOf(publisher.getId()),
+                    extension.getName() + fileext,
+                    model.getFile().getContentType(),
+                    model.getFile().getBytes()
+            );
             extension.setBlobId(blobid);
-            String extensionURI = cloudExtensionRepository.getEXTENSION_URL_PREFIX() + blobid.getName();
-            extension.setDlURI(extensionURI);
+            extension.setDlURI(cloudExtensionRepository.getEXTENSION_URL_PREFIX() + blobid.getName());
             extension.setBlobId(blobid);
-            String picURI = cloudExtensionRepository.saveExtensionPic(String.valueOf(publisher.getId()), extension.getName() + picext, model.getPic().getContentType(), model.getPic().getBytes());
+            String picURI = cloudExtensionRepository.saveExtensionPic(
+                    String.valueOf(publisher.getId()),
+                    extension.getName() + picext,
+                    model.getPic().getContentType(),
+                    model.getPic().getBytes()
+            );
             extension.setPicURI(picURI);
         }catch(IOException e){
             //Could replace this with a log entry
@@ -142,7 +141,7 @@ public class ExtensionServiceImpl implements ExtensionService {
             errors.addError(new ObjectError("fileProblem", "Failed to upload file"));
             return;
         }
-        //Very high chance it will break from here
+
         repository.save(extension);
         extension.setGitHubInfo(new GitHubInfo());
         extension.getGitHubInfo().setParent(extension);
@@ -150,7 +149,6 @@ public class ExtensionServiceImpl implements ExtensionService {
         gitHubRepository.save(extension.getGitHubInfo());
         extension.setTags(handleTags(model.getTagString(), extension));
         repository.update(extension);
-        //to here, might have to revert it after testing - no testing as of yet
         reloadLists();
     }
 
@@ -203,8 +201,6 @@ public class ExtensionServiceImpl implements ExtensionService {
         reloadLists();
     }
 
-    //Current sync set at 2 hours
-    @Scheduled(fixedRate = 2 * 60 * 60 * 1000)
     public void syncAll() {
         Date currentTime = new Date();
         List<Extension> extensions = getAllApproved();
@@ -273,7 +269,8 @@ public class ExtensionServiceImpl implements ExtensionService {
         String[] words = repo.split("/");
         return words.length == 2;
     }
-    public Set<Tag> handleTags(String tagString, Extension extension){
+
+    private Set<Tag> handleTags(String tagString, Extension extension){
         String [] tagArray = tagString.split(", ");
         Set<Tag> tags = new HashSet<>();
 
@@ -291,6 +288,23 @@ public class ExtensionServiceImpl implements ExtensionService {
             }
         }
         return tags;
+    }
+
+    public void setSync(long period){
+        if(syncManager != null){
+            syncManager.interrupt();
+        }
+        syncManager = new Thread(() -> {
+            while(true){
+                syncAll();
+                try {
+                    Thread.sleep(period);
+                } catch (InterruptedException e) {
+                    System.out.println("Thread interrupted");
+                }
+            }
+        });
+        syncManager.start();
     }
 
 }
