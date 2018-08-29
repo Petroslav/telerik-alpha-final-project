@@ -86,4 +86,18 @@ public class HomeController {
 
         return "base-layout";
     }
+
+    @GetMapping("/search")
+    public String search(@RequestParam(value = "criteria", required = false) String criteria, Model model) {
+        List<Extension> matches;
+        if (criteria.startsWith("user:")) {
+            List<User> matchedUsers = service.searchUsers(criteria);
+            model.addAttribute("userMatches", matchedUsers);
+        }else{
+            matches = extensionService.searchExtensions(criteria);
+            matches.addAll(extensionService.searchExtensionsByTag(criteria));
+            model.addAttribute("matches", matches);
+        }
+        return "base-layout";
+    }
 }
