@@ -56,6 +56,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> searchUsers(String criteria) {
+        return repository.search(criteria);
+    }
+
+    @Override
     public User registerUser(UserBindingModel model, BindingResult errors) {
         if(!validateReg(model, errors)) {
             System.out.println("stuff is shit");

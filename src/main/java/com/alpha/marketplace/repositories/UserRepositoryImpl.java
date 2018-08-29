@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -87,6 +88,25 @@ public class UserRepositoryImpl implements UserRepository {
             e.printStackTrace();
         }
         return users;
+    }
+
+    @Override
+    public List<User> search(String criteria) {
+        List<User> matches;
+        try(Session sess = session.openSession()){
+            sess.beginTransaction();
+
+            matches = sess
+                    .createQuery("FROM User WHERE username LIKE :name", User.class)
+                    .setParameter("name", "%" + criteria + "%")
+                    .list();
+            sess.getTransaction().commit();
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+        return matches;
     }
 
     @Override

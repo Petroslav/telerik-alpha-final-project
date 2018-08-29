@@ -7,6 +7,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -32,6 +33,25 @@ public class TagRepositoryImpl implements TagRepository {
             e.printStackTrace();
         }
         return tags;
+    }
+
+    @Override
+    public List<Tag> search(String criteria) {
+        List<Tag> matches;
+        try(Session sess = session.openSession()){
+            sess.beginTransaction();
+
+            matches = sess
+                    .createQuery("FROM Tag WHERE name LIKE :name", Tag.class)
+                    .setParameter("name", "%" + criteria + "%")
+                    .list();
+            sess.getTransaction().commit();
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+        return matches;
     }
 
     @Override

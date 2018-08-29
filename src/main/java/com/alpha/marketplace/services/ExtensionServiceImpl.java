@@ -112,6 +112,18 @@ public class ExtensionServiceImpl implements ExtensionService {
     }
 
     @Override
+    public List<Extension> searchExtensions(String criteria) {
+        return new ArrayList<>(repository.search(criteria));
+    }
+
+    @Override
+    public List<Extension> searchExtensionsByTag(String criteria) {
+        List<Extension> matches = new ArrayList<>();
+        tagRepository.search(criteria).forEach(tag -> matches.addAll(tag.getTaggedExtensions()));
+        return matches;
+    }
+
+    @Override
     public Extension getById(int id) {
         if (id < 0) {
             return null;

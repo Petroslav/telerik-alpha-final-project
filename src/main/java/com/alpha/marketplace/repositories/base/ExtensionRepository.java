@@ -8,11 +8,12 @@ import java.util.List;
 public interface ExtensionRepository {
 
     List<Extension> getAll();
-    Extension getById(int id);
-    Extension getByName(String name);
+    List<Extension> search(String criteria);
     List<Extension> getByDownloads(int downloads);
     List<Extension> getByUploadDate(Date date);
     List<Extension> getByCommitDate(Date date);
+    Extension getById(int id);
+    Extension getByName(String name);
     boolean save(Extension extension);
     boolean update(Extension extension);
     boolean delete(int id);

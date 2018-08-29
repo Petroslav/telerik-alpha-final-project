@@ -13,6 +13,8 @@ public interface ExtensionService {
     List<Extension> getLatest();
     List<Extension> getAllApproved();
     List<Extension> getUnapproved();
+    List<Extension> searchExtensions(String criteria);
+    List<Extension> searchExtensionsByTag(String criteria);
     Extension getById(int id);
     Extension getByName(String name);
     User currentUser();

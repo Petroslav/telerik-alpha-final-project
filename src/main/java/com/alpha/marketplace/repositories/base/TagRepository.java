@@ -7,6 +7,7 @@ import java.util.List;
 public interface TagRepository {
 
     List<Tag> findAll();
+    List<Tag> search(String criteria);
     Tag findByName(String name);
     Tag findById(int id);
     boolean saveTag(Tag tag);

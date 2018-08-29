@@ -12,6 +12,7 @@ import java.util.List;
 public interface UserService extends UserDetailsService {
 
     List<User> getAll();
+    List<User> searchUsers(String criteria);
     User registerUser(UserBindingModel u, BindingResult errors);
     User findById(long id);
     User findByEmail(String email);

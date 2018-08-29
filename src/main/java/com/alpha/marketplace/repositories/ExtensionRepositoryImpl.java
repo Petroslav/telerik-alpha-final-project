@@ -7,6 +7,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -39,44 +40,23 @@ public class ExtensionRepositoryImpl implements ExtensionRepository {
         return extensions;
     }
 
-
     @Override
-    public Extension getById(int id) {
-        Extension extension = null;
-        try (Session sess = session.openSession()) {
+    public List<Extension> search(String criteria) {
+        List<Extension> matches;
+        try(Session sess = session.openSession()){
             sess.beginTransaction();
 
-            extension = sess.get(Extension.class, (long) id);
-            //TODO ask about casting good practices
-
+            matches = sess
+                    .createQuery("FROM Extension WHERE name LIKE :name", Extension.class)
+                    .setParameter("name", "%" + criteria + "%")
+                    .list();
             sess.getTransaction().commit();
-            System.out.println("Extension " + extension.getName() + " with ID = " + extension.getId() + " retrieved successfully");
-
-        } catch (Exception e) {
+        }catch(Exception e){
             System.out.println(e.getMessage());
             e.printStackTrace();
+            matches = new ArrayList<>();
         }
-
-        return extension;
-    }
-
-    @Override
-    public Extension getByName(String name) {
-        Extension extension = null;
-        try (Session sess = session.openSession()) {
-            sess.beginTransaction();
-
-            extension = (Extension) sess.createQuery("FROM Extension WHERE name = :inputName")
-                    .setParameter("inputName", name);
-
-            sess.getTransaction().commit();
-            System.out.println("Extension " + extension.getName() + " retrieved successfully");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
-
-        return extension;
+        return matches;
     }
 
     @Override
@@ -122,6 +102,45 @@ public class ExtensionRepositoryImpl implements ExtensionRepository {
     public List<Extension> getByCommitDate(Date date) {
         //TODO implement commit date search
         return null;
+    }
+
+    @Override
+    public Extension getById(int id) {
+        Extension extension = null;
+        try (Session sess = session.openSession()) {
+            sess.beginTransaction();
+
+            extension = sess.get(Extension.class, (long) id);
+            //TODO ask about casting good practices
+
+            sess.getTransaction().commit();
+            System.out.println("Extension " + extension.getName() + " with ID = " + extension.getId() + " retrieved successfully");
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return extension;
+    }
+
+    @Override
+    public Extension getByName(String name) {
+        Extension extension = null;
+        try (Session sess = session.openSession()) {
+            sess.beginTransaction();
+
+            extension = (Extension) sess.createQuery("FROM Extension WHERE name = :inputName")
+                    .setParameter("inputName", name);
+
+            sess.getTransaction().commit();
+            System.out.println("Extension " + extension.getName() + " retrieved successfully");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return extension;
     }
 
     @Override
