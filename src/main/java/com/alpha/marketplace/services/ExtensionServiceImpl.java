@@ -27,7 +27,7 @@ public class ExtensionServiceImpl implements ExtensionService {
     private static Thread syncManager;
     private static long delay = 2 * 60 * 60 * 1000;
 
-    private final String git = "https://github.com/";
+    private final String GITHUB_PREFIX = "https://github.com/";
 
     private final ExtensionRepository repository;
     private final UserRepository userRepository;
@@ -94,6 +94,56 @@ public class ExtensionServiceImpl implements ExtensionService {
     }
 
     @Override
+    public List<Extension> getAllApproved() {
+        if (approved.isEmpty()) {
+            approved =  all.stream()
+                    .filter(Extension::isApproved).collect(Collectors.toList());
+        }
+        return approved;
+    }
+
+    @Override
+    public List<Extension> getUnapproved() {
+        if (unApproved.isEmpty()) {
+            unApproved =  all.stream()
+                    .filter(extension -> !extension.isApproved()).collect(Collectors.toList());
+        }
+        return unApproved;
+    }
+
+    @Override
+    public Extension getById(int id) {
+        if (id < 0) {
+            return null;
+        }
+        return repository.getById(id);
+    }
+
+    @Override
+    public Extension getByName(String name) {
+        return repository.getByName(name);
+    }
+
+    @Override
+    public User currentUser() {
+        if(Utils.userIsAnonymous()){
+            return null;
+        }
+        UserDetails user = (UserDetails) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+        return userRepository.findByUsername(user.getUsername());
+    }
+
+    @Override
+    public boolean isUserPublisherOrAdmin(Extension extension) {
+        if(Utils.userIsAnonymous()){
+            return false;
+        }
+        User u = currentUser();
+        return u.isAdmin() || u.isPublisher(extension);
+    }
+
+    @Override
     public void createExtension(ExtensionBindingModel model, BindingResult errors) {
 
         if(!validateRepoUrl(model.getRepositoryUrl())){
@@ -109,75 +159,30 @@ public class ExtensionServiceImpl implements ExtensionService {
         User publisher = currentUser();
         Extension extension = mapper.map(model, Extension.class);
         extension.setPublisher(publisher);
-
         extension.setRepoURL(model.getRepositoryUrl());
 
-        BlobId blobid = storeFiles(extension, model, errors);
-
-        repository.save(extension);
-        extension.setGitHubInfo(new GitHubInfo());
-        extension.getGitHubInfo().setParent(extension);
-        Utils.updateGithubInfo(extension.getGitHubInfo());
-        gitHubRepository.save(extension.getGitHubInfo());
-        extension.setTags(handleTags(model.getTagString(), extension));
-        repository.update(extension);
-        reloadLists();
-    }
-
-    private BlobId storeFiles(Extension extension, ExtensionBindingModel model,  BindingResult errors) {
-
-        BlobId blobid = null;
-        String fileext = model.getFile().getOriginalFilename();
-        String picext = model.getFile().getOriginalFilename();
-        fileext = fileext.substring(fileext.lastIndexOf("."));
-        picext = picext.substring(picext.lastIndexOf("."));
-
         try {
-            blobid = cloudExtensionRepository.saveExtension(
-                    String.valueOf(extension.getPublisher().getId()),
-                    extension.getName() + fileext,
-                    model.getFile().getContentType(),
-                    model.getFile().getBytes()
-            );
-            extension.setBlobId(blobid);
-            extension.setDlURI(cloudExtensionRepository.getEXTENSION_URL_PREFIX() + blobid.getName());
-            extension.setBlobId(blobid);
-            String picURI = cloudExtensionRepository.saveExtensionPic(
-                    String.valueOf(extension.getPublisher().getId()),
-                    extension.getName() + picext,
-                    model.getPic().getContentType(),
-                    model.getPic().getBytes()
-            );
-            extension.setPicURI(picURI);
+            storeFiles(extension, model, errors);
         }catch(IOException e){
             //Could replace this with a log entry
             System.out.println(e.getMessage());
-            if(blobid != null){
-                cloudExtensionRepository.delete(blobid);
+            //this ^^^^
+            if(extension.getBlobId() != null){
+                cloudExtensionRepository.delete(extension.getBlobId());
                 errors.addError(new ObjectError("picProblem", "Failed to upload picture"));
             }else {
                 errors.addError(new ObjectError("fileProblem", "Failed to upload file"));
             }
-            return null;
+            return;
         }
-        return blobid;
+
+        saveExtension(extension, model);
     }
 
     @Override
-    public Extension getById(int id) {
-        if (id < 0) {
-            return null;
-        }
-        return repository.getById(id);
-    }
-
-    @Override
-    public List<Extension> getAllApproved() {
-        if (approved.isEmpty()) {
-            approved =  all.stream()
-                    .filter(Extension::isApproved).collect(Collectors.toList());
-        }
-        return approved;
+    public void delete(int id) {
+        repository.delete(id);
+        reloadLists();
     }
 
     @Override
@@ -186,30 +191,6 @@ public class ExtensionServiceImpl implements ExtensionService {
         Extension extension = getById(id);
         extension.approve();
         repository.update(extension);
-    }
-
-    @Override
-    public Extension getByName(String name) {
-        return repository.getByName(name);
-    }
-
-
-    //TODO add logging for github sync
-    @Override
-    public void sync(int id) {
-        Extension extension = getById(id);
-        GitHubInfo info = extension.getGitHubInfo();
-        Date currentTime = new Date();
-        System.out.println("[" + currentTime + "]" + "Admin syncing for " + extension.getName() + ":");
-        Utils.updateGithubInfo(info);
-        gitHubRepository.update(info);
-        System.out.println("--Updated info for " + extension.getName());
-    }
-
-    @Override
-    public void delete(int id) {
-        repository.delete(id);
-        reloadLists();
     }
 
     @Override
@@ -226,58 +207,19 @@ public class ExtensionServiceImpl implements ExtensionService {
         unApproved = getUnapproved();
         System.out.println("Lists reloaded");
     }
-
+    //TODO add logging for github sync
     @Override
-    public List<Extension> getUnapproved() {
-        if (unApproved.isEmpty()) {
-            unApproved =  all.stream()
-                    .filter(extension -> !extension.isApproved()).collect(Collectors.toList());
-        }
-        return unApproved;
-    }
-
-
-    @Override
-    public boolean isUserPublisherOrAdmin(Extension extension) {
-        if(Utils.userIsAnonymous()){
-            return false;
-        }
-        User u = currentUser();
-        return u.isAdmin() || u.isPublisher(extension);
-    }
-
-    @Override
-    public User currentUser() {
-        if(Utils.userIsAnonymous()){
-            return null;
-        }
-        UserDetails user = (UserDetails) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
-      return userRepository.findByUsername(user.getUsername());
-    }
-
-    @PostConstruct
-    public void initializeSync(){
-        //HERE WE ACTUALLY FETCH THE DELAY FROM THE DB AND UPDATE IT
-        setSync(delay);
-    }
-
-    private void syncAll() {
+    public void sync(int id) {
+        Extension extension = getById(id);
+        GitHubInfo info = extension.getGitHubInfo();
         Date currentTime = new Date();
-        List<Extension> extensions = getAllApproved();
-        System.out.println("[" + currentTime + "]" + "Syncing:");
-        for (Extension e : extensions) {
-            if (e.getGitHubInfo() == null) {
-                continue;
-            }
-            GitHubInfo ginfo = e.getGitHubInfo();
-            Utils.updateGithubInfo(ginfo);
-            gitHubRepository.update(ginfo);
-            System.out.println("--Updated info for " + e.getName());
-        }
-        reloadLists();
+        System.out.println("[" + currentTime + "]" + "Admin syncing for " + extension.getName() + ":");
+        Utils.updateGithubInfo(info);
+        gitHubRepository.update(info);
+        System.out.println("--Updated info for " + extension.getName());
     }
 
+    @Override
     public void setSync(long period){
         if(syncManager != null){
             try {
@@ -304,13 +246,35 @@ public class ExtensionServiceImpl implements ExtensionService {
         syncManager.start();
     }
 
+    @PostConstruct
+    public void initializeSync(){
+        //HERE WE ACTUALLY FETCH THE DELAY FROM THE DB AND UPDATE IT
+        setSync(delay);
+    }
+
     private boolean validateRepoUrl(String repo){
-        if(!repo.startsWith(git)){
+        if(!repo.startsWith(GITHUB_PREFIX)){
             return false;
         }
         repo = repo.substring(Utils.GITHUB_URL_PREFIX.length());
         String[] words = repo.split("/");
         return words.length == 2;
+    }
+
+    private void syncAll() {
+        Date currentTime = new Date();
+        List<Extension> extensions = getAllApproved();
+        System.out.println("[" + currentTime + "]" + "Syncing:");
+        for (Extension e : extensions) {
+            if (e.getGitHubInfo() == null) {
+                continue;
+            }
+            GitHubInfo ginfo = e.getGitHubInfo();
+            Utils.updateGithubInfo(ginfo);
+            gitHubRepository.update(ginfo);
+            System.out.println("--Updated info for " + e.getName());
+        }
+        reloadLists();
     }
 
     private Set<Tag> handleTags(String tagString, Extension extension){
@@ -332,6 +296,43 @@ public class ExtensionServiceImpl implements ExtensionService {
             }
         }
         return tags;
+    }
+
+
+    private void storeFiles(Extension extension, ExtensionBindingModel model,  BindingResult errors) throws IOException {
+
+        BlobId blobid;
+        String fileext = model.getFile().getOriginalFilename();
+        String picext = model.getFile().getOriginalFilename();
+        fileext = fileext.substring(fileext.lastIndexOf("."));
+        picext = picext.substring(picext.lastIndexOf("."));
+        blobid = cloudExtensionRepository.saveExtension(
+                String.valueOf(extension.getPublisher().getId()),
+                extension.getName() + fileext,
+                model.getFile().getContentType(),
+                model.getFile().getBytes()
+        );
+        extension.setBlobId(blobid);
+        extension.setDlURI(cloudExtensionRepository.getEXTENSION_URL_PREFIX() + blobid.getName());
+        extension.setBlobId(blobid);
+        String picURI = cloudExtensionRepository.saveExtensionPic(
+                String.valueOf(extension.getPublisher().getId()),
+                extension.getName() + picext,
+                model.getPic().getContentType(),
+                model.getPic().getBytes()
+        );
+        extension.setPicURI(picURI);
+    }
+
+    private void saveExtension(Extension extension, ExtensionBindingModel model) {
+        repository.save(extension);
+        extension.setGitHubInfo(new GitHubInfo());
+        extension.getGitHubInfo().setParent(extension);
+        Utils.updateGithubInfo(extension.getGitHubInfo());
+        gitHubRepository.save(extension.getGitHubInfo());
+        extension.setTags(handleTags(model.getTagString(), extension));
+        repository.update(extension);
+        reloadLists();
     }
 
 }

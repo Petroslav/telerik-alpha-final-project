@@ -64,7 +64,8 @@ public class Extension {
     private String repoURL;
 
     @OneToOne(fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     @JoinColumn(name = "git_info_id")
     private GitHubInfo gitHubInfo;

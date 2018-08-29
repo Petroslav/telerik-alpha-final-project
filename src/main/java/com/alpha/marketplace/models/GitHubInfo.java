@@ -13,8 +13,7 @@ public class GitHubInfo {
     @Column(name = "id")
     private long id;
 
-    @OneToOne(cascade = CascadeType.ALL,
-            mappedBy = "gitHubInfo")
+    @OneToOne(mappedBy = "gitHubInfo")
     private Extension parent;
 
     @Column(name = "pulls")

@@ -11,15 +11,16 @@ public interface ExtensionService {
     List<Extension> getMostPopular();
     List<Extension> getAdminSelection();
     List<Extension> getLatest();
-    void createExtension(ExtensionBindingModel extensionBindingModel, BindingResult errors);
-    Extension getById(int id);
     List<Extension> getAllApproved();
-    void approveExtensionById(int id);
-    Extension getByName(String name);
-    void sync(int id);
-    void delete(int id);
-    boolean isUserPublisherOrAdmin(Extension extension);
-    User currentUser();
-    void reloadLists();
     List<Extension> getUnapproved();
+    Extension getById(int id);
+    Extension getByName(String name);
+    User currentUser();
+    boolean isUserPublisherOrAdmin(Extension extension);
+    void createExtension(ExtensionBindingModel extensionBindingModel, BindingResult errors);
+    void delete(int id);
+    void approveExtensionById(int id);
+    void reloadLists();
+    void sync(int id);
+    void setSync(long period);
 }
