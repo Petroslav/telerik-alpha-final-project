@@ -129,4 +129,14 @@ public class ExtensionController {
 
         return "redirect:/extension/" + id;
     }
+
+    @PostMapping("/download/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String download(@PathVariable("id") Integer id) {
+
+        Extension extension = extensionService.getById(id);
+        extensionService.download(id);
+
+        return "redirect:"+extension.getDlURI();
+    }
 }

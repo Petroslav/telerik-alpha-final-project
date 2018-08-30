@@ -33,5 +33,8 @@
                 <button sec:authorize="hasRole('ADMIN')">Approve</button>
             </th:block>
         </form>
+        <form th:action="@{/extension/download/{id} (id=${extension.id})}" method="POST">
+                <button sec:authorize="isAuthenticated()">Download</button>
+        </form>
     </header>
 </main>

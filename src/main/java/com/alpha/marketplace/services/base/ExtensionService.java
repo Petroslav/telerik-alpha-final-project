@@ -25,4 +25,5 @@ public interface ExtensionService {
     void reloadLists();
     void sync(int id);
     void setSync(long period);
+    void download(int id);
 }

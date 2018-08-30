@@ -258,6 +258,15 @@ public class ExtensionServiceImpl implements ExtensionService {
         syncManager.start();
     }
 
+    @Override
+    public void download(int id) {
+        Extension extension = getById(id);
+        extension.setDownloads(extension.getDownloads()+1);
+        repository.update(extension);
+        System.out.println("Extension "+extension.getName()+" downloaded successfully");
+        System.out.println("number of downloads: "+extension.getDownloads());
+    }
+
     @PostConstruct
     public void initializeSync(){
         //HERE WE ACTUALLY FETCH THE DELAY FROM THE DB AND UPDATE IT
