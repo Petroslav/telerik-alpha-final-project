@@ -3,6 +3,8 @@
         <a class="home-icon" th:href="@{/}">
             <img src="http://icons.iconarchive.com/icons/custom-icon-design/mono-general-3/512/home-icon.png">
         </a>
+        <input type="text" id ="searchField" />
+        <button id="searchButton">Search</button>
         <a sec:authorize="isAuthenticated()" th:href="@{/logout}">
             <img src="https://cdn4.iconfinder.com/data/icons/proglyphs-computers-and-development/512/Logout-512.png">
         </a>

@@ -17,10 +17,14 @@ $(document).ready(function () {
         } else {
             $('#stickyNav').css({
                 'position': 'absolute',
-                'top': '',
+                'top': ''
 
             })
         }
+    });
+
+    $('#searchButton').on('click', function () {
+        $(location).attr('href', '/search?criteria='+$('#searchField').val());
     });
 });
 
