@@ -65,7 +65,7 @@ public class ExtensionController {
             model.addAttribute("view", "error/404");
             return "base-layout";
         }
-        if (!(SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken)) {
+        if (!Utils.userIsAnonymous()) {
             User user = extensionService.currentUser();
             model.addAttribute("user", user);
 

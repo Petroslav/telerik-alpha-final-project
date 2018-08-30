@@ -8,6 +8,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.*;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.apache.commons.io.FileUtils;
 import org.hibernate.SessionFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +22,14 @@ import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URL;
 
 @Configuration
 @EnableScheduling
 public class Config {
 
-    private final String PATH_TO_CONFIG = "C:\\Users\\luffy\\OneDrive\\Desktop\\marketplace\\src\\main\\resources\\telerikfinalproject-30ecbd8e72f6.json";
-    private final String PATH_TO_CONFIG_2 = "C:\\Users\\Fast1r1s\\Desktop\\telerik-alpha-final-project\\src\\main\\resources\\telerikfinalproject-30ecbd8e72f6.json";
     private final String PROJECT_ID = "telerikfinalproject";
+
     @Autowired
     private PropertiesRepository propertiesRepository;
 
@@ -52,18 +53,12 @@ public class Config {
 
     @Bean
     Storage getStorage() {
-        String actualPath = PATH_TO_CONFIG;
         try {
             String cr = propertiesRepository.get().getCredentials();
-            File file = new File(actualPath);
-            if (!file.exists()) {
-                actualPath = PATH_TO_CONFIG_2;
-            }
-            JsonParser parser = new JsonParser();
-            JsonObject jsonObj = parser.parse(cr).getAsJsonObject();
-
-
-            Credentials credentials = GoogleCredentials.fromStream(new FileInputStream(actualPath));
+            URL crURL = new URL(cr);
+            System.out.println(crURL.toString());
+            System.out.println(cr);
+            Credentials credentials = GoogleCredentials.fromStream(crURL.openStream());
             return StorageOptions.newBuilder().setCredentials(credentials).setProjectId(PROJECT_ID).build().getService();
         } catch (IOException e) {
             System.out.println(e.getMessage());
