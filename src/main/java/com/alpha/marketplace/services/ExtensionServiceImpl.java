@@ -2,6 +2,7 @@ package com.alpha.marketplace.services;
 
 import com.alpha.marketplace.models.Extension;
 import com.alpha.marketplace.models.GitHubInfo;
+import com.alpha.marketplace.models.Properties;
 import com.alpha.marketplace.models.Tag;
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.ExtensionBindingModel;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 @Service
 public class ExtensionServiceImpl implements ExtensionService {
     private static Thread syncManager;
-    private static long delay = 2 * 60 * 60 * 1000;
+    private static long delay;
 
     private final String GITHUB_PREFIX = "https://github.com/";
 
@@ -35,6 +36,7 @@ public class ExtensionServiceImpl implements ExtensionService {
     private final CloudExtensionRepository cloudExtensionRepository;
     private final ModelMapper mapper;
     private final GitHubRepository gitHubRepository;
+    private final PropertiesRepository propertiesRepository;
 
     private List<Extension> all;
     private List<Extension> approved;
@@ -49,7 +51,8 @@ public class ExtensionServiceImpl implements ExtensionService {
             CloudExtensionRepository cloudExtensionRepository,
             TagRepository tagRepository,
             ModelMapper mapper,
-            GitHubRepository gitHubRepository
+            GitHubRepository gitHubRepository,
+            PropertiesRepository propertiesRepository
     ) {
         this.repository = repository;
         this.userRepository = userRepository;
@@ -62,6 +65,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         this.latest = new ArrayList<>();
         this.mostPopular = new ArrayList<>();
         this.unApproved = new ArrayList<>();
+        this.propertiesRepository = propertiesRepository;
     }
 
 
@@ -242,7 +246,9 @@ public class ExtensionServiceImpl implements ExtensionService {
                 e.printStackTrace();
             }
         }
-        //here we update the db with the new delay period
+        Properties properties = propertiesRepository.get();
+        properties.setDelay(String.valueOf(period));
+        propertiesRepository.update(properties);
         syncManager = new Thread(() -> {
             while(true){
                 try {
@@ -269,7 +275,10 @@ public class ExtensionServiceImpl implements ExtensionService {
 
     @PostConstruct
     public void initializeSync(){
-        //HERE WE ACTUALLY FETCH THE DELAY FROM THE DB AND UPDATE IT
+        Properties properties = propertiesRepository.get();
+        delay = Long.parseLong(properties.getDelay());
+        String key  = properties.getGitHubOAuthKey();
+        Utils.setKey(key);
         setSync(delay);
     }
 

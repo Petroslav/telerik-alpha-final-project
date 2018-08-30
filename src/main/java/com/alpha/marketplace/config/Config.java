@@ -1,12 +1,16 @@
 package com.alpha.marketplace.config;
 
 import com.alpha.marketplace.models.*;
+import com.alpha.marketplace.repositories.base.PropertiesRepository;
 import com.google.auth.Credentials;
 import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.*;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.hibernate.SessionFactory;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -25,6 +29,8 @@ public class Config {
     private final String PATH_TO_CONFIG = "C:\\Users\\luffy\\OneDrive\\Desktop\\marketplace\\src\\main\\resources\\telerikfinalproject-30ecbd8e72f6.json";
     private final String PATH_TO_CONFIG_2 = "C:\\Users\\Fast1r1s\\Desktop\\telerik-alpha-final-project\\src\\main\\resources\\telerikfinalproject-30ecbd8e72f6.json";
     private final String PROJECT_ID = "telerikfinalproject";
+    @Autowired
+    private PropertiesRepository propertiesRepository;
 
     @Bean
     SessionFactory getSessionFactory() {
@@ -35,6 +41,7 @@ public class Config {
                 .addAnnotatedClass(Tag.class)
                 .addAnnotatedClass(Role.class)
                 .addAnnotatedClass(GitHubInfo.class)
+                .addAnnotatedClass(Properties.class)
                 .buildSessionFactory();
     }
 
@@ -47,10 +54,15 @@ public class Config {
     Storage getStorage() {
         String actualPath = PATH_TO_CONFIG;
         try {
+            String cr = propertiesRepository.get().getCredentials();
             File file = new File(actualPath);
             if (!file.exists()) {
                 actualPath = PATH_TO_CONFIG_2;
             }
+            JsonParser parser = new JsonParser();
+            JsonObject jsonObj = parser.parse(cr).getAsJsonObject();
+
+
             Credentials credentials = GoogleCredentials.fromStream(new FileInputStream(actualPath));
             return StorageOptions.newBuilder().setCredentials(credentials).setProjectId(PROJECT_ID).build().getService();
         } catch (IOException e) {

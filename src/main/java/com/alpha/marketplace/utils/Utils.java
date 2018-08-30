@@ -1,10 +1,15 @@
 package com.alpha.marketplace.utils;
 
 import com.alpha.marketplace.models.GitHubInfo;
+import com.alpha.marketplace.models.Properties;
+import com.alpha.marketplace.repositories.PropertiesRepositoryImpl;
+import com.alpha.marketplace.repositories.base.PropertiesRepository;
 import org.kohsuke.github.GHIssueState;
 import org.kohsuke.github.GitHub;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
@@ -15,6 +20,7 @@ import java.util.Date;
 public class Utils {
     public static final String GITHUB_URL_PREFIX = "https://github.com/";
     private static GitHub GITHUB_CONNECTION;
+    private static String gitkey;
 
     public static boolean userIsAnonymous() {
         return AnonymousAuthenticationToken.class ==
@@ -46,6 +52,9 @@ public class Utils {
         return contentType;
     }
 
+    public static void setKey(String key){
+        gitkey = key;
+    }
     public static void updateGithubInfo(GitHubInfo info){
         String url = removePrefix(info.getParent().getRepoURL());
 
@@ -55,16 +64,19 @@ public class Utils {
 
     }
 
+
     private static GitHub getGHConnection(){
+
         try {
             if(GITHUB_CONNECTION == null){
-                GITHUB_CONNECTION = GitHub.connectUsingOAuth("baaf4d97deaba2886b58fdeb52236dfdbe373eb5 ");
+                GITHUB_CONNECTION = GitHub.connectUsingOAuth(gitkey);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         return GITHUB_CONNECTION;
     }
+
 
 
     private static String openIssues(String url){
