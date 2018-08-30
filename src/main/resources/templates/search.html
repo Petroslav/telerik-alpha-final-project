@@ -1,0 +1,28 @@
+<main>
+    <th:block th:if="${!isUserSearch}">
+
+        <div th:each="match : ${matches}">
+            <header>
+                <a th:href="@{/extension/{id}(id=${match.id})}">
+                    <h2 th:text=${match.name}></h2>
+                </a>
+
+
+            </header>
+        </div>
+    </th:block>
+
+    <th:block th:if="${isUserSearch}">
+
+        <div th:each="match : ${userMatches}">
+            <header>
+                <a th:href="@{/user/{id}(id=${match.id})}">
+                    <h2 th:text=${match.username}></h2>
+                </a>
+
+
+            </header>
+        </div>
+    </th:block>
+
+</main>
