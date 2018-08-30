@@ -34,10 +34,10 @@ public class PropertiesRepositoryImpl implements PropertiesRepository {
     }
 
     @Override
-    public void update(Properties properties) {
+    public void update() {
         try (Session sess = session.openSession()) {
             sess.beginTransaction();
-            sess.update(properties);
+            sess.update(get());
             sess.getTransaction().commit();
             System.out.println("Properties updated successfully.");
         } catch (Exception e) {

@@ -233,6 +233,11 @@ public class ExtensionServiceImpl implements ExtensionService {
         Utils.updateGithubInfo(info);
         gitHubRepository.update(info);
         System.out.println("--Updated info for " + extension.getName());
+        Properties properties = propertiesRepository.get();
+
+        properties.setLastSuccessfulSync(new Date());
+
+        propertiesRepository.update();
     }
 
     @Override
@@ -248,7 +253,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         }
         Properties properties = propertiesRepository.get();
         properties.setDelay(String.valueOf(period));
-        propertiesRepository.update(properties);
+        propertiesRepository.update();
         syncManager = new Thread(() -> {
             while(true){
                 try {
@@ -304,6 +309,11 @@ public class ExtensionServiceImpl implements ExtensionService {
             gitHubRepository.update(ginfo);
             System.out.println("--Updated info for " + e.getName());
         }
+        Properties properties = propertiesRepository.get();
+
+        properties.setLastSuccessfulSync(new Date());
+
+        propertiesRepository.update();
         reloadLists();
     }
 

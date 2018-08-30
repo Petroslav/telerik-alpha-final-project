@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PropertiesRepository{
     Properties get();
-    void update(Properties properties);
+    void update();
 }
