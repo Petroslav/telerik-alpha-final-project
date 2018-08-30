@@ -22,10 +22,12 @@
         <img src="https://cdn1.iconfinder.com/data/icons/freeline/32/add_cross_new_plus_create-512.png">
     </a>
     <div class="search-area">
-        <select id="searchOption">
-            <option value="extension">Extension</option>
-            <option value="user">User</option>
-        </select>
+        <div class="searchOption">
+            <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="searchOption">
+                <input type="checkbox" id="searchOption" class="mdl-switch__input">
+                <span class="mdl-switch__label"></span>
+            </label>
+        </div>
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
             <label class="mdl-button mdl-js-button mdl-button--icon" for="searchField">
                 <i class="material-icons">search</i>

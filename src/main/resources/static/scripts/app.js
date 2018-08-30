@@ -1,5 +1,10 @@
 $(document).ready(function () {
 
+    var url = $(location).attr('href');
+    var parameter = url.substring(url.lastIndexOf('=')+1);
+
+    $('#sortOption').val(parameter);
+
     $('.home-icon').on('click', function () {
         $('html').animate({scrollTop: 0}, 'slow');
         return true;
@@ -27,15 +32,21 @@ $(document).ready(function () {
     $('#searchButton').on('click', function () {
         var textfield = $('#searchField').val();
 
-        if (textfield != "") {
+        if (textfield !== "") {
             var prefix = "";
 
-            if ($('#searchOption').val() == "user") {
+            if ($('#searchOption').is(':checked')) {
                 prefix = "user:"
             }
 
             $(location).attr('href', '/search?criteria=' + prefix + textfield);
         }
+    });
+    $('#sortButton').on('click', function () {
+
+
+            $(location).attr('href', '/?sort=' + $('#sortOption').val());
+
     });
 });
 

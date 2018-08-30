@@ -2,6 +2,7 @@ package com.alpha.marketplace.controllers;
 
 import com.alpha.marketplace.exceptions.ErrorMessages;
 import com.alpha.marketplace.models.Extension;
+import com.alpha.marketplace.models.GitHubInfo;
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.UserBindingModel;
 import com.alpha.marketplace.services.base.ExtensionService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
+import java.util.Comparator;
 import java.util.List;
 
 @Controller
@@ -32,10 +34,35 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(Model model, @RequestParam(value = "sort", required = false) String sort) {
         List<Extension> newestExtensions = extensionService.getLatest();
         List<Extension> selectedByAdmin = extensionService.getAdminSelection();
         List<Extension> mostPopular = extensionService.getMostPopular();
+
+        if(sort!=null) {
+            switch (sort) {
+
+                case "byLastCommit":
+                    newestExtensions.sort(Comparator.comparing(extension -> extension.getGitHubInfo().getLastCommit()));
+//                    selectedByAdmin.sort(Comparator.comparing(extension -> extension.getGitHubInfo().getLastCommit()));
+                    mostPopular.sort(Comparator.comparing(extension -> extension.getGitHubInfo().getLastCommit()));
+                    break;
+
+                case "byUploadDate":
+                    newestExtensions.sort(Comparator.comparing(Extension::getAddedOn));
+//                    selectedByAdmin.sort(Comparator.comparing(Extension::getAddedOn));
+                    mostPopular.sort(Comparator.comparing(Extension::getAddedOn));
+                    break;
+
+                case "byDownloads":
+                    newestExtensions.sort(Comparator.comparing(Extension::getDownloads));
+//                    selectedByAdmin.sort(Comparator.comparing(Extension::getDownloads));
+                    mostPopular.sort(Comparator.comparing(Extension::getDownloads));
+                    break;
+                default:
+                    break;
+            }
+        }
 
         model.addAttribute("view", "index");
         model.addAttribute("newest", newestExtensions);

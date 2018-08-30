@@ -14,5 +14,12 @@
                 <a th:href="@{/extension/{id}(id=${extension.id})}">Go to extension </a>
             </div>
         </div>
+
     </div>
+    <select id="sortOption">
+        <option value="byDownloads">downloads</option>
+        <option value="byUploadDate">uploadDate</option>
+        <option value="byLastCommit">lastCommit</option>
+    </select>
+    <button id="sortButton">sort</button>
 </main>
