@@ -3,12 +3,8 @@ package com.alpha.marketplace.config;
 import com.alpha.marketplace.models.*;
 import com.alpha.marketplace.repositories.base.PropertiesRepository;
 import com.google.auth.Credentials;
-import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.*;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import org.apache.commons.io.FileUtils;
 import org.hibernate.SessionFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +15,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
 
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.URL;
+import java.io.*;
 
 @Configuration
 @EnableScheduling
@@ -30,7 +23,6 @@ public class Config {
 
     private final String PROJECT_ID = "telerikfinalproject";
 
-    @Autowired
     private PropertiesRepository propertiesRepository;
 
     @Bean
@@ -55,10 +47,8 @@ public class Config {
     Storage getStorage() {
         try {
             String cr = propertiesRepository.get().getCredentials();
-            URL crURL = new URL(cr);
-            System.out.println(crURL.toString());
-            System.out.println(cr);
-            Credentials credentials = GoogleCredentials.fromStream(crURL.openStream());
+            InputStream is = new ByteArrayInputStream(cr.getBytes());
+            Credentials credentials = GoogleCredentials.fromStream(is);
             return StorageOptions.newBuilder().setCredentials(credentials).setProjectId(PROJECT_ID).build().getService();
         } catch (IOException e) {
             System.out.println(e.getMessage());
@@ -79,5 +69,8 @@ public class Config {
         return messageSource;
     }
 
-
+    @Autowired
+    public void setPropertiesRepository(PropertiesRepository propertiesRepository) {
+        this.propertiesRepository = propertiesRepository;
+    }
 }
