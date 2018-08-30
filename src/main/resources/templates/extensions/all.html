@@ -1,9 +1,24 @@
 <main>
     <div th:each="extension : ${extensions}">
-        <header>
-            <a th:href="@{/extension/{id}(id=${extension.id})}">
-                <h2 th:text=${extension.name}></h2>
-            </a>
-        </header>
+        <!--<header>-->
+            <!--<a th:href="@{/extension/{id}(id=${extension.id})}">-->
+                <!--<h2 th:text=${extension.name}></h2>-->
+            <!--</a>-->
+        <!--</header>-->
+        <!--TODO make inline-block work!!-->
+        <div class="myExtension mdl-card mdl-shadow--4dp" style="display: inline-block;">
+            <div class="mdl-card__title">
+                <h2 class="mdl-card__title-text" th:text="${extension.name}"></h2>
+            </div>
+            <div class="mdl-card__media">
+                <img th:attr="src=@{${extension.picURI}}" width="95%" border="0" alt="" style="padding:20px;">
+            </div>
+            <div th:text="${extension.description}" class="mdl-card__supporting-text">
+
+            </div>
+            <div class="mdl-card__actions">
+                <a th:href="@{/extension/{id}(id=${extension.id})}">Go to extension </a>
+            </div>
+        </div>
     </div>
 </main>

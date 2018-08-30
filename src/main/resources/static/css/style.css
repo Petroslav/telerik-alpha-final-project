@@ -1,10 +1,11 @@
-body{
+body {
     padding-top: 5%;
     margin: 0;
 }
-.nav{
+
+.nav {
     margin: 0 auto;
-    display:block;
+    display: block;
     top: 0;
     z-index: 10;
     position: absolute;
@@ -13,11 +14,24 @@ body{
     border-radius: 3px;
     background-color: rgb(27, 247, 170);
 }
-.nav a img{
+
+.nav a img {
     float: right;
     margin-right: 20px;
     width: 60px;
 }
-.home-icon{
+
+.home-icon {
     float: left;
+}
+
+.search-area {
+    display: inline-block;
+    float: right;
+    margin-right: 5px;
+}
+
+.myExtension {
+    display: inline-block; /*TODO make it work !!!!!!!!!!!*/
+    margin: 10px;
 }

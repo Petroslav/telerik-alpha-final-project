@@ -17,7 +17,7 @@ public class CloudExtensionRepositoryImpl implements CloudExtensionRepository {
     private final Storage storage;
 
     private final String EXTENSION_URL_PREFIX = "https://storage.googleapis.com/marketplace-extensions/";
-    private final String EXTENSION_PIC_URL_PREFIX = "https://storage.googleapis.com/marketplace-extensions-pics/";
+    private final String EXTENSION_PIC_URL_PREFIX = "https://storage.googleapis.com/marketplace-extension-pics/";
 
     private final Bucket extensionBucket;
     private final Bucket extensionPicBucket;
@@ -71,7 +71,7 @@ public class CloudExtensionRepositoryImpl implements CloudExtensionRepository {
     public String saveExtensionPic(String userId, String extensionName, String contentType, byte[] bytes){
         String name = userId + "-" + extensionName;
         Blob blob = extensionPicBucket.create(name, bytes, contentType);
-        return EXTENSION_URL_PREFIX + blob.getName();
+        return EXTENSION_PIC_URL_PREFIX + blob.getName();
     }
 
     @Override

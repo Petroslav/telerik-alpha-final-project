@@ -315,7 +315,7 @@ public class ExtensionServiceImpl implements ExtensionService {
 
         BlobId blobid;
         String fileext = model.getFile().getOriginalFilename();
-        String picext = model.getFile().getOriginalFilename();
+        String picext = model.getPic().getOriginalFilename();
         fileext = fileext.substring(fileext.lastIndexOf("."));
         picext = picext.substring(picext.lastIndexOf("."));
         blobid = cloudExtensionRepository.saveExtension(
