@@ -1,6 +1,6 @@
 <main>
-    <div th:each="extension : ${newest}">
-        <div class="myExtension mdl-card mdl-shadow--4dp" style="display: inline-block;">
+    <div th:each="extension : ${newest}" class="myExtension">
+        <div class="myExtension mdl-card mdl-shadow--4dp">
             <div class="mdl-card__title">
                 <h2 class="mdl-card__title-text" th:text="${extension.name}"></h2>
             </div>

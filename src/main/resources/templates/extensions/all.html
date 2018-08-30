@@ -1,12 +1,12 @@
 <main>
-    <div th:each="extension : ${extensions}">
+    <div th:each="extension : ${extensions}" class="myExtension">
         <!--<header>-->
             <!--<a th:href="@{/extension/{id}(id=${extension.id})}">-->
                 <!--<h2 th:text=${extension.name}></h2>-->
             <!--</a>-->
         <!--</header>-->
         <!--TODO make inline-block work!!-->
-        <div class="myExtension mdl-card mdl-shadow--4dp" style="display: inline-block;">
+        <div class="myExtension mdl-card mdl-shadow--4dp">
             <div class="mdl-card__title">
                 <h2 class="mdl-card__title-text" th:text="${extension.name}"></h2>
             </div>

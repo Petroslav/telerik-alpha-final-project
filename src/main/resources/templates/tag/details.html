@@ -1,7 +1,7 @@
 <main>
     <h1>All extensions with tag <th:block th:text="${tag.name}"></th:block> : </h1>
-    <div th:each="extension : ${extensions}">
-        <div class="myExtension mdl-card mdl-shadow--4dp" style="display: inline-block;">
+    <div th:each="extension : ${extensions}" class="myExtension">
+        <div class="myExtension mdl-card mdl-shadow--4dp">
             <div class="mdl-card__title">
                 <h2 class="mdl-card__title-text" th:text="${extension.name}"></h2>
             </div>

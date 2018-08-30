@@ -1,8 +1,8 @@
 <main>
     <th:block th:if="${!isUserSearch}">
 
-        <div th:each="match : ${matches}">
-            <div class="myExtension mdl-card mdl-shadow--4dp" style="display: inline-block;">
+        <div th:each="match : ${matches}" class="myExtension">
+            <div class="myExtension mdl-card mdl-shadow--4dp">
                 <div class="mdl-card__title">
                     <h2 class="mdl-card__title-text" th:text="${match.name}"></h2>
                 </div>
