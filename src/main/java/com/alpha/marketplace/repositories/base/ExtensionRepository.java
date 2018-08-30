@@ -9,14 +9,14 @@ public interface ExtensionRepository {
 
     List<Extension> getAll();
     List<Extension> search(String criteria);
-    List<Extension> getByDownloads(int downloads);
+    List<Extension> getByDownloads(long downloads);
     List<Extension> getByUploadDate(Date date);
     List<Extension> getByCommitDate(Date date);
-    Extension getById(int id);
+    Extension getById(long id);
     Extension getByName(String name);
     boolean save(Extension extension);
     boolean update(Extension extension);
-    boolean delete(int id);
+    boolean delete(long id);
 
 
 

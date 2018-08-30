@@ -1,5 +1,6 @@
 package com.alpha.marketplace.utils;
 
+import com.alpha.marketplace.exceptions.FailedToSyncException;
 import com.alpha.marketplace.models.GitHubInfo;
 import com.alpha.marketplace.models.Properties;
 import com.alpha.marketplace.repositories.PropertiesRepositoryImpl;
@@ -55,15 +56,17 @@ public class Utils {
     public static void setKey(String key){
         gitkey = key;
     }
-    public static void updateGithubInfo(GitHubInfo info){
+    public static void updateGithubInfo(GitHubInfo info) throws FailedToSyncException {
         String url = removePrefix(info.getParent().getRepoURL());
-
-        info.setIssuesCount(openIssues(url));
-        info.setLastCommit(commitDate(url));
-        info.setPullCount(pullsCount(url));
+        try{
+            info.setIssuesCount(openIssues(url));
+            info.setLastCommit(commitDate(url));
+            info.setPullCount(pullsCount(url));
+        }catch(IOException e){
+            throw new FailedToSyncException("Failed to sync GitHub info");
+        }
 
     }
-
 
     private static GitHub getGHConnection(){
 
@@ -77,40 +80,24 @@ public class Utils {
         return GITHUB_CONNECTION;
     }
 
-
-
-    private static String openIssues(String url){
+    private static String openIssues(String url) throws IOException {
         GitHub gh = getGHConnection();
-        String openIssues = null;
-        try {
-            openIssues = String.valueOf(gh.getRepository(url).getOpenIssueCount());
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
-
+        String openIssues;
+        openIssues = String.valueOf(gh.getRepository(url).getOpenIssueCount());
         return openIssues;
     }
 
-    private static Date commitDate(String url){
+    private static Date commitDate(String url) throws IOException {
         GitHub gh = getGHConnection();
-        Date commitDate = null;
-        try {
-            commitDate = gh.getRepository(url).listCommits().asList().get(0).getCommitDate();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Date commitDate;
+        commitDate = gh.getRepository(url).listCommits().asList().get(0).getCommitDate();
         return commitDate;
     }
 
-    private static String pullsCount(String url){
+    private static String pullsCount(String url) throws IOException {
         GitHub gh = getGHConnection();
-        String pullCount = null;
-        try {
-            pullCount = String.valueOf(gh.getRepository(url).getPullRequests(GHIssueState.OPEN).size());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String pullCount;
+        pullCount = String.valueOf(gh.getRepository(url).getPullRequests(GHIssueState.OPEN).size());
         return pullCount;
     }
 

@@ -1,5 +1,6 @@
 package com.alpha.marketplace.services;
 
+import com.alpha.marketplace.exceptions.FailedToSyncException;
 import com.alpha.marketplace.models.Extension;
 import com.alpha.marketplace.models.GitHubInfo;
 import com.alpha.marketplace.models.Properties;
@@ -128,7 +129,7 @@ public class ExtensionServiceImpl implements ExtensionService {
     }
 
     @Override
-    public Extension getById(int id) {
+    public Extension getById(long id) {
         if (id < 0) {
             return null;
         }
@@ -192,17 +193,22 @@ public class ExtensionServiceImpl implements ExtensionService {
             return;
         }
 
-        saveExtension(extension, model);
+        try {
+            saveExtension(extension, model);
+        } catch (FailedToSyncException e) {
+            errors.addError(new ObjectError("syncFail", "Failed to sync GitHub data"));
+            delete(extension.getId());
+        }
     }
 
     @Override
-    public void delete(int id) {
+    public void delete(long id) {
         repository.delete(id);
         reloadLists();
     }
 
     @Override
-    public void approveExtensionById(int id) {
+    public void approveExtensionById(long id) {
 
         Extension extension = getById(id);
         extension.approve();
@@ -225,17 +231,20 @@ public class ExtensionServiceImpl implements ExtensionService {
     }
     //TODO add logging for github sync
     @Override
-    public void sync(int id) {
+    public void sync(long id) {
         Extension extension = getById(id);
         GitHubInfo info = extension.getGitHubInfo();
         Date currentTime = new Date();
         System.out.println("[" + currentTime + "]" + "Admin syncing for " + extension.getName() + ":");
-        Utils.updateGithubInfo(info);
-        gitHubRepository.update(info);
-        System.out.println("--Updated info for " + extension.getName());
         Properties properties = propertiesRepository.get();
-
-        properties.setLastSuccessfulSync(new Date());
+        try {
+            Utils.updateGithubInfo(info);
+            gitHubRepository.update(info);
+            System.out.println("--Updated info for " + extension.getName());
+            properties.setLastSuccessfulSync(new Date());
+        } catch (FailedToSyncException e) {
+            properties.setLastFailedSync(new Date());
+        }
 
         propertiesRepository.update();
     }
@@ -270,7 +279,7 @@ public class ExtensionServiceImpl implements ExtensionService {
     }
 
     @Override
-    public void download(int id) {
+    public void download(long id) {
         Extension extension = getById(id);
         extension.setDownloads(extension.getDownloads()+1);
         repository.update(extension);
@@ -300,18 +309,28 @@ public class ExtensionServiceImpl implements ExtensionService {
         Date currentTime = new Date();
         List<Extension> extensions = getAllApproved();
         System.out.println("[" + currentTime + "]" + "Syncing:");
+        Properties properties = propertiesRepository.get();
+        boolean failed = false;
         for (Extension e : extensions) {
             if (e.getGitHubInfo() == null) {
                 continue;
             }
             GitHubInfo ginfo = e.getGitHubInfo();
-            Utils.updateGithubInfo(ginfo);
-            gitHubRepository.update(ginfo);
-            System.out.println("--Updated info for " + e.getName());
-        }
-        Properties properties = propertiesRepository.get();
 
-        properties.setLastSuccessfulSync(new Date());
+            try {
+                Utils.updateGithubInfo(ginfo);
+                gitHubRepository.update(ginfo);
+                System.out.println("--Updated info for " + e.getName());
+            } catch (FailedToSyncException e1) {
+                failed = true;
+            }
+        }
+
+        if(!failed){
+            properties.setLastSuccessfulSync(new Date());
+        }else{
+            properties.setLastFailedSync(new Date());
+        }
 
         propertiesRepository.update();
         reloadLists();
@@ -364,7 +383,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         extension.setPicURI(picURI);
     }
 
-    private void saveExtension(Extension extension, ExtensionBindingModel model) {
+    private void saveExtension(Extension extension, ExtensionBindingModel model) throws FailedToSyncException {
         repository.save(extension);
         extension.setGitHubInfo(new GitHubInfo());
         extension.getGitHubInfo().setParent(extension);
@@ -374,5 +393,4 @@ public class ExtensionServiceImpl implements ExtensionService {
         repository.update(extension);
         reloadLists();
     }
-
 }

@@ -15,15 +15,15 @@ public interface ExtensionService {
     List<Extension> getUnapproved();
     List<Extension> searchExtensions(String criteria);
     List<Extension> searchExtensionsByTag(String criteria);
-    Extension getById(int id);
+    Extension getById(long id);
     Extension getByName(String name);
     User currentUser();
     boolean isUserPublisherOrAdmin(Extension extension);
     void createExtension(ExtensionBindingModel extensionBindingModel, BindingResult errors);
-    void delete(int id);
-    void approveExtensionById(int id);
+    void delete(long id);
+    void approveExtensionById(long id);
     void reloadLists();
-    void sync(int id);
+    void sync(long id);
     void setSync(long period);
-    void download(int id);
+    void download(long id);
 }

@@ -8,10 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 public class ExtensionRepositoryImpl implements ExtensionRepository {
@@ -60,7 +58,7 @@ public class ExtensionRepositoryImpl implements ExtensionRepository {
     }
 
     @Override
-    public List<Extension> getByDownloads(int downloads) {
+    public List<Extension> getByDownloads(long downloads) {
         List<Extension> extensions = null;
         try (Session sess = session.openSession()) {
             sess.beginTransaction();
@@ -105,12 +103,12 @@ public class ExtensionRepositoryImpl implements ExtensionRepository {
     }
 
     @Override
-    public Extension getById(int id) {
+    public Extension getById(long id) {
         Extension extension = null;
         try (Session sess = session.openSession()) {
             sess.beginTransaction();
 
-            extension = sess.get(Extension.class, (long) id);
+            extension = sess.get(Extension.class, id);
             //TODO ask about casting good practices
 
             sess.getTransaction().commit();
@@ -178,7 +176,7 @@ public class ExtensionRepositoryImpl implements ExtensionRepository {
     }
 
     @Override
-    public boolean delete(int id) {
+    public boolean delete(long id) {
         try (Session sess = session.openSession()) {
             sess.beginTransaction();
 
