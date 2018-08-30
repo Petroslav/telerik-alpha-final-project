@@ -1,27 +1,32 @@
-
-    <div id="stickyNav" class="nav">
-        <a class="home-icon" th:href="@{/}">
-            <img src="http://icons.iconarchive.com/icons/custom-icon-design/mono-general-3/512/home-icon.png">
-        </a>
-        <input type="text" id ="searchField" />
+<div id="stickyNav" class="nav">
+    <a class="home-icon" th:href="@{/}">
+        <img src="http://icons.iconarchive.com/icons/custom-icon-design/mono-general-3/512/home-icon.png">
+    </a>
+    <div>
+        <select id="searchOption">
+            <option value="extension">Extension</option>
+            <option value="user">User</option>
+        </select>
+        <input type="text" id="searchField"/>
         <button id="searchButton">Search</button>
-        <a sec:authorize="isAuthenticated()" th:href="@{/logout}">
-            <img src="https://cdn4.iconfinder.com/data/icons/proglyphs-computers-and-development/512/Logout-512.png">
-        </a>
-        <a sec:authorize="isAnonymous()" th:href="@{/login}">
-            <img src="https://cdn2.iconfinder.com/data/icons/flaticons-stroke/16/login-1-512.png">
-        </a>
-        <a sec:authorize="isAnonymous()" th:href="@{/register}">
-            <img src="http://www.seawindbandtravel.com/kailuais/kauai2018/_content/portfolio/Registration.png">
-        </a>
-        <a sec:authorize="hasRole('ADMIN')"  th:href="@{/admin/panel}">
-            <img src="http://www.muller.ru/i/social/Admin.png">
-        </a>
-        <a sec:authorize="isAuthenticated()"  th:href="@{/user/profile}">
-            <img src="http://pluspng.com/img-png/png-user-icon-account-friend-human-man-member-person-profile-user-256.png">
-        </a>
-        <a sec:authorize="isAuthenticated()"  th:href="@{/extension/create}">
-            <img src="https://cdn1.iconfinder.com/data/icons/freeline/32/add_cross_new_plus_create-512.png">
-        </a>
-
     </div>
+    <a sec:authorize="isAuthenticated()" th:href="@{/logout}">
+        <img src="https://cdn4.iconfinder.com/data/icons/proglyphs-computers-and-development/512/Logout-512.png">
+    </a>
+    <a sec:authorize="isAnonymous()" th:href="@{/login}">
+        <img src="https://cdn2.iconfinder.com/data/icons/flaticons-stroke/16/login-1-512.png">
+    </a>
+    <a sec:authorize="isAnonymous()" th:href="@{/register}">
+        <img src="http://www.seawindbandtravel.com/kailuais/kauai2018/_content/portfolio/Registration.png">
+    </a>
+    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/panel}">
+        <img src="http://www.muller.ru/i/social/Admin.png">
+    </a>
+    <a sec:authorize="isAuthenticated()" th:href="@{/user/profile}">
+        <img src="http://pluspng.com/img-png/png-user-icon-account-friend-human-man-member-person-profile-user-256.png">
+    </a>
+    <a sec:authorize="isAuthenticated()" th:href="@{/extension/create}">
+        <img src="https://cdn1.iconfinder.com/data/icons/freeline/32/add_cross_new_plus_create-512.png">
+    </a>
+
+</div>

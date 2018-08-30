@@ -24,7 +24,13 @@ $(document).ready(function () {
     });
 
     $('#searchButton').on('click', function () {
-        $(location).attr('href', '/search?criteria='+$('#searchField').val());
+        var prefix = "";
+
+        if($('#searchOption').val()== "user"){
+            prefix = "user:"
+        }
+
+        $(location).attr('href', '/search?criteria='+prefix+$('#searchField').val());
     });
 });
 
