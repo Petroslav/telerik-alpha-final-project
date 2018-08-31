@@ -33,6 +33,18 @@
                 <button sec:authorize="hasRole('ADMIN')">Approve</button>
             </th:block>
         </form>
+
+        <form th:action="@{/extension/feature/{id} (id=${extension.id})}" method="POST">
+            <th:block th:if="${!extension.isSelected()}">
+                <button sec:authorize="hasRole('ADMIN')">Feature</button>
+            </th:block>
+        </form>
+
+        <form th:action="@{/extension/unFeature/{id} (id=${extension.id})}" method="POST">
+            <th:block th:if="${extension.isSelected()}">
+                <button sec:authorize="hasRole('ADMIN')">Remove from featured</button>
+            </th:block>
+        </form>
         <form th:action="@{/extension/download/{id} (id=${extension.id})}" method="POST">
                 <button sec:authorize="isAuthenticated()">Download</button>
         </form>

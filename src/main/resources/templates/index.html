@@ -1,4 +1,5 @@
 <main>
+    <h2>Newest:</h2>
     <div th:each="extension : ${newest}" class="myExtension">
         <div class="myExtension mdl-card mdl-shadow--4dp">
             <div class="mdl-card__title">
@@ -14,7 +15,42 @@
                 <a th:href="@{/extension/{id}(id=${extension.id})}">Go to extension </a>
             </div>
         </div>
+    </div>
 
+    <h2>Most Popular:</h2>
+    <div th:each="extension : ${mostPopular}" class="myExtension">
+        <div class="myExtension mdl-card mdl-shadow--4dp">
+            <div class="mdl-card__title">
+                <h2 class="mdl-card__title-text" th:text="${extension.name}"></h2>
+            </div>
+            <div class="mdl-card__media">
+                <img th:attr="src=@{${extension.picURI}}" width="95%" border="0" alt="" style="padding:20px;">
+            </div>
+            <div th:text="${extension.description}" class="mdl-card__supporting-text">
+
+            </div>
+            <div class="mdl-card__actions">
+                <a th:href="@{/extension/{id}(id=${extension.id})}">Go to extension </a>
+            </div>
+        </div>
+    </div>
+
+    <h2>Featured:</h2>
+    <div th:each="extension : ${adminSelection}" class="myExtension">
+        <div class="myExtension mdl-card mdl-shadow--4dp">
+            <div class="mdl-card__title">
+                <h2 class="mdl-card__title-text" th:text="${extension.name}"></h2>
+            </div>
+            <div class="mdl-card__media">
+                <img th:attr="src=@{${extension.picURI}}" width="95%" border="0" alt="" style="padding:20px;">
+            </div>
+            <div th:text="${extension.description}" class="mdl-card__supporting-text">
+
+            </div>
+            <div class="mdl-card__actions">
+                <a th:href="@{/extension/{id}(id=${extension.id})}">Go to extension </a>
+            </div>
+        </div>
     </div>
     <select id="sortOption">
         <option value="byDownloads">downloads</option>

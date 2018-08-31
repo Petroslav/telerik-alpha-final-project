@@ -70,6 +70,12 @@ public class Extension {
     @JoinColumn(name = "git_info_id")
     private GitHubInfo gitHubInfo;
 
+    @Column(name = "selected")
+    private boolean selected;
+
+    @Column(name = "selection_date")
+    private Date selectionDate;
+
     //TODO fix peasant way of getting githubinfo
 
     public Extension(){
@@ -77,6 +83,7 @@ public class Extension {
         setAddedOn(new Date());
         setApproved(false);
         setTags(new HashSet<>());
+        setSelected(false);
     }
 
     public Extension(
@@ -93,7 +100,9 @@ public class Extension {
             String picURI,
             String dlURI,
             String repoURL,
-            GitHubInfo gitHubInfo
+            GitHubInfo gitHubInfo,
+            boolean selected,
+            Date selectionDate
         ) {
         this.name = name;
         this.description = description;
@@ -109,6 +118,8 @@ public class Extension {
         this.dlURI = dlURI;
         this.repoURL = repoURL;
         this.gitHubInfo = gitHubInfo;
+        this.selected = selected;
+        this.selectionDate = selectionDate;
     }
 
     public long getId() {
@@ -225,6 +236,22 @@ public class Extension {
 
     public GitHubInfo getGitHubInfo() {
         return gitHubInfo;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public Date getSelectionDate() {
+        return selectionDate;
+    }
+
+    public void setSelectionDate(Date selectionDate) {
+        this.selectionDate = selectionDate;
     }
 
     public void setGitHubInfo(GitHubInfo gitHubInfo) {

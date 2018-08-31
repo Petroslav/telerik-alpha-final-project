@@ -19,6 +19,7 @@ public interface ExtensionService {
     Extension getByName(String name);
     User currentUser();
     boolean isUserPublisherOrAdmin(Extension extension);
+    boolean update(Extension extension);
     void createExtension(ExtensionBindingModel extensionBindingModel, BindingResult errors);
     void delete(long id);
     void approveExtensionById(long id);

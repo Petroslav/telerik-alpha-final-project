@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -139,4 +140,28 @@ public class ExtensionController {
 
         return "redirect:"+extension.getDlURI();
     }
+
+    @PostMapping("/feature/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String featureExtension( @PathVariable("id") Integer id) {
+        Extension extension = extensionService.getById(id);
+        extension.setSelected(true);
+        extension.setSelectionDate(new Date());
+        extensionService.update(extension);
+        extensionService.reloadLists();
+
+        return "redirect:/extension/" + id;
+    }
+    @PostMapping("/unFeature/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String unFeatureExtension( @PathVariable("id") Integer id) {
+        Extension extension = extensionService.getById(id);
+        extension.setSelected(false);
+        extensionService.update(extension);
+        extensionService.reloadLists();
+
+        return "redirect:/extension/" + id;
+    }
+
+
 }

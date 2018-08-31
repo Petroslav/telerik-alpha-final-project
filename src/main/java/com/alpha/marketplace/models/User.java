@@ -209,13 +209,13 @@ public class User implements UserDetails {
     }
 
     public void ban(){
-        isAccountNonLocked = false;
+        isEnabled = false;
         extensions.forEach(Extension::forbid);
     }
 
     public void unban(){
         //TODO might have to rethink this in case there were pending extensions before the ban
-        isAccountNonLocked = true;
+        isEnabled = true;
         extensions.forEach(Extension::approve);
     }
 
@@ -240,7 +240,7 @@ public class User implements UserDetails {
 
     @Transient
     public boolean isBanned(){
-        return !isAccountNonLocked;
+        return !isEnabled;
     }
 
     @Override

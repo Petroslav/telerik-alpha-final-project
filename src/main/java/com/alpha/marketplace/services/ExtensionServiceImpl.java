@@ -44,6 +44,7 @@ public class ExtensionServiceImpl implements ExtensionService {
     private List<Extension> latest;
     private List<Extension> mostPopular;
     private List<Extension> unApproved;
+    private List<Extension> selected;
 
     @Autowired
     public ExtensionServiceImpl(
@@ -66,6 +67,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         this.latest = new ArrayList<>();
         this.mostPopular = new ArrayList<>();
         this.unApproved = new ArrayList<>();
+        this.selected = new ArrayList<>();
         this.propertiesRepository = propertiesRepository;
     }
 
@@ -83,8 +85,14 @@ public class ExtensionServiceImpl implements ExtensionService {
 
     @Override
     public List<Extension> getAdminSelection() {
-        //TODO implement admin selection
-        return null;
+        if (selected.isEmpty()) {
+            selected = approved.stream()
+                    .filter(Extension::isSelected)
+                    .sorted(Comparator.comparing(Extension::getSelectionDate).reversed())
+                    .limit(10)
+                    .collect(Collectors.toList());
+        }
+        return selected;
     }
 
     @Override
@@ -158,6 +166,12 @@ public class ExtensionServiceImpl implements ExtensionService {
         }
         User u = currentUser();
         return u.isAdmin() || u.isPublisher(extension);
+    }
+
+    @Override
+    public boolean update(Extension extension) {
+
+        return repository.update(extension);
     }
 
     @Override
