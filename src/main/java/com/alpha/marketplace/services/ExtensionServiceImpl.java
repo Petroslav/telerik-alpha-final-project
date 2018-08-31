@@ -239,11 +239,13 @@ public class ExtensionServiceImpl implements ExtensionService {
         mostPopular.clear();
         latest.clear();
         unApproved.clear();
+        selected.clear();
         all = repository.getAll();
         approved = getAllApproved();
         mostPopular = getMostPopular();
         latest = getLatest();
         unApproved = getUnapproved();
+        selected = getAdminSelection();
         System.out.println("Lists reloaded");
     }
     //TODO add logging for github sync
