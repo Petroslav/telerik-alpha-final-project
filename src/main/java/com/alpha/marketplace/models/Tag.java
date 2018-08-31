@@ -3,6 +3,7 @@ package com.alpha.marketplace.models;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "tags")
@@ -54,5 +55,19 @@ public class Tag {
 
     public void setTaggedExtensions(List<Extension> taggedExtensions) {
         this.taggedExtensions = taggedExtensions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tag tag = (Tag) o;
+        return getId() == tag.getId();
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(getId());
     }
 }
