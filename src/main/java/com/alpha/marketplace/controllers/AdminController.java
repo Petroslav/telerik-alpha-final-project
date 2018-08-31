@@ -61,7 +61,7 @@ public class AdminController {
 
     @PostMapping("/ban/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public String banUser(Model model, @PathVariable("id") long id){
+    public String banUser(@PathVariable("id") long id){
         User gettingBanned = userService.findById(id);
         if(!gettingBanned.isAdmin() || userService.currentUser().isOwner()){
             gettingBanned.ban();

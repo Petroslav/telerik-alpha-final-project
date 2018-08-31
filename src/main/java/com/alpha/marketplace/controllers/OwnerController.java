@@ -26,14 +26,14 @@ public class OwnerController {
 
     @PostMapping("/assignAdmin/{id}")
     @PreAuthorize("hasRole('OWNER')")
-    public String assignRole(Model model, @PathVariable("id") long id){
+    public String assignRole(@PathVariable("id") long id){
         service.addRoleToUser(id, "ROLE_ADMIN");
         return "redirect:/user/"+id;
     }
 
     @PostMapping("/removeAdmin/{id}")
     @PreAuthorize("hasRole('OWNER')")
-    public String removeAdmin(Model model, @PathVariable("id") long id){
+    public String removeAdmin(@PathVariable("id") long id){
         User u = service.findById(id);
         if(!u.isAdmin()){
             return "redirect:/";

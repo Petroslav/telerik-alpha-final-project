@@ -1,8 +1,5 @@
 package com.alpha.marketplace.models;
 
-import com.google.api.client.json.Json;
-import com.google.gson.JsonObject;
-
 import javax.persistence.*;
 import java.util.Date;
 
@@ -16,7 +13,7 @@ public class Properties {
     private short id;
 
     @Column(name = "delay", nullable = false)
-    private String delay;
+    private long delay;
 
     @Column(name = "github_key", nullable = false)
     private String gitHubOAuthKey;
@@ -35,7 +32,7 @@ public class Properties {
 
     public Properties(){}
 
-    public Properties(String delay, String gitHubOAuthKey, Date lastSuccessfulSync, Date lastFailedSync, String failInfo, String credentials) {
+    public Properties(int delay, String gitHubOAuthKey, Date lastSuccessfulSync, Date lastFailedSync, String failInfo, String credentials) {
         this.delay = delay;
         this.gitHubOAuthKey = gitHubOAuthKey;
         this.lastSuccessfulSync = lastSuccessfulSync;
@@ -52,11 +49,11 @@ public class Properties {
         this.id = id;
     }
 
-    public String getDelay() {
+    public long getDelay() {
         return delay;
     }
 
-    public void setDelay(String delay) {
+    public void setDelay(long delay) {
         this.delay = delay;
     }
 

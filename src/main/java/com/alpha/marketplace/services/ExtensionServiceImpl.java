@@ -192,13 +192,16 @@ public class ExtensionServiceImpl implements ExtensionService {
             }
             return;
         }
+        repository.save(extension);
 
-        try {
-            saveExtension(extension, model);
-        } catch (FailedToSyncException e) {
-            errors.addError(new ObjectError("syncFail", "Failed to sync GitHub data"));
-            delete(extension.getId());
-        }
+        new Thread(()->{
+            try {
+                saveExtension(extension, model);
+            } catch (FailedToSyncException e) {
+                errors.addError(new ObjectError("syncFail", "Failed to sync GitHub data"));
+                delete(extension.getId());
+            }
+        }).start();
     }
 
     @Override
@@ -261,7 +264,7 @@ public class ExtensionServiceImpl implements ExtensionService {
             }
         }
         Properties properties = propertiesRepository.get();
-        properties.setDelay(String.valueOf(period));
+        properties.setDelay(period);
         propertiesRepository.update();
         syncManager = new Thread(() -> {
             while(true){
@@ -290,7 +293,7 @@ public class ExtensionServiceImpl implements ExtensionService {
     @PostConstruct
     public void initializeSync(){
         Properties properties = propertiesRepository.get();
-        delay = Long.parseLong(properties.getDelay());
+        delay = properties.getDelay();
         String key  = properties.getGitHubOAuthKey();
         Utils.setKey(key);
         setSync(delay);
@@ -384,7 +387,6 @@ public class ExtensionServiceImpl implements ExtensionService {
     }
 
     private void saveExtension(Extension extension, ExtensionBindingModel model) throws FailedToSyncException {
-        repository.save(extension);
         extension.setGitHubInfo(new GitHubInfo());
         extension.getGitHubInfo().setParent(extension);
         Utils.updateGithubInfo(extension.getGitHubInfo());
