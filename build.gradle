@@ -56,6 +56,10 @@ dependencies {
     // https://mvnrepository.com/artifact/org.thymeleaf.extras/thymeleaf-extras-springsecurity4
     compile group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-springsecurity4', version: '3.0.2.RELEASE'
 
+    // https://mvnrepository.com/artifact/maven/maven-checkstyle-plugin
+    compile group: 'maven', name: 'maven-checkstyle-plugin', version: '3.0.1'
+
+
 
 
 

@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 public class HomeController {
@@ -116,14 +118,14 @@ public class HomeController {
 
     @GetMapping("/search")
     public String search(@RequestParam(value = "criteria", required = false) String criteria, Model model) {
-        List<Extension> matches;
+        Set<Extension> matches;
         boolean isUserSearch = false;
         if (criteria.startsWith("user:")) {
             List<User> matchedUsers = service.searchUsers(criteria.substring(5));
             model.addAttribute("userMatches", matchedUsers);
             isUserSearch = true;
         }else{
-            matches = extensionService.searchExtensions(criteria);
+            matches = new HashSet<>(extensionService.searchExtensions(criteria));
             matches.addAll(extensionService.searchExtensionsByTag(criteria));
             model.addAttribute("matches", matches);
         }

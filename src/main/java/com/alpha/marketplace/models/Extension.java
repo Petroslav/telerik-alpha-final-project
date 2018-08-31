@@ -241,4 +241,17 @@ public class Extension {
         return !isApproved;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Extension extension = (Extension) o;
+        return getId() == extension.getId();
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(getId());
+    }
 }
