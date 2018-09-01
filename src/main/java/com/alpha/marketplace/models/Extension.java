@@ -1,5 +1,6 @@
 package com.alpha.marketplace.models;
 
+import com.fasterxml.jackson.annotation.*;
 import com.google.cloud.storage.BlobId;
 
 import javax.persistence.*;
@@ -20,6 +21,7 @@ public class Extension {
     @Column(name = "description", nullable = false, length = 5000)
     private String description;
 
+    @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User publisher;
@@ -30,9 +32,11 @@ public class Extension {
     @Column(name = "version", nullable = false)
     private String version;
 
+    @JsonIgnore
     @Column(name = "blob_id", columnDefinition = "LONGBLOB")
     private BlobId blobId;
 
+    @JsonBackReference
     @ManyToMany(
             fetch = FetchType.EAGER,
             cascade = {
