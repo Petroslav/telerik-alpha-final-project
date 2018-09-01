@@ -1,5 +1,6 @@
 package com.alpha.marketplace.services;
 
+import com.alpha.marketplace.exceptions.ErrorMessages;
 import com.alpha.marketplace.exceptions.FailedToSyncException;
 import com.alpha.marketplace.models.Extension;
 import com.alpha.marketplace.models.GitHubInfo;
@@ -126,13 +127,13 @@ public class ExtensionServiceImpl implements ExtensionService {
     }
 
     @Override
-    public List<Extension> searchExtensions(String criteria) {
-        return new ArrayList<>(repository.search(criteria));
+    public Set<Extension> searchExtensions(String criteria) {
+        return new HashSet<>(repository.search(criteria));
     }
 
     @Override
-    public List<Extension> searchExtensionsByTag(String criteria) {
-        List<Extension> matches = new ArrayList<>();
+    public Set<Extension> searchExtensionsByTag(String criteria) {
+        Set<Extension> matches = new HashSet<>();
         tagRepository.search(criteria).forEach(tag -> matches.addAll(tag.getTaggedExtensions()));
         return matches;
     }
@@ -179,12 +180,12 @@ public class ExtensionServiceImpl implements ExtensionService {
     public void createExtension(ExtensionBindingModel model, BindingResult errors) {
 
         if(!validateRepoUrl(model.getRepositoryUrl())){
-            errors.addError(new ObjectError("link", "Repository URL is invalid"));
+            errors.addError(new ObjectError("link", ErrorMessages.BAD_REPOSITORY));
             return;
         }
 
         if(model.getFile().isEmpty() || model.getPic().isEmpty()){
-            errors.addError(new ObjectError("noFile", "No file received."));
+            errors.addError(new ObjectError("noFile", ErrorMessages.NO_FILE));
             return;
         }
 
@@ -196,24 +197,21 @@ public class ExtensionServiceImpl implements ExtensionService {
         try {
             storeFiles(extension, model, errors);
         }catch(IOException e){
-            //Could replace this with a log entry
             System.out.println(e.getMessage());
-            //this ^^^^
             if(extension.getBlobId() != null){
                 cloudExtensionRepository.delete(extension.getBlobId());
-                errors.addError(new ObjectError("picProblem", "Failed to upload picture"));
-            }else {
-                errors.addError(new ObjectError("fileProblem", "Failed to upload file"));
             }
+            errors.addError(new ObjectError("file", ErrorMessages.FILE_UPLOAD_FAIL));
             return;
         }
+
         repository.save(extension);
 
         new Thread(()->{
             try {
                 saveExtension(extension, model);
             } catch (FailedToSyncException e) {
-                errors.addError(new ObjectError("syncFail", "Failed to sync GitHub data"));
+                errors.addError(new ObjectError("syncFail", ErrorMessages.GITHUB_SYNC_FAIL));
                 delete(extension.getId());
             }
         }).start();
@@ -380,11 +378,14 @@ public class ExtensionServiceImpl implements ExtensionService {
 
     private void storeFiles(Extension extension, ExtensionBindingModel model,  BindingResult errors) throws IOException {
 
+        //DECLARE VARIABLES AND GET THE FILE EXTENSION
         Blob blob;
         String fileext = model.getFile().getOriginalFilename();
         String picext = model.getPic().getOriginalFilename();
         fileext = fileext.substring(fileext.lastIndexOf("."));
         picext = picext.substring(picext.lastIndexOf("."));
+
+        //CALL SERVICE TO SAVE FILE
         blob = cloudExtensionRepository.saveExtension(
                 String.valueOf(extension.getPublisher().getId()),
                 extension.getName() + fileext,
@@ -393,6 +394,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         );
         extension.setBlobId(blob.getBlobId());
         extension.setDlURI(blob.getMediaLink());
+        //REPEAT FOR PIC
         Blob picBlob = cloudExtensionRepository.saveExtensionPic(
                 String.valueOf(extension.getPublisher().getId()),
                 extension.getName() + picext,

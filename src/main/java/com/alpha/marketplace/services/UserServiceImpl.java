@@ -1,6 +1,7 @@
 package com.alpha.marketplace.services;
 
 import com.alpha.marketplace.exceptions.CannotFetchBytesException;
+import com.alpha.marketplace.exceptions.ErrorMessages;
 import com.alpha.marketplace.models.Role;
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.UserBindingModel;
@@ -29,6 +30,8 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
     private final String VALID_EMAIL_ADDRESS_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9]+.[a-z.]+$";
+    private final String DEFAULT_PIC = "https://storage.cloud.google.com/marketplace-user-pics/new-user.jpg";
+    private final String DEFAULT_ROLE = "ROLE_USER";
 
     private final UserRepository repository;
     private final CloudUserRepository cloudUserRepository;
@@ -64,18 +67,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public User registerUser(UserBindingModel model, BindingResult errors) {
         if(!validateReg(model, errors)) {
-            System.out.println("stuff is shit");
             return null;
         }
         User u = mapper.map(model, User.class);
-        Role role = roleRepository.findByName("ROLE_USER");
-        String encryptedPass = encoder.encode(model.getPass1());
+        Role role = roleRepository.findByName(DEFAULT_ROLE);
+        String encryptedPass = encoder.encode(model.getPass());
         u.setPassword(encryptedPass);
         u.getAuthorities().add(role);
-        u.setPicURI("https://storage.cloud.google.com/marketplace-user-pics/new-user.jpg");
-        if(errors.hasErrors()){
-            return null;
-        }
+        u.setPicURI(DEFAULT_PIC);
         repository.save(u);
         return u;
     }
@@ -188,17 +187,14 @@ public class UserServiceImpl implements UserService {
     private boolean validateReg(UserBindingModel model, BindingResult errors) {
         boolean valid = true;
         if (!validateEmail(model.getEmail())) {
-            errors.addError(new ObjectError("email", "Please input a valid e-mail"));
+            errors.addError(new ObjectError("email", ErrorMessages.INVALID_EMAIL));
             valid = false;
         }
-        if(repository.findByEmail(model.getEmail()) != null){
-            errors.addError(new ObjectError("email", "A user with that e-mail already exists."));
+        if(repository.findByEmail(model.getEmail()) != null || repository.findByUsername(model.getUsername()) != null){
+            errors.addError(new ObjectError("email", ErrorMessages.INVALID_USERNAME_EMAIL));
             valid = false;
         }
-        if(!model.getPass1().equals(model.getPass2())){
-            errors.addError(new ObjectError("passMismatch", "Passwords do not match"));
-            valid = false;
-        }
+
         return valid;
     }
 

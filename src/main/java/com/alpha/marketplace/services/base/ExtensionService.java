@@ -6,6 +6,7 @@ import com.alpha.marketplace.models.binding.ExtensionBindingModel;
 import org.springframework.validation.BindingResult;
 
 import java.util.List;
+import java.util.Set;
 
 public interface ExtensionService {
     List<Extension> getMostPopular();
@@ -13,8 +14,8 @@ public interface ExtensionService {
     List<Extension> getLatest();
     List<Extension> getAllApproved();
     List<Extension> getUnapproved();
-    List<Extension> searchExtensions(String criteria);
-    List<Extension> searchExtensionsByTag(String criteria);
+    Set<Extension> searchExtensions(String criteria);
+    Set<Extension> searchExtensionsByTag(String criteria);
     Extension getById(long id);
     Extension getByName(String name);
     User currentUser();

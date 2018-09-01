@@ -24,10 +24,7 @@ public class UserBindingModel {
 
     @NotEmpty
     @Size(min = 6, max = 16, message = "Password must be between 6 and 16 symbols")
-    private String pass1;
-    @NotEmpty
-    @Size(min = 6, max = 16, message = "Password must be between 6 and 16 symbols")
-    private String pass2;
+    private String pass;
 
     public UserBindingModel(){}
 
@@ -37,15 +34,13 @@ public class UserBindingModel {
             @Size(min = 5, max = 36, message = "Please input an e-mail between 5 and 36 characters.") String email,
             @Size(max = 30, message = "Cannot be more than 30 characters") String firstName,
             @Size(max = 30, message = "Cannot be more than 30 characters") String lastName,
-            @NotEmpty @Size(min = 6, max = 16, message = "Password must be between 6 and 16 symbols") String pass1,
-            @NotEmpty @Size(min = 6, max = 16, message = "Password must be between 6 and 16 symbols") String pass2
+            @NotEmpty @Size(min = 6, max = 16, message = "Password must be between 6 and 16 symbols") String pass
     ) {
         this.username = username;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.pass1 = pass1;
-        this.pass2 = pass2;
+        this.pass = pass;
     }
 
     public String getUsername() {
@@ -80,19 +75,11 @@ public class UserBindingModel {
         this.lastName = lastName;
     }
 
-    public String getPass1() {
-        return pass1;
+    public String getPass() {
+        return pass;
     }
 
-    public void setPass1(String pass1) {
-        this.pass1 = pass1;
-    }
-
-    public String getPass2() {
-        return pass2;
-    }
-
-    public void setPass2(String pass2) {
-        this.pass2 = pass2;
+    public void setPass(String pass) {
+        this.pass = pass;
     }
 }
