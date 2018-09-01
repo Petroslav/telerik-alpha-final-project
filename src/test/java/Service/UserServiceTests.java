@@ -1,4 +1,4 @@
-package com.alpha.marketplace.ServiceTests;
+package Service;
 
 import com.alpha.marketplace.models.Role;
 import com.alpha.marketplace.models.User;
