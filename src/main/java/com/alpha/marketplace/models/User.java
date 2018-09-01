@@ -64,6 +64,7 @@ public class User implements UserDetails {
     )
     private Set<Role> authorities;
 
+    //asdasd
     @JsonIgnore
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "publisher")
     private List<Extension> extensions;
