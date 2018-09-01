@@ -41,25 +41,25 @@ public class HomeController {
         List<Extension> selectedByAdmin = extensionService.getAdminSelection();
         List<Extension> mostPopular = extensionService.getMostPopular();
 
-        if(sort!=null) {
+        if (sort != null) {
             switch (sort) {
 
                 case "byLastCommit":
-                    newestExtensions.sort(Comparator.comparing(extension -> extension.getGitHubInfo().getLastCommit()));
-//                    selectedByAdmin.sort(Comparator.comparing(extension -> extension.getGitHubInfo().getLastCommit()));
-                    mostPopular.sort(Comparator.comparing(extension -> extension.getGitHubInfo().getLastCommit()));
+                    newestExtensions.sort((e1, e2) -> e2.getGitHubInfo().getLastCommit().compareTo(e1.getGitHubInfo().getLastCommit()));
+                    selectedByAdmin.sort((e1, e2) -> e2.getGitHubInfo().getLastCommit().compareTo(e1.getGitHubInfo().getLastCommit()));
+                    mostPopular.sort((e1, e2) -> e2.getGitHubInfo().getLastCommit().compareTo(e1.getGitHubInfo().getLastCommit()));
                     break;
 
                 case "byUploadDate":
-                    newestExtensions.sort(Comparator.comparing(Extension::getAddedOn));
-//                    selectedByAdmin.sort(Comparator.comparing(Extension::getAddedOn));
-                    mostPopular.sort(Comparator.comparing(Extension::getAddedOn));
+                    newestExtensions.sort((e1, e2) -> e2.getAddedOn().compareTo(e1.getAddedOn()));
+                    selectedByAdmin.sort((e1, e2) -> e2.getAddedOn().compareTo(e1.getAddedOn()));
+                    mostPopular.sort((e1, e2) -> e2.getAddedOn().compareTo(e1.getAddedOn()));
                     break;
 
                 case "byDownloads":
-                    newestExtensions.sort(Comparator.comparing(Extension::getDownloads));
-//                    selectedByAdmin.sort(Comparator.comparing(Extension::getDownloads));
-                    mostPopular.sort(Comparator.comparing(Extension::getDownloads));
+                    newestExtensions.sort((e1, e2) -> e2.getDownloads() - e1.getDownloads() == 0 ? e1.getName().compareTo(e2.getName()) : e2.getDownloads() - e1.getDownloads());
+                    selectedByAdmin.sort((e1, e2) -> e2.getDownloads() - e1.getDownloads() == 0 ? e1.getName().compareTo(e2.getName()) : e2.getDownloads() - e1.getDownloads());
+                    mostPopular.sort((e1, e2) -> e2.getDownloads() - e1.getDownloads() == 0 ? e1.getName().compareTo(e2.getName()) : e2.getDownloads() - e1.getDownloads());
                     break;
                 default:
                     break;
@@ -86,7 +86,7 @@ public class HomeController {
     }
 
     @PostMapping("/register")
-    public String regUser(@Valid @ModelAttribute UserBindingModel user, BindingResult errors, Model model){
+    public String regUser(@Valid @ModelAttribute UserBindingModel user, BindingResult errors, Model model) {
         service.registerUser(user, errors);
         if (errors.hasErrors()) {
             model.addAttribute("view", "register");
@@ -101,7 +101,7 @@ public class HomeController {
         if (!Utils.userIsAnonymous()) {
             return "redirect:/";
         }
-        if(error != null){
+        if (error != null) {
             model.addAttribute("error", ErrorMessages.INVALID_CREDENTIALS);
         }
         model.addAttribute("view", "login");
@@ -124,7 +124,7 @@ public class HomeController {
             List<User> matchedUsers = service.searchUsers(criteria.substring(5));
             model.addAttribute("userMatches", matchedUsers);
             isUserSearch = true;
-        }else{
+        } else {
             matches = new HashSet<>(extensionService.searchExtensions(criteria));
             matches.addAll(extensionService.searchExtensionsByTag(criteria));
             model.addAttribute("matches", matches);
