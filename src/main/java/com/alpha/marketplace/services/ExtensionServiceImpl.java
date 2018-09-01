@@ -36,9 +36,9 @@ public class ExtensionServiceImpl implements ExtensionService {
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     private final CloudExtensionRepository cloudExtensionRepository;
-    private final ModelMapper mapper;
     private final GitHubRepository gitHubRepository;
     private final PropertiesRepository propertiesRepository;
+    private final ModelMapper mapper;
 
     private List<Extension> all;
     private List<Extension> approved;

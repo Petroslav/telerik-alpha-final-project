@@ -31,10 +31,7 @@ public class ExtensionRestController {
 
     @RequestMapping(value = "/approved", method = RequestMethod.GET)
     public Set<Extension> getAllApproved() {
-
-        Set<Extension> set = new HashSet<>(extensionService.getAllApproved());
-        System.out.println("I WEIGH THIS MUCH: " + set.size());
-        return set;
+        return new HashSet<>(extensionService.getAllApproved());
     }
 
     @RequestMapping(value = "/mostPopular", method = RequestMethod.GET)

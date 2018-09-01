@@ -1,13 +1,14 @@
 package com.alpha.marketplace.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.alpha.marketplace.models.dtos.ExtensionDTO;
+import com.fasterxml.jackson.annotation.*;
 import com.google.cloud.storage.BlobId;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users" )
@@ -63,7 +64,7 @@ public class User implements UserDetails {
     )
     private Set<Role> authorities;
 
-    @JsonManagedReference
+    @JsonIgnore
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "publisher")
     private List<Extension> extensions;
 
@@ -182,12 +183,28 @@ public class User implements UserDetails {
         this.authorities = authorities;
     }
 
+    @JsonIgnore
     public List<Extension> getExtensions() {
         return extensions;
     }
 
+    @JsonIdentityReference
     public void setExtensions(List<Extension> extensions) {
         this.extensions = extensions;
+    }
+
+    @JsonProperty("extensions")
+    public Set<ExtensionDTO> getExtensionsDTO(){
+            return getExtensions().stream()
+                    .map(e -> new ExtensionDTO(
+                            e.getId(), e.getName(),
+                            e.getDescription(),
+                            e.getDownloads(),
+                            e.getDlURI(),
+                            e.getTags(),
+                            e.getAddedOn(),
+                            e.getGitHubInfo()))
+                    .collect(Collectors.toSet());
     }
 
     @Override

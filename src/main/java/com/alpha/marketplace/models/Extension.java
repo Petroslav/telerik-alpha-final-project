@@ -1,5 +1,7 @@
 package com.alpha.marketplace.models;
 
+import com.alpha.marketplace.models.dtos.ExtensionDTO;
+import com.alpha.marketplace.models.dtos.UserDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -8,6 +10,7 @@ import com.google.cloud.storage.BlobId;
 
 import javax.persistence.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "extensions")
@@ -77,7 +80,7 @@ public class Extension {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    @JsonIgnore
+
     @JoinColumn(name = "git_info_id")
     private GitHubInfo gitHubInfo;
 
@@ -86,8 +89,6 @@ public class Extension {
 
     @Column(name = "selection_date")
     private Date selectionDate;
-
-    //TODO fix peasant way of getting githubinfo
 
     public Extension(){
         setDownloads(0);
@@ -159,13 +160,13 @@ public class Extension {
         this.description = description;
     }
 
-
     public User getPublisher() {
         return publisher;
     }
+
     @JsonProperty("publisher")
-    public String getPublisherUserName(){
-        return publisher.getUsername();
+    public UserDTO getPublisherUserName(){
+        return new UserDTO(publisher.getId(), publisher.getUsername(), publisher.getFirstName(), publisher.getLastName());
     }
 
     @JsonIdentityReference

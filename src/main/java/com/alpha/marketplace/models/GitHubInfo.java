@@ -1,5 +1,7 @@
 package com.alpha.marketplace.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,6 +15,7 @@ public class GitHubInfo {
     @Column(name = "id")
     private long id;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "gitHubInfo")
     private Extension parent;
 
