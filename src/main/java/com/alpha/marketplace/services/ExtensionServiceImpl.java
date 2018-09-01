@@ -10,6 +10,7 @@ import com.alpha.marketplace.models.binding.ExtensionBindingModel;
 import com.alpha.marketplace.repositories.base.*;
 import com.alpha.marketplace.services.base.ExtensionService;
 import com.alpha.marketplace.utils.Utils;
+import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -379,27 +380,27 @@ public class ExtensionServiceImpl implements ExtensionService {
 
     private void storeFiles(Extension extension, ExtensionBindingModel model,  BindingResult errors) throws IOException {
 
-        BlobId blobid;
+        Blob blob;
         String fileext = model.getFile().getOriginalFilename();
         String picext = model.getPic().getOriginalFilename();
         fileext = fileext.substring(fileext.lastIndexOf("."));
         picext = picext.substring(picext.lastIndexOf("."));
-        blobid = cloudExtensionRepository.saveExtension(
+        blob = cloudExtensionRepository.saveExtension(
                 String.valueOf(extension.getPublisher().getId()),
                 extension.getName() + fileext,
                 model.getFile().getContentType(),
                 model.getFile().getBytes()
         );
-        extension.setBlobId(blobid);
-        extension.setDlURI(cloudExtensionRepository.getEXTENSION_URL_PREFIX() + blobid.getName());
-        extension.setBlobId(blobid);
-        String picURI = cloudExtensionRepository.saveExtensionPic(
+        extension.setBlobId(blob.getBlobId());
+        extension.setDlURI(blob.getMediaLink());
+        Blob picBlob = cloudExtensionRepository.saveExtensionPic(
                 String.valueOf(extension.getPublisher().getId()),
                 extension.getName() + picext,
                 model.getPic().getContentType(),
                 model.getPic().getBytes()
         );
-        extension.setPicURI(picURI);
+        extension.setPicBlobId(picBlob.getBlobId());
+        extension.setPicURI(picBlob.getMediaLink());
     }
 
     private void saveExtension(Extension extension, ExtensionBindingModel model) throws FailedToSyncException {

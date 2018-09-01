@@ -1,6 +1,7 @@
 package com.alpha.marketplace.repositories;
 
 import com.alpha.marketplace.exceptions.CannotFetchBytesException;
+import com.alpha.marketplace.models.Extension;
 import com.alpha.marketplace.repositories.base.CloudExtensionRepository;
 import com.alpha.marketplace.utils.Utils;
 import com.google.cloud.storage.*;
@@ -16,9 +17,6 @@ public class CloudExtensionRepositoryImpl implements CloudExtensionRepository {
 
     private final Storage storage;
 
-    private final String EXTENSION_URL_PREFIX = "https://storage.googleapis.com/marketplace-extensions/";
-    private final String EXTENSION_PIC_URL_PREFIX = "https://storage.googleapis.com/marketplace-extension-pics/";
-
     private final Bucket extensionBucket;
     private final Bucket extensionPicBucket;
 
@@ -29,14 +27,16 @@ public class CloudExtensionRepositoryImpl implements CloudExtensionRepository {
         this.extensionPicBucket = storage.get("marketplace-extension-pics");
     }
 
-    public BlobId saveExtension(String userId, String extensionName, String contentType, byte[] bytes){
+    @Override
+    public Blob saveExtension(String userId, String extensionName, String contentType, byte[] bytes){
         String name = userId + "-" + extensionName;
         Blob blob = extensionBucket.create(name, bytes, contentType);
-        return blob.getBlobId();
+        System.out.println(blob.getMediaLink());
+        return blob;
     }
 
     @Override
-    public BlobId saveExtensionFromUrl(String userId, String extensionName, String urlString) throws CannotFetchBytesException {
+    public Blob saveExtensionFromUrl(String userId, String extensionName, String urlString) throws CannotFetchBytesException {
         String name = userId + "-" + extensionName;
         byte[] bytes = Utils.getBytesFromUrl(urlString);
         String contentType = Utils.getContentTypeFromUrl(urlString);
@@ -45,13 +45,11 @@ public class CloudExtensionRepositoryImpl implements CloudExtensionRepository {
             throw new CannotFetchBytesException("Unable to save URL");
         }
 
-        Blob blob = extensionBucket.create(name, bytes, contentType);
-
-        return blob.getBlobId();
+        return extensionBucket.create(name, bytes, contentType);
     }
 
     @Override
-    public BlobId updateExtension(BlobId blobId, String userId, String extensionName, String contentType, byte[] bytes){
+    public Blob updateExtension(BlobId blobId, String userId, String extensionName, String contentType, byte[] bytes){
         Blob blob = storage.get(blobId);
         try{
             blob.writer().write(ByteBuffer.wrap(bytes));
@@ -59,7 +57,7 @@ public class CloudExtensionRepositoryImpl implements CloudExtensionRepository {
             System.out.println("Could not locate file, no changes made");
             e.printStackTrace();
         }
-        return blob.getBlobId();
+        return blob;
     }
 
     @Override
@@ -68,30 +66,19 @@ public class CloudExtensionRepositoryImpl implements CloudExtensionRepository {
     }
 
     @Override
-    public String saveExtensionPic(String userId, String extensionName, String contentType, byte[] bytes){
+    public Blob saveExtensionPic(String userId, String extensionName, String contentType, byte[] bytes){
         String name = userId + "-" + extensionName;
-        Blob blob = extensionPicBucket.create(name, bytes, contentType);
-        return EXTENSION_PIC_URL_PREFIX + blob.getName();
+        return extensionPicBucket.create(name, bytes, contentType);
     }
 
     @Override
-    public String saveExtensionPicFromUrl(String userId, String extensionName, String urlString) throws CannotFetchBytesException {
+    public Blob saveExtensionPicFromUrl(String userId, String extensionName, String urlString) throws CannotFetchBytesException {
         byte[] bytes = Utils.getBytesFromUrl(urlString);
         String contentType = Utils.getContentTypeFromUrl(urlString);
         if(bytes == null || contentType == null){
             throw new CannotFetchBytesException("Unable to save URL");
         }
         return saveExtensionPic(userId, extensionName, contentType, bytes);
-    }
-
-    @Override
-    public String getEXTENSION_URL_PREFIX() {
-        return EXTENSION_URL_PREFIX;
-    }
-
-    @Override
-    public String getEXTENSION_PIC_URL_PREFIX() {
-        return EXTENSION_PIC_URL_PREFIX;
     }
 
 }

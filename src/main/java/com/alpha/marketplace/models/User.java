@@ -1,8 +1,6 @@
 package com.alpha.marketplace.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.google.cloud.storage.BlobId;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
@@ -18,33 +16,30 @@ public class User implements UserDetails {
     @Column(name = "user_id")
     private long id;
 
-    @JsonIgnore
     @Column(name = "expired")
     private boolean isAccountNonExpired;
 
-    @JsonIgnore
     @Column(name = "locked")
     private boolean isAccountNonLocked;
 
-    @JsonIgnore
     @Column(name = "credentials_expired")
     private boolean isCredentialsNonExpired;
 
-    @JsonIgnore
     @Column(name = "enabled")
     private boolean isEnabled;
 
     @Column(name = "username", nullable = false, unique = true)
     private String username;
 
-    @JsonIgnore
     @Column(name = "password", nullable = false, length = 1000)
     private String password;
 
-    @JsonIgnore
     @Column(name = "email", nullable = false, unique = true)
     @Email
     private String email;
+
+    @Column(name = "pic_blob_id")
+    private BlobId picBlobId;
 
     @Column(name = "pic", nullable = false)
     private String picURI;
@@ -55,7 +50,6 @@ public class User implements UserDetails {
     @Column(name = "last_name")
     private String lastName;
 
-    @JsonIgnore
     @ManyToMany( fetch = FetchType.EAGER,
             cascade = {
             CascadeType.PERSIST,
@@ -67,7 +61,6 @@ public class User implements UserDetails {
     )
     private Set<Role> authorities;
 
-    @JsonBackReference
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "publisher")
     private List<Extension> extensions;
 
@@ -88,6 +81,7 @@ public class User implements UserDetails {
             boolean isEnabled, String username,
             String password,
             String email,
+            BlobId picBlobId,
             String picURI,
             String firstName,
             String lastName,
@@ -101,6 +95,7 @@ public class User implements UserDetails {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.picBlobId = picBlobId;
         this.picURI = picURI;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -146,6 +141,14 @@ public class User implements UserDetails {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public BlobId getPicBlobId() {
+        return picBlobId;
+    }
+
+    public void setPicBlobId(BlobId picBlobId) {
+        this.picBlobId = picBlobId;
     }
 
     public String getPicURI() {
