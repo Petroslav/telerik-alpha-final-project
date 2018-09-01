@@ -7,10 +7,12 @@ import com.google.cloud.storage.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
 @Repository
 public class CloudUserRepositoryImpl implements CloudUserRepository {
     private final String FILE_NAME_PREFIX = "user-";
-    private final String PROFILE_PICS_URL_PREFIX = "https://storage.googleapis.com/marketplace-user-pics/";
 
     private final Storage storage;
     private final Bucket profileBucket;
@@ -22,29 +24,32 @@ public class CloudUserRepositoryImpl implements CloudUserRepository {
     }
 
     @Override
-    public String saveUserPic(String userId, byte[] bytes, String contentType){
+    public Blob saveUserPic(String userId, byte[] bytes, String contentType){
         String blobName = FILE_NAME_PREFIX + userId;
-        String blobPath = PROFILE_PICS_URL_PREFIX + blobName;
-        profileBucket.create(blobName, bytes, contentType);
-        return blobPath;
+        return profileBucket.create(blobName, bytes, contentType);
     }
 
     @Override
-    public String saveUserPicFromUrl(String userId, String urlString) throws CannotFetchBytesException {
+    public Blob saveUserPicFromUrl(String userId, String urlString) throws CannotFetchBytesException {
         String blobName = FILE_NAME_PREFIX + userId;
-        String blobPath = PROFILE_PICS_URL_PREFIX + blobName;
         byte[] bytes = Utils.getBytesFromUrl(urlString);
         String contentType = Utils.getContentTypeFromUrl(urlString);
         if(bytes == null || contentType == null) {
             throw new CannotFetchBytesException("Could not save from URL");
         }
-        profileBucket.create(blobName, bytes, contentType);
 
-        return blobPath;
+        return profileBucket.create(blobName, bytes, contentType);
     }
 
     @Override
-    public String getPROFILE_PICS_URL_PREFIX() {
-        return PROFILE_PICS_URL_PREFIX;
+    public Blob updateUserPic(BlobId blobId, byte[] bytes){
+        Blob blob = storage.get(blobId);
+        try{
+            blob.writer().write(ByteBuffer.wrap(bytes));
+        }catch(IOException e){
+            System.out.println("Could not locate file, no changes made");
+            e.printStackTrace();
+        }
+        return blob;
     }
 }

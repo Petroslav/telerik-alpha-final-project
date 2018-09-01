@@ -1,10 +1,12 @@
 package com.alpha.marketplace.repositories.base;
 
 import com.alpha.marketplace.exceptions.CannotFetchBytesException;
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
 
 public interface CloudUserRepository {
 
-    String saveUserPic(String userId, byte[] bytes, String contentType);
-    String saveUserPicFromUrl(String userId, String url) throws CannotFetchBytesException;
-    String getPROFILE_PICS_URL_PREFIX();
+    Blob saveUserPic(String userId, byte[] bytes, String contentType);
+    Blob saveUserPicFromUrl(String userId, String url) throws CannotFetchBytesException;
+    Blob updateUserPic(BlobId blobId, byte[] bytes);
 }

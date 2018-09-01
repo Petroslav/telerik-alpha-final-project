@@ -33,6 +33,9 @@ public class Extension {
     @Column(name = "blob_id", columnDefinition = "LONGBLOB")
     private BlobId blobId;
 
+    @Column(name = "pic_blob_id", columnDefinition = "LONGBLOB")
+    private BlobId picBlobId;
+
     @ManyToMany(
             fetch = FetchType.EAGER,
             cascade = {
@@ -93,6 +96,7 @@ public class Extension {
             int downloads,
             String version,
             BlobId blobId,
+            BlobId picBlobId,
             Set<Tag> tags,
             Date addedOn,
             Date latestUpdate,
@@ -110,6 +114,7 @@ public class Extension {
         this.downloads = downloads;
         this.version = version;
         this.blobId = blobId;
+        this.picBlobId = picBlobId;
         this.tags = tags;
         this.addedOn = addedOn;
         this.latestUpdate = latestUpdate;
@@ -176,6 +181,14 @@ public class Extension {
 
     public void setBlobId(BlobId blobId) {
         this.blobId = blobId;
+    }
+
+    public BlobId getPicBlobId() {
+        return picBlobId;
+    }
+
+    public void setPicBlobId(BlobId picBlobId) {
+        this.picBlobId = picBlobId;
     }
 
     public Date getAddedOn() {

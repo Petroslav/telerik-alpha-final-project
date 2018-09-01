@@ -10,6 +10,7 @@ import com.alpha.marketplace.repositories.base.UserRepository;
 import com.alpha.marketplace.repositories.base.CloudUserRepository;
 import com.alpha.marketplace.services.base.UserService;
 import com.alpha.marketplace.utils.Utils;
+import com.google.cloud.storage.Blob;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -71,7 +72,7 @@ public class UserServiceImpl implements UserService {
         String encryptedPass = encoder.encode(model.getPass1());
         u.setPassword(encryptedPass);
         u.getAuthorities().add(role);
-        u.setPicURI(cloudUserRepository.getPROFILE_PICS_URL_PREFIX() + "new-user");
+        u.setPicURI("https://storage.cloud.google.com/marketplace-user-pics/new-user.jpg");
         if(errors.hasErrors()){
             return null;
         }
@@ -116,24 +117,26 @@ public class UserServiceImpl implements UserService {
             System.out.println(e.getMessage());
             return false;
         }
-        String picURI = cloudUserRepository.saveUserPic(String.valueOf(u.getId()), bytes, file.getContentType());
-        if(picURI == null){
+        Blob blob = cloudUserRepository.saveUserPic(String.valueOf(u.getId()), bytes, file.getContentType());
+        if(blob == null){
             return false;
         }
-        u.setPicURI(picURI);
+        u.setPicBlobId(blob.getBlobId());
+        u.setPicURI(blob.getMediaLink());
         return true;
     }
 
     @Override
     public boolean editUserPic(User u, String urlString) {
-        String picURI;
+        Blob b;
         try{
-            picURI = cloudUserRepository.saveUserPicFromUrl(String.valueOf(u.getId()), urlString);
+            b = cloudUserRepository.saveUserPicFromUrl(String.valueOf(u.getId()), urlString);
         }catch(CannotFetchBytesException e){
             System.out.println(e.getMessage());
             return false;
         }
-        u.setPicURI(picURI);
+        u.setPicBlobId(b.getBlobId());
+        u.setPicURI(b.getMediaLink());
         return true;
     }
 

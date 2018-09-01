@@ -1,5 +1,6 @@
 package com.alpha.marketplace.models;
 
+import com.google.cloud.storage.BlobId;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
@@ -36,6 +37,9 @@ public class User implements UserDetails {
     @Column(name = "email", nullable = false, unique = true)
     @Email
     private String email;
+
+    @Column(name = "pic_blob_id")
+    private BlobId picBlobId;
 
     @Column(name = "pic", nullable = false)
     private String picURI;
@@ -77,6 +81,7 @@ public class User implements UserDetails {
             boolean isEnabled, String username,
             String password,
             String email,
+            BlobId picBlobId,
             String picURI,
             String firstName,
             String lastName,
@@ -90,6 +95,7 @@ public class User implements UserDetails {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.picBlobId = picBlobId;
         this.picURI = picURI;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -135,6 +141,14 @@ public class User implements UserDetails {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public BlobId getPicBlobId() {
+        return picBlobId;
+    }
+
+    public void setPicBlobId(BlobId picBlobId) {
+        this.picBlobId = picBlobId;
     }
 
     public String getPicURI() {
