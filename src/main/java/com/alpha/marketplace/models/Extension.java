@@ -1,5 +1,9 @@
 package com.alpha.marketplace.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.cloud.storage.BlobId;
 
 import javax.persistence.*;
@@ -22,6 +26,7 @@ public class Extension {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User publisher;
 
     @Column(name = "downloads", nullable = false)
@@ -30,12 +35,15 @@ public class Extension {
     @Column(name = "version", nullable = false)
     private String version;
 
+    @JsonIgnore
     @Column(name = "blob_id", columnDefinition = "LONGBLOB")
     private BlobId blobId;
 
+    @JsonIgnore
     @Column(name = "pic_blob_id", columnDefinition = "LONGBLOB")
     private BlobId picBlobId;
 
+    @JsonIgnore
     @ManyToMany(
             fetch = FetchType.EAGER,
             cascade = {
@@ -70,6 +78,7 @@ public class Extension {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+    @JsonIgnore
     @JoinColumn(name = "git_info_id")
     private GitHubInfo gitHubInfo;
 
@@ -151,10 +160,16 @@ public class Extension {
         this.description = description;
     }
 
+
     public User getPublisher() {
         return publisher;
     }
+    @JsonProperty("publisher")
+    public String getPublisherUserName(){
+        return publisher.getUsername();
+    }
 
+    @JsonIdentityReference
     public void setPublisher(User publisher) {
         this.publisher = publisher;
     }
