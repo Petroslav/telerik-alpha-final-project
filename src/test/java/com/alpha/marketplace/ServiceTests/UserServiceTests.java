@@ -72,14 +72,14 @@ public class UserServiceTests {
     }
 
     @Test
-    public void userServiceRegistrationSuccess() {
+    public void userServiceRegistrationSuccessByEmail() {
         UserBindingModel reg = new UserBindingModel("user", EMAIL_AVAILABLE, "FirstoNaimo", "LastoNaimo", "1234567" );
         User success = userService.registerUser(reg, errors);
         Assert.assertThat(success, samePropertyValuesAs(expected));
     }
 
     @Test
-    public void userServiceRegistrationFail(){
+    public void userServiceRegistrationFailByEmail(){
         UserBindingModel reg = new UserBindingModel("user", EMAIL_EXISTS, "FirstoNaimo", "LastoNaimo", "1234567" );
 
         User success = userService.registerUser(reg, errors);
