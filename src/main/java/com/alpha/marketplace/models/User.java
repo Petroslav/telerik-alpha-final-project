@@ -1,6 +1,7 @@
 package com.alpha.marketplace.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.google.cloud.storage.BlobId;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -62,7 +63,7 @@ public class User implements UserDetails {
     )
     private Set<Role> authorities;
 
-    @JsonBackReference
+    @JsonManagedReference
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "publisher")
     private List<Extension> extensions;
 
