@@ -43,7 +43,6 @@ public class Extension {
     @Column(name = "pic_blob_id", columnDefinition = "LONGBLOB")
     private BlobId picBlobId;
 
-    @JsonIgnore
     @ManyToMany(
             fetch = FetchType.EAGER,
             cascade = {

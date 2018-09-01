@@ -1,5 +1,7 @@
 package com.alpha.marketplace.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,7 @@ public class Tag {
     @Column(name = "tag_name", unique = true)
     private String name;
 
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER,
             mappedBy = "tags")
     private List<Extension> taggedExtensions;
