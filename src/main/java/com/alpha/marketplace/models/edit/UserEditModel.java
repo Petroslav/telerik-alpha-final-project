@@ -6,14 +6,12 @@ public class UserEditModel {
     private String lastName;
     private String oldPass;
     private String newPass;
-    private String newPassConfirm;
 
-    public UserEditModel(String firstName, String lastName, String oldPass, String newPass, String newPassConfirm) {
+    public UserEditModel(String firstName, String lastName, String oldPass, String newPass) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.oldPass = oldPass;
         this.newPass = newPass;
-        this.newPassConfirm = newPassConfirm;
     }
 
     public String getFirstName() {   return firstName;
@@ -45,13 +43,5 @@ public class UserEditModel {
 
     public void setNewPass(String newPass) {
         this.newPass = newPass;
-    }
-
-    public String getNewPassConfirm() {
-        return newPassConfirm;
-    }
-
-    public void setNewPassConfirm(String newPassConfirm) {
-        this.newPassConfirm = newPassConfirm;
     }
 }

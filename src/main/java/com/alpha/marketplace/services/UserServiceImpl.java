@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
         u.setFirstName(edit.getFirstName());
         u.setLastName(edit.getLastName());
         if(!edit.getOldPass().isEmpty()){
-            if(!encoder.matches(edit.getOldPass(), u.getPassword()) ||!edit.getNewPass().equals(edit.getNewPassConfirm())){
+            if(!encoder.matches(edit.getOldPass(), u.getPassword())){
                 return false;
             }
             u.setPassword(encoder.encode(edit.getNewPass()));
@@ -188,6 +188,9 @@ public class UserServiceImpl implements UserService {
         boolean valid = true;
         if (!validateEmail(model.getEmail())) {
             errors.addError(new ObjectError("email", ErrorMessages.INVALID_EMAIL));
+            valid = false;
+        }
+        if(model.getPass().length() < 6 || model.getPass().length() > 16){
             valid = false;
         }
         if(repository.findByEmail(model.getEmail()) != null || repository.findByUsername(model.getUsername()) != null){

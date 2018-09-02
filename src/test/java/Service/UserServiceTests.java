@@ -3,6 +3,7 @@ package Service;
 import com.alpha.marketplace.models.Role;
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.UserBindingModel;
+import com.alpha.marketplace.models.edit.UserEditModel;
 import com.alpha.marketplace.repositories.base.CloudUserRepository;
 import com.alpha.marketplace.repositories.base.RoleRepository;
 import com.alpha.marketplace.repositories.base.UserRepository;
@@ -19,6 +20,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
 
 import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs;
 import static org.mockito.ArgumentMatchers.any;
@@ -46,24 +48,41 @@ public class UserServiceTests {
     @Mock
     private BCryptPasswordEncoder encoder;
 
+    @Mock
+    private MultipartFile file;
+
     private final String EMAIL_EXISTS = "troqta@gmail.com";
     private final String EMAIL_AVAILABLE = "notpresent@present.present";
+    private final String USERNAME_EXISTS = "exists";
+    private final String USERNAME_AVAILABLE = "available";
+    private final String PASS_OLD = "1234567";
+    private final String PASS_NEW = "1111111";
 
     private UserService userService;
     private User expected = null;
 
     @Before
     public void setup(){
-        expected = UserSetUp.setupUser("user","FirstoNaimo", "LastoNaimo", EMAIL_EXISTS, "1234567");
+        expected = UserSetUp.setupUser(USERNAME_EXISTS,"FirstoNaimo", "LastoNaimo", EMAIL_EXISTS, PASS_OLD);
         when(userRepository.save(any(User.class)))
                 .thenReturn(true);
 
         when(userRepository.findByEmail(EMAIL_EXISTS))
                 .thenReturn(expected);
+        when(userRepository.update(any(User.class)))
+                .thenReturn(true);
         when(userRepository.findByEmail(EMAIL_AVAILABLE))
                 .thenReturn(null);
-        when(encoder.encode(anyString()))
-                .thenReturn("encryptedPass");
+        when(userRepository.findByUsername(USERNAME_EXISTS))
+                .thenReturn(expected);
+        when(userRepository.findByUsername(USERNAME_AVAILABLE))
+                .thenReturn(null);
+        when(encoder.encode(PASS_OLD))
+                .thenReturn("encryptedOldPass");
+        when(encoder.encode(PASS_NEW))
+                .thenReturn("encryptedNewPass");
+        when(encoder.matches(PASS_OLD, PASS_OLD))
+                .thenReturn(true);
         when(mapper.map(any(UserBindingModel.class), eq(User.class)))
                 .thenReturn(expected);
         when(roleRepository.findByName(anyString()))
@@ -74,17 +93,55 @@ public class UserServiceTests {
 
     @Test
     public void userServiceRegistrationSuccessByEmail() {
-        UserBindingModel reg = new UserBindingModel("user", EMAIL_AVAILABLE, "FirstoNaimo", "LastoNaimo", "1234567" );
+        UserBindingModel reg = new UserBindingModel(USERNAME_AVAILABLE, EMAIL_AVAILABLE, "FirstoNaimo", "LastoNaimo", PASS_OLD);
         User success = userService.registerUser(reg, errors);
         Assert.assertThat(success, samePropertyValuesAs(expected));
     }
 
     @Test
     public void userServiceRegistrationFailByEmail(){
-        UserBindingModel reg = new UserBindingModel("user", EMAIL_EXISTS, "FirstoNaimo", "LastoNaimo", "1234567" );
+        UserBindingModel reg = new UserBindingModel("user", EMAIL_EXISTS, "FirstoNaimo", "LastoNaimo", PASS_OLD );
 
         User success = userService.registerUser(reg, errors);
         Assert.assertNull(success);
 
+    }
+
+    @Test
+    public void userServiceRegistrationFailPassword(){
+        UserBindingModel reg = new UserBindingModel("user", EMAIL_AVAILABLE, "FirstoNaimo", "LastoNaimo", "123" );
+        User success = userService.registerUser(reg, errors);
+        Assert.assertNull(success);
+    }
+
+
+    @Test
+    public void userServiceRegistrationSuccessPassword(){
+        UserBindingModel reg = new UserBindingModel("user", EMAIL_AVAILABLE, "FirstoNaimo", "LastoNaimo", PASS_OLD);
+        User success = userService.registerUser(reg, errors);
+        Assert.assertNotNull(success);
+    }
+
+    @Test
+    public void userServiceRegisterSuccessUsername(){
+        UserBindingModel reg = new UserBindingModel(USERNAME_AVAILABLE, EMAIL_AVAILABLE, "FirstoNaimo", "LastoNaimo", PASS_OLD);
+        User success = userService.registerUser(reg, errors);
+        Assert.assertNotNull(success);
+
+    }
+
+    @Test
+    public void userServiceRegisterFAILUsername(){
+        UserBindingModel reg = new UserBindingModel(USERNAME_EXISTS, EMAIL_AVAILABLE, "FirstoNaimo", "LastoNaimo", PASS_OLD);
+        User success = userService.registerUser(reg, errors);
+        Assert.assertNull(success);
+
+    }
+
+    @Test
+    public void userServiceEditUserOldPasswordMatchSuccess(){
+        UserEditModel sad = new UserEditModel("ekler", "lastEkler", PASS_OLD, PASS_NEW);
+        boolean kek = userService.editUser(expected, sad);
+        Assert.assertTrue(kek);
     }
 }
