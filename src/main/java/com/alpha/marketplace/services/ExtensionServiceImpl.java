@@ -314,6 +314,28 @@ public class ExtensionServiceImpl implements ExtensionService {
         System.out.println("number of downloads: "+extension.getDownloads());
     }
 
+    @Override
+    public void setFeatured(long id) {
+        Extension extension = getById(id);
+        if(extension.isSelected()){
+            return;
+        }
+        extension.setSelected(true);
+        extension.setSelectionDate(new Date());
+        update(extension);
+    }
+
+    @Override
+    public void removeFeatured(long id) {
+        Extension extension = getById(id);
+        if(!extension.isSelected()){
+            return;
+        }
+        extension.setSelected(false);
+        update(extension);
+
+    }
+
     @PostConstruct
     public void initializeSync(){
         Properties properties = Utils.properties;

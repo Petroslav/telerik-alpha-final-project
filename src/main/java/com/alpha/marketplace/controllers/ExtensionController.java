@@ -144,10 +144,10 @@ public class ExtensionController {
     @PostMapping("/feature/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String featureExtension( @PathVariable("id") Integer id) {
-        Extension extension = extensionService.getById(id);
-        extension.setSelected(true);
-        extension.setSelectionDate(new Date());
-        extensionService.update(extension);
+        if(extensionService.getAdminSelection().size() == 10){
+            return "redirect:/featuredSelection";
+        }
+        extensionService.setFeatured(id);
         extensionService.reloadLists();
 
         return "redirect:/extension/" + id;
@@ -155,12 +155,26 @@ public class ExtensionController {
     @PostMapping("/unFeature/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String unFeatureExtension( @PathVariable("id") Integer id) {
-        Extension extension = extensionService.getById(id);
-        extension.setSelected(false);
-        extensionService.update(extension);
+        extensionService.removeFeatured(id);
         extensionService.reloadLists();
 
         return "redirect:/extension/" + id;
+    }
+
+    @GetMapping("/featuredSelection")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String getFeaturedSelection(Model model){
+        model.addAttribute("view", "/admin/featuredSelection");
+        model.addAttribute("featured", extensionService.getAdminSelection());
+        return "base-layout";
+    }
+
+    @PostMapping("/removeFeatured")
+    public String removeFeatured(Model model, @RequestParam("list") List<Long> stuff){
+        stuff.forEach(id -> extensionService.removeFeatured(id));
+        extensionService.reloadLists();
+
+        return "redirect:/admin";
     }
 
 

@@ -87,7 +87,7 @@ public class HomeController {
 
     @PostMapping("/register")
     public String regUser(@Valid @ModelAttribute UserBindingModel user, BindingResult errors, Model model) {
-        service.registerUser(user, errors);
+        service.registerUser(user);
         if (errors.hasErrors()) {
             model.addAttribute("view", "register");
             return "base-layout";

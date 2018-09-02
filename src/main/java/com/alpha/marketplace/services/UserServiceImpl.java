@@ -66,8 +66,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User registerUser(UserBindingModel model, BindingResult errors) {
-        if(!validateReg(model, errors)) {
+    public User registerUser(UserBindingModel model) {
+        if(!validateReg(model)) {
+
             return null;
         }
         User u = mapper.map(model, User.class);
@@ -193,21 +194,14 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private boolean validateReg(UserBindingModel model, BindingResult errors) {
-        boolean valid = true;
+    private boolean validateReg(UserBindingModel model) {
         if (!validateEmail(model.getEmail())) {
-            errors.addError(new ObjectError("email", ErrorMessages.INVALID_EMAIL));
-            valid = false;
+            return false;
         }
         if(model.getPass().length() < 6 || model.getPass().length() > 16){
-            valid = false;
+            return false;
         }
-        if(repository.findByEmail(model.getEmail()) != null || repository.findByUsername(model.getUsername()) != null){
-            errors.addError(new ObjectError("email", ErrorMessages.INVALID_USERNAME_EMAIL));
-            valid = false;
-        }
-
-        return valid;
+        return repository.findByEmail(model.getEmail()) == null && repository.findByUsername(model.getUsername()) == null;
     }
 
     private boolean validateEmail(String email){

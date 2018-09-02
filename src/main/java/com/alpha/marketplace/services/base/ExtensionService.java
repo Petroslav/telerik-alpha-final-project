@@ -29,4 +29,6 @@ public interface ExtensionService {
     void sync(long id);
     void setSync(long period);
     void download(long id);
+    void setFeatured(long id);
+    void removeFeatured(long id);
 }

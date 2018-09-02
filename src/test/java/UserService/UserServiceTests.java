@@ -35,9 +35,6 @@ public class UserServiceTests {
     private CloudUserRepository cloudUserRepository;
 
     @Mock
-    private BindingResult errors;
-
-    @Mock
     private RoleRepository roleRepository;
 
     @Mock
@@ -93,7 +90,7 @@ public class UserServiceTests {
     @Test
     public void userServiceRegistrationSuccessByEmail() {
         UserBindingModel reg = new UserBindingModel(USERNAME_AVAILABLE, EMAIL_AVAILABLE, "FirstoNaimo", "LastoNaimo", PASS_OLD);
-        User success = userService.registerUser(reg, errors);
+        User success = userService.registerUser(reg);
         Assert.assertThat(success, samePropertyValuesAs(expected));
     }
 
@@ -101,7 +98,7 @@ public class UserServiceTests {
     public void userServiceRegistrationFailByEmail(){
         UserBindingModel reg = new UserBindingModel("user", EMAIL_EXISTS, "FirstoNaimo", "LastoNaimo", PASS_OLD );
 
-        User success = userService.registerUser(reg, errors);
+        User success = userService.registerUser(reg);
         Assert.assertNull(success);
 
     }
@@ -109,7 +106,7 @@ public class UserServiceTests {
     @Test
     public void userServiceRegistrationFailPassword(){
         UserBindingModel reg = new UserBindingModel("user", EMAIL_AVAILABLE, "FirstoNaimo", "LastoNaimo", "123" );
-        User success = userService.registerUser(reg, errors);
+        User success = userService.registerUser(reg);
         Assert.assertNull(success);
     }
 
@@ -117,14 +114,14 @@ public class UserServiceTests {
     @Test
     public void userServiceRegistrationSuccessPassword(){
         UserBindingModel reg = new UserBindingModel("user", EMAIL_AVAILABLE, "FirstoNaimo", "LastoNaimo", PASS_OLD);
-        User success = userService.registerUser(reg, errors);
+        User success = userService.registerUser(reg);
         Assert.assertNotNull(success);
     }
 
     @Test
     public void userServiceRegisterSuccessUsername(){
         UserBindingModel reg = new UserBindingModel(USERNAME_AVAILABLE, EMAIL_AVAILABLE, "FirstoNaimo", "LastoNaimo", PASS_OLD);
-        User success = userService.registerUser(reg, errors);
+        User success = userService.registerUser(reg);
         Assert.assertNotNull(success);
 
     }
@@ -132,7 +129,7 @@ public class UserServiceTests {
     @Test
     public void userServiceRegisterFAILUsername(){
         UserBindingModel reg = new UserBindingModel(USERNAME_EXISTS, EMAIL_AVAILABLE, "FirstoNaimo", "LastoNaimo", PASS_OLD);
-        User success = userService.registerUser(reg, errors);
+        User success = userService.registerUser(reg);
         Assert.assertNull(success);
 
     }
