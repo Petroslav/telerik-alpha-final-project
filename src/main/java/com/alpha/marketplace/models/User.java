@@ -64,7 +64,6 @@ public class User implements UserDetails {
     )
     private Set<Role> authorities;
 
-    //TODO ... A lOT OF SUTFF
     @JsonIgnore
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "publisher")
     private List<Extension> extensions;

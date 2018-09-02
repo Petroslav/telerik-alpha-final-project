@@ -1,5 +1,6 @@
 package Service;
 
+import com.alpha.marketplace.models.Role;
 import com.alpha.marketplace.models.User;
 
 class UserSetUp {
@@ -11,6 +12,7 @@ class UserSetUp {
         profile.setLastName(lastName);
         profile.setEmail(email);
         profile.setPassword(password);
+        profile.getAuthorities().add(new Role("ROLE_USER"));
 
         return profile;
     }

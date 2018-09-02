@@ -47,12 +47,11 @@ public class Role implements GrantedAuthority {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Role role = (Role) o;
-        return getId() == role.getId();
+        return Objects.equals(getAuthority(), role.getAuthority());
     }
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(getId());
+        return Objects.hash(getAuthority());
     }
 }

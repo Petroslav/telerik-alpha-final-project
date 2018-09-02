@@ -64,9 +64,9 @@ public class UserServiceTests {
     @Before
     public void setup(){
         expected = UserSetUp.setupUser(USERNAME_EXISTS,"FirstoNaimo", "LastoNaimo", EMAIL_EXISTS, PASS_OLD);
+
         when(userRepository.save(any(User.class)))
                 .thenReturn(true);
-
         when(userRepository.findByEmail(EMAIL_EXISTS))
                 .thenReturn(expected);
         when(userRepository.update(any(User.class)))
@@ -85,8 +85,12 @@ public class UserServiceTests {
                 .thenReturn(true);
         when(mapper.map(any(UserBindingModel.class), eq(User.class)))
                 .thenReturn(expected);
-        when(roleRepository.findByName(anyString()))
+        when(userRepository.findById(1))
+                .thenReturn(expected);
+        when(roleRepository.findByName("ROLE_USER"))
                 .thenReturn(new Role("ROLE_USER"));
+        when(roleRepository.findByName("ROLE_ADMIN"))
+                .thenReturn(new Role("ROLE_ADMIN"));
 
         userService = new UserServiceImpl(userRepository, cloudUserRepository, roleRepository, mapper, encoder);
     }
@@ -144,4 +148,26 @@ public class UserServiceTests {
         boolean kek = userService.editUser(expected, sad);
         Assert.assertTrue(kek);
     }
+
+    @Test
+    public void userServiceRemoveRoleFromUserSuccess(){
+        userService.removeRoleFromUser(1, "USER");
+        Assert.assertFalse(expected.getAuthorities().contains(new Role("ROLE_USER")));
+
+    }
+
+    @Test
+    public void userServiceRemoveRoleFromUserFail(){
+        userService.removeRoleFromUser(1, "ADMIN");
+        Assert.assertTrue(expected.getAuthorities().contains(new Role("ROLE_USER")));
+    }
+
+    @Test
+    public void userServiceAddRoleToUser(){
+        Assert.assertFalse(expected.getAuthorities().contains(new Role("ROLE_ADMIN")));
+        userService.addRoleToUser(1, "ADMIN");
+        Assert.assertTrue(expected.getAuthorities().contains(new Role("ROLE_ADMIN")));
+    }
+
+    //TODO MAYBE TEST PIC METHODS EVEN THOUGH THEY ARE CLOUD BASED
 }

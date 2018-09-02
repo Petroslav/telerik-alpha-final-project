@@ -32,6 +32,7 @@ public class UserServiceImpl implements UserService {
     private final String VALID_EMAIL_ADDRESS_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9]+.[a-z.]+$";
     private final String DEFAULT_PIC = "https://storage.cloud.google.com/marketplace-user-pics/new-user.jpg";
     private final String DEFAULT_ROLE = "ROLE_USER";
+    private final String ROLE_PREFIX = "ROLE_";
 
     private final UserRepository repository;
     private final CloudUserRepository cloudUserRepository;
@@ -156,9 +157,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean addRoleToUser(long id, String role){
+        if(!role.contains(ROLE_PREFIX)){
+            role = ROLE_PREFIX + role;
+        }
         try{
             User u = findById(id);
-            u.getAuthorities().add(roleRepository.findByName(role));
+            Role r = roleRepository.findByName(role);
+            if(r == null) return false;
+            boolean success = u.getAuthorities().add(r);
+            if(!success) return false;
             return repository.update(u);
         }catch(Exception e){
             System.out.println(e.getMessage());
@@ -169,13 +176,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean removeRoleFromUser(long id, String role) {
+        if(!role.contains(ROLE_PREFIX)){
+            role = ROLE_PREFIX + role;
+        }
         try{
             User u = findById(id);
-            u.setAuthorities(u.getAuthorities()
-                    .stream()
-                    .filter(r -> !r.getAuthority().equals(role))
-                    .collect(Collectors.toSet())
-            );
+            Role r = roleRepository.findByName(role);
+            if(r == null) return false;
+            boolean success = u.getAuthorities().remove(r);
+            if(!success) return false;
             return repository.update(u);
         }catch(Exception e){
             System.out.println(e.getMessage());
