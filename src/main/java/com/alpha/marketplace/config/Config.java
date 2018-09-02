@@ -2,6 +2,7 @@ package com.alpha.marketplace.config;
 
 import com.alpha.marketplace.models.*;
 import com.alpha.marketplace.repositories.base.PropertiesRepository;
+import com.alpha.marketplace.utils.Utils;
 import com.google.auth.Credentials;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.*;
@@ -20,8 +21,6 @@ import java.io.*;
 @Configuration
 @EnableScheduling
 public class Config {
-
-    private final String PROJECT_ID = "telerikfinalproject";
 
     private PropertiesRepository propertiesRepository;
 
@@ -46,10 +45,12 @@ public class Config {
     @Bean
     Storage getStorage() {
         try {
-            String cr = propertiesRepository.get().getCredentials();
+            Utils.properties = propertiesRepository.get();
+            String cr = Utils.properties.getCredentials();
             InputStream is = new ByteArrayInputStream(cr.getBytes());
             Credentials credentials = GoogleCredentials.fromStream(is);
-            return StorageOptions.newBuilder().setCredentials(credentials).setProjectId(PROJECT_ID).build().getService();
+            String projectId = Utils.properties.getProjectId();
+            return StorageOptions.newBuilder().setCredentials(credentials).setProjectId(projectId).build().getService();
         } catch (IOException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();

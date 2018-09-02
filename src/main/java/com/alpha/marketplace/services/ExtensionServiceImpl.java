@@ -12,7 +12,6 @@ import com.alpha.marketplace.repositories.base.*;
 import com.alpha.marketplace.services.base.ExtensionService;
 import com.alpha.marketplace.utils.Utils;
 import com.google.cloud.storage.Blob;
-import com.google.cloud.storage.BlobId;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -254,7 +253,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         GitHubInfo info = extension.getGitHubInfo();
         Date currentTime = new Date();
         System.out.println("[" + currentTime + "]" + "Admin syncing for " + extension.getName() + ":");
-        Properties properties = propertiesRepository.get();
+        Properties properties = Utils.properties;
         try {
             Utils.updateGithubInfo(info);
             gitHubRepository.update(info);
@@ -278,17 +277,21 @@ public class ExtensionServiceImpl implements ExtensionService {
                 e.printStackTrace();
             }
         }
-        Properties properties = propertiesRepository.get();
-        properties.setDelay(period);
-        propertiesRepository.update();
+        Properties properties = Utils.properties;
+        if(delay != period){
+            properties.setDelay(period);
+            propertiesRepository.update();
+        }
         syncManager = new Thread(() -> {
             while(true){
                 try {
                     syncAll();
                     Thread.sleep(period);
                 } catch (InterruptedException e) {
-                    //add to logger entry
-                    System.out.println("Thread interrupted");
+                    System.out.println("Thread intrrupted");
+                    properties.setLastFailedSync(new Date());
+                    properties.setFailInfo("Thread was interrupted before it could finish syncing.");
+                    propertiesRepository.update();
                 }
             }
         });
@@ -307,7 +310,7 @@ public class ExtensionServiceImpl implements ExtensionService {
 
     @PostConstruct
     public void initializeSync(){
-        Properties properties = propertiesRepository.get();
+        Properties properties = Utils.properties;
         delay = properties.getDelay();
         String key  = properties.getGitHubOAuthKey();
         Utils.setKey(key);
@@ -327,7 +330,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         Date currentTime = new Date();
         List<Extension> extensions = getAllApproved();
         System.out.println("[" + currentTime + "]" + "Syncing:");
-        Properties properties = propertiesRepository.get();
+        Properties properties = Utils.properties;
         boolean failed = false;
         for (Extension e : extensions) {
             if (e.getGitHubInfo() == null) {
@@ -341,13 +344,13 @@ public class ExtensionServiceImpl implements ExtensionService {
                 System.out.println("--Updated info for " + e.getName());
             } catch (FailedToSyncException e1) {
                 failed = true;
+                properties.setLastFailedSync(new Date());
+                properties.setFailInfo("Could not finish synchronization. " + e1.getMessage());
             }
         }
 
         if(!failed){
             properties.setLastSuccessfulSync(new Date());
-        }else{
-            properties.setLastFailedSync(new Date());
         }
 
         propertiesRepository.update();

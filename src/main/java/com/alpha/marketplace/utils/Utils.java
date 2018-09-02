@@ -3,25 +3,23 @@ package com.alpha.marketplace.utils;
 import com.alpha.marketplace.exceptions.FailedToSyncException;
 import com.alpha.marketplace.models.GitHubInfo;
 import com.alpha.marketplace.models.Properties;
-import com.alpha.marketplace.repositories.PropertiesRepositoryImpl;
-import com.alpha.marketplace.repositories.base.PropertiesRepository;
 import org.kohsuke.github.GHIssueState;
 import org.kohsuke.github.GitHub;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.Date;
+
 
 public class Utils {
     public static final String GITHUB_URL_PREFIX = "https://github.com/";
+
+    public static Properties properties;
     private static GitHub GITHUB_CONNECTION;
-    private static String gitkey;
+    private static String gitKey;
 
     public static boolean userIsAnonymous() {
         return AnonymousAuthenticationToken.class ==
@@ -54,8 +52,9 @@ public class Utils {
     }
 
     public static void setKey(String key){
-        gitkey = key;
+        gitKey = key;
     }
+
     public static void updateGithubInfo(GitHubInfo info) throws FailedToSyncException {
         String url = removePrefix(info.getParent().getRepoURL());
         try{
@@ -72,7 +71,8 @@ public class Utils {
 
         try {
             if(GITHUB_CONNECTION == null){
-                GITHUB_CONNECTION = GitHub.connectUsingOAuth(gitkey);
+                GITHUB_CONNECTION = GitHub.connectUsingOAuth(gitKey);
+                gitKey = "";
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -104,4 +104,6 @@ public class Utils {
     private static String removePrefix(String url){
         return url.substring(GITHUB_URL_PREFIX.length());
     }
+
+
 }

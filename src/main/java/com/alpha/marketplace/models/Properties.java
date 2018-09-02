@@ -12,11 +12,17 @@ public class Properties {
     @Column(name = "properties_id")
     private short id;
 
-    @Column(name = "delay", nullable = false)
-    private long delay;
-
     @Column(name = "github_key", nullable = false)
     private String gitHubOAuthKey;
+
+    @Column(name = "project_id")
+    private String projectId;
+
+    @Column(name = "credentials", nullable = false, length = 5000)
+    private String credentials;
+
+    @Column(name = "delay", nullable = false)
+    private long delay;
 
     @Column(name = "success", nullable = false)
     private Date lastSuccessfulSync;
@@ -27,18 +33,16 @@ public class Properties {
     @Column(name = "fail_info", nullable = false)
     private String failInfo;
 
-    @Column(name = "credentials", nullable = false, length = 5000)
-    private String credentials;
-
     public Properties(){}
 
-    public Properties(int delay, String gitHubOAuthKey, Date lastSuccessfulSync, Date lastFailedSync, String failInfo, String credentials) {
-        this.delay = delay;
+    public Properties(String gitHubOAuthKey, String projectId, String credentials, long delay, Date lastSuccessfulSync, Date lastFailedSync, String failInfo) {
         this.gitHubOAuthKey = gitHubOAuthKey;
+        this.projectId = projectId;
+        this.credentials = credentials;
+        this.delay = delay;
         this.lastSuccessfulSync = lastSuccessfulSync;
         this.lastFailedSync = lastFailedSync;
         this.failInfo = failInfo;
-        this.credentials = credentials;
     }
 
     public short getId() {
@@ -49,20 +53,36 @@ public class Properties {
         this.id = id;
     }
 
-    public long getDelay() {
-        return delay;
-    }
-
-    public void setDelay(long delay) {
-        this.delay = delay;
-    }
-
     public String getGitHubOAuthKey() {
         return gitHubOAuthKey;
     }
 
     public void setGitHubOAuthKey(String gitHubOAuthKey) {
         this.gitHubOAuthKey = gitHubOAuthKey;
+    }
+
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
+
+    public String getCredentials() {
+        return credentials;
+    }
+
+    public void setCredentials(String credentials) {
+        this.credentials = credentials;
+    }
+
+    public long getDelay() {
+        return delay;
+    }
+
+    public void setDelay(long delay) {
+        this.delay = delay;
     }
 
     public Date getLastSuccessfulSync() {
@@ -87,13 +107,5 @@ public class Properties {
 
     public void setFailInfo(String failInfo) {
         this.failInfo = failInfo;
-    }
-
-    public String getCredentials() {
-        return credentials;
-    }
-
-    public void setCredentials(String credentials) {
-        this.credentials = credentials;
     }
 }

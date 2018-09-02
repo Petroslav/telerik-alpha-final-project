@@ -2,6 +2,7 @@ package com.alpha.marketplace.repositories;
 
 import com.alpha.marketplace.models.Properties;
 import com.alpha.marketplace.repositories.base.PropertiesRepository;
+import com.alpha.marketplace.utils.Utils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class PropertiesRepositoryImpl implements PropertiesRepository {
     public void update() {
         try (Session sess = session.openSession()) {
             sess.beginTransaction();
-            sess.update(get());
+            sess.update(Utils.properties);
             sess.getTransaction().commit();
             System.out.println("Properties updated successfully.");
         } catch (Exception e) {
