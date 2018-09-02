@@ -1,4 +1,4 @@
-package Service;
+package UserService;
 
 import com.alpha.marketplace.models.Role;
 import com.alpha.marketplace.models.User;
@@ -20,11 +20,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.multipart.MultipartFile;
 
 import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -47,9 +45,6 @@ public class UserServiceTests {
 
     @Mock
     private BCryptPasswordEncoder encoder;
-
-    @Mock
-    private MultipartFile file;
 
     private final String EMAIL_EXISTS = "troqta@gmail.com";
     private final String EMAIL_AVAILABLE = "notpresent@present.present";

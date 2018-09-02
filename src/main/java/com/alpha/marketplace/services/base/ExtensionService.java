@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 public interface ExtensionService {
+    List<Extension> getAll();
     List<Extension> getMostPopular();
     List<Extension> getAdminSelection();
     List<Extension> getLatest();

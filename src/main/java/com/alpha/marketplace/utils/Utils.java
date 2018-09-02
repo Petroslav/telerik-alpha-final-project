@@ -19,7 +19,6 @@ public class Utils {
 
     public static Properties properties;
     private static GitHub GITHUB_CONNECTION;
-    private static String gitKey;
 
     public static boolean userIsAnonymous() {
         return AnonymousAuthenticationToken.class ==
@@ -51,10 +50,6 @@ public class Utils {
         return contentType;
     }
 
-    public static void setKey(String key){
-        gitKey = key;
-    }
-
     public static void updateGithubInfo(GitHubInfo info) throws FailedToSyncException {
         String url = removePrefix(info.getParent().getRepoURL());
         try{
@@ -71,8 +66,8 @@ public class Utils {
 
         try {
             if(GITHUB_CONNECTION == null){
-                GITHUB_CONNECTION = GitHub.connectUsingOAuth(gitKey);
-                gitKey = "";
+                String key = properties.getGitHubOAuthKey();
+                GITHUB_CONNECTION = GitHub.connectUsingOAuth(key);
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -63,7 +63,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         this.tagRepository = tagRepository;
         this.mapper = mapper;
         this.gitHubRepository = gitHubRepository;
-        this.all = repository.getAll();
+        this.all = new ArrayList<>();
         this.approved = new ArrayList<>();
         this.latest = new ArrayList<>();
         this.mostPopular = new ArrayList<>();
@@ -74,9 +74,15 @@ public class ExtensionServiceImpl implements ExtensionService {
 
 
     @Override
+    public List<Extension> getAll() {
+        if(all.isEmpty()) all = repository.getAll();
+        return all;
+    }
+
+    @Override
     public List<Extension> getMostPopular() {
         if (mostPopular.isEmpty()) {
-            mostPopular = approved.stream()
+            mostPopular = getAllApproved().stream()
                     .sorted(Comparator.comparing(Extension::getDownloads).reversed())
                     .limit(10)
                     .collect(Collectors.toList());
@@ -87,7 +93,7 @@ public class ExtensionServiceImpl implements ExtensionService {
     @Override
     public List<Extension> getAdminSelection() {
         if (selected.isEmpty()) {
-            selected = approved.stream()
+            selected = getAllApproved().stream()
                     .filter(Extension::isSelected)
                     .sorted(Comparator.comparing(Extension::getSelectionDate).reversed())
                     .limit(10)
@@ -99,7 +105,7 @@ public class ExtensionServiceImpl implements ExtensionService {
     @Override
     public List<Extension> getLatest() {
         if (latest.isEmpty()) {
-            latest = approved.stream()
+            latest = getAllApproved().stream()
                     .sorted(Comparator.comparing(Extension::getAddedOn).reversed())
                     .limit(10)
                     .collect(Collectors.toList());
@@ -110,7 +116,7 @@ public class ExtensionServiceImpl implements ExtensionService {
     @Override
     public List<Extension> getAllApproved() {
         if (approved.isEmpty()) {
-            approved =  all.stream()
+            approved =  getAll().stream()
                     .filter(Extension::isApproved).collect(Collectors.toList());
         }
         return approved;
@@ -119,7 +125,7 @@ public class ExtensionServiceImpl implements ExtensionService {
     @Override
     public List<Extension> getUnapproved() {
         if (unApproved.isEmpty()) {
-            unApproved =  all.stream()
+            unApproved =  getAll().stream()
                     .filter(extension -> !extension.isApproved()).collect(Collectors.toList());
         }
         return unApproved;
@@ -312,8 +318,6 @@ public class ExtensionServiceImpl implements ExtensionService {
     public void initializeSync(){
         Properties properties = Utils.properties;
         delay = properties.getDelay();
-        String key  = properties.getGitHubOAuthKey();
-        Utils.setKey(key);
         setSync(delay);
     }
 
@@ -336,11 +340,11 @@ public class ExtensionServiceImpl implements ExtensionService {
             if (e.getGitHubInfo() == null) {
                 continue;
             }
-            GitHubInfo ginfo = e.getGitHubInfo();
+            GitHubInfo gitHubInfo = e.getGitHubInfo();
 
             try {
-                Utils.updateGithubInfo(ginfo);
-                gitHubRepository.update(ginfo);
+                Utils.updateGithubInfo(gitHubInfo);
+                gitHubRepository.update(gitHubInfo);
                 System.out.println("--Updated info for " + e.getName());
             } catch (FailedToSyncException e1) {
                 failed = true;
@@ -380,7 +384,6 @@ public class ExtensionServiceImpl implements ExtensionService {
 
 
     private void storeFiles(Extension extension, ExtensionBindingModel model,  BindingResult errors) throws IOException {
-
         //DECLARE VARIABLES AND GET THE FILE EXTENSION
         Blob blob;
         String fileext = model.getFile().getOriginalFilename();
