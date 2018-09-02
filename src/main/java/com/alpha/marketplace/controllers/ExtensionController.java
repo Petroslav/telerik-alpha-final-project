@@ -42,26 +42,27 @@ public class ExtensionController {
     }
 
     @GetMapping("/create")
+    @PreAuthorize("hasRole('USER')")
     public String createPage(Model model) {
-        if (Utils.userIsAnonymous()) {
-            return "redirect:/";
-        }
         model.addAttribute("view", "extensions/create");
+
         return "base-layout";
     }
 
     @PostMapping("/create")
     public String create(ExtensionBindingModel model, BindingResult errors) {
         extensionService.createExtension(model, errors);
+        if(errors.hasErrors()){
+            return "redirect:/extension/create";
+        }
 
         return "redirect:/";
     }
 
     @GetMapping("/{id}")
-    public String viewExtension(@PathVariable String id, Model model) {
+    public String viewExtension(@PathVariable("id") long id, Model model) {
 
-        int intId = Integer.parseInt(id);
-        Extension extension = extensionService.getById(intId);
+        Extension extension = extensionService.getById(id);
         if (extension == null) {
             model.addAttribute("view", "error/404");
             return "base-layout";
@@ -75,7 +76,6 @@ public class ExtensionController {
         if (extension.isApproved()) {
             approved = "Approved";
         }
-        //TODO remove after tags are changed to Set
 
         model.addAttribute("view", "extensions/details");
         model.addAttribute("approved", approved);

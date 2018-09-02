@@ -110,6 +110,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean banUser(long id) {
+        User gettingBanned = findById(id);
+        if(!gettingBanned.isAdmin() || currentUser().isOwner()){
+            gettingBanned.ban();
+            return updateUser(gettingBanned);
+        }else{
+            return false;
+        }
+    }
+
+    @Override
+    public boolean unbanUser(long id) {
+        User gettingUnbanned = findById(id);
+        gettingUnbanned.unban();
+        return updateUser(gettingUnbanned);
+    }
+
+    @Override
     public boolean editUserPic(User u, MultipartFile file) {
         byte[] bytes;
         try{
@@ -201,7 +219,7 @@ public class UserServiceImpl implements UserService {
         if(model.getPass().length() < 6 || model.getPass().length() > 16){
             return false;
         }
-        return repository.findByEmail(model.getEmail()) == null && repository.findByUsername(model.getUsername()) == null;
+        return findByEmail(model.getEmail()) == null && repository.findByUsername(model.getUsername()) == null;
     }
 
     private boolean validateEmail(String email){

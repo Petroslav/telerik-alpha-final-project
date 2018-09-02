@@ -59,14 +59,16 @@ public class AdminController {
         return "base-layout";
     }
 
+    @GetMapping("/userEdit")
+    @PreAuthorize(("hasRole('ADMIN')"))
+    public String editUserRoles(){
+        return "redirect:/";
+    }
+
     @PostMapping("/ban/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public String banUser(@PathVariable("id") long id){
-        User gettingBanned = userService.findById(id);
-        if(!gettingBanned.isAdmin() || userService.currentUser().isOwner()){
-            gettingBanned.ban();
-            userService.updateUser(gettingBanned);
-        }else{
+        if(!userService.banUser(id)){
             System.out.println("Can't ban the guy, he's an admin");
             return "redirect:/admin/users";
         }
@@ -76,9 +78,7 @@ public class AdminController {
     @PostMapping("/unban/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public String unbanUser(Model model, @PathVariable("id") long id){
-        User gettingUnbanned = userService.findById(id);
-        gettingUnbanned.unban();
-        userService.updateUser(gettingUnbanned);
+        userService.unbanUser(id);
         model.addAttribute("view", "index");
 
         return "redirect:/user/"+id;

@@ -183,6 +183,7 @@ public class ExtensionServiceImpl implements ExtensionService {
 
     @Override
     public void createExtension(ExtensionBindingModel model, BindingResult errors) {
+        if(errors.hasErrors()) return;
 
         if(!validateRepoUrl(model.getRepositoryUrl())){
             errors.addError(new ObjectError("link", ErrorMessages.BAD_REPOSITORY));
