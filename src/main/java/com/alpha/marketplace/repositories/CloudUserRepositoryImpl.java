@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.WritableByteChannel;
 
 @Repository
 public class CloudUserRepositoryImpl implements CloudUserRepository {
@@ -44,12 +45,21 @@ public class CloudUserRepositoryImpl implements CloudUserRepository {
     @Override
     public Blob updateUserPic(BlobId blobId, byte[] bytes){
         Blob blob = storage.get(blobId);
-        try{
-            blob.writer().write(ByteBuffer.wrap(bytes));
+        storage.delete(blobId);
+        try(WritableByteChannel writer = blob.writer()){
+            System.out.println(blob.getMediaLink());
+            writer.write(ByteBuffer.wrap(bytes));
+            blob.update();
+            System.out.println(blob.getMediaLink());
         }catch(IOException e){
             System.out.println("Could not locate file, no changes made");
             e.printStackTrace();
         }
         return blob;
+    }
+
+    @Override
+    public void deleteUserPic(BlobId bid) {
+        storage.delete(bid);
     }
 }

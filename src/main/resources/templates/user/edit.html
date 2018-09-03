@@ -1,9 +1,11 @@
 <main>
-    <form th:action="@{/user/profile/edit}" method="post">
+    <form th:action="@{/user/profile/edit}" method="post" enctype="multipart/form-data">
         <label for="firstName">First Name</label>
         <input type="text" name="firstName" id="firstName">
         <label for="lastName">Last Name</label>
         <input type="text" name="lastName" id="lastName">
+        <label for="picture">Picture</label>
+        <input type="file" name="picture" id="picture">
         <label for="oldPass">Old Password</label>
         <input type="password" name="oldPass" id="oldPass">
         <label for="newPass">New Password</label>

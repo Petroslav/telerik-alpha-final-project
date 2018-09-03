@@ -12,6 +12,7 @@ import com.alpha.marketplace.repositories.base.CloudUserRepository;
 import com.alpha.marketplace.services.base.UserService;
 import com.alpha.marketplace.utils.Utils;
 import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
     private final String VALID_EMAIL_ADDRESS_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9]+.[a-z.]+$";
-    private final String DEFAULT_PIC = "https://storage.cloud.google.com/marketplace-user-pics/new-user.jpg";
+    private final String DEFAULT_PIC = "http://marketplace-user-pics.storage.googleapis.com/new-user.jpg";
     private final String DEFAULT_ROLE = "ROLE_USER";
     private final String ROLE_PREFIX = "ROLE_";
 
@@ -99,6 +100,20 @@ public class UserServiceImpl implements UserService {
     public boolean editUser(User u, UserEditModel edit) {
         u.setFirstName(edit.getFirstName());
         u.setLastName(edit.getLastName());
+        if(!edit.getPicture().isEmpty()){
+            try {
+                if(u.getPicBlobId() != null){
+                    cloudUserRepository.deleteUserPic(u.getPicBlobId());
+                }
+                String e = edit.getPicture().getOriginalFilename();
+                Blob b = cloudUserRepository.saveUserPic(u.getId() + e.substring(e.lastIndexOf(".")), edit.getPicture().getBytes(), edit.getPicture().getContentType());
+                u.setPicBlobId(b.getBlobId());
+                u.setPicURI(b.getMediaLink());
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("SAD LIFE");
+            }
+        }
         if(!edit.getOldPass().isEmpty()){
             if(!encoder.matches(edit.getOldPass(), u.getPassword())){
                 return false;

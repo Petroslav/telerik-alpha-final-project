@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.WritableByteChannel;
 
 
 @Repository
@@ -51,18 +52,15 @@ public class CloudExtensionRepositoryImpl implements CloudExtensionRepository {
     @Override
     public Blob updateExtension(BlobId blobId, String userId, String extensionName, String contentType, byte[] bytes){
         Blob blob = storage.get(blobId);
-        try{
-            blob.writer().write(ByteBuffer.wrap(bytes));
+        try(WritableByteChannel writer = blob.writer()){
+            writer.write(ByteBuffer.wrap(bytes));
+            blob.update();
+            System.out.println(blob.getMediaLink());
         }catch(IOException e){
             System.out.println("Could not locate file, no changes made");
             e.printStackTrace();
         }
         return blob;
-    }
-
-    @Override
-    public boolean delete(BlobId blobid) {
-        return storage.delete(blobid);
     }
 
     @Override
@@ -79,6 +77,11 @@ public class CloudExtensionRepositoryImpl implements CloudExtensionRepository {
             throw new CannotFetchBytesException("Unable to save URL");
         }
         return saveExtensionPic(userId, extensionName, contentType, bytes);
+    }
+
+    @Override
+    public boolean delete(BlobId blobid) {
+        return storage.delete(blobid);
     }
 
 }

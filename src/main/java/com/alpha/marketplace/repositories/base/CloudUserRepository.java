@@ -9,4 +9,5 @@ public interface CloudUserRepository {
     Blob saveUserPic(String userId, byte[] bytes, String contentType);
     Blob saveUserPicFromUrl(String userId, String url) throws CannotFetchBytesException;
     Blob updateUserPic(BlobId blobId, byte[] bytes);
+    void deleteUserPic(BlobId bid);
 }
