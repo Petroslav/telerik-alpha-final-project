@@ -68,10 +68,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public User registerUser(UserBindingModel model) {
         if(!validateReg(model)) {
-            System.out.println("NOT VALID???");
             return null;
         }
-        System.out.println("VALID?");
         User u = mapper.map(model, User.class);
         Role role = roleRepository.findByName(DEFAULT_ROLE);
         String encryptedPass = encoder.encode(model.getPass());

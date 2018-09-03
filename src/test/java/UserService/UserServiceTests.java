@@ -18,6 +18,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.BindingResult;
 
@@ -68,7 +69,7 @@ public class UserServiceTests {
         when(userRepository.findByUsername(USERNAME_EXISTS))
                 .thenReturn(expected);
         when(userRepository.findByUsername(USERNAME_AVAILABLE))
-                .thenReturn(null);
+                .thenThrow(new UsernameNotFoundException("Kek"));
         when(encoder.encode(PASS_OLD))
                 .thenReturn("encryptedOldPass");
         when(encoder.encode(PASS_NEW))
@@ -113,7 +114,7 @@ public class UserServiceTests {
 
     @Test
     public void userServiceRegistrationSuccessPassword(){
-        UserBindingModel reg = new UserBindingModel("user", EMAIL_AVAILABLE, "FirstoNaimo", "LastoNaimo", PASS_OLD);
+        UserBindingModel reg = new UserBindingModel(USERNAME_AVAILABLE, EMAIL_AVAILABLE, "FirstoNaimo", "LastoNaimo", PASS_OLD);
         User success = userService.registerUser(reg);
         Assert.assertNotNull(success);
     }
