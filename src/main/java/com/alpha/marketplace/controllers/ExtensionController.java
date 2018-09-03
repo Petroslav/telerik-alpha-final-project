@@ -171,8 +171,7 @@ public class ExtensionController {
 
     @PostMapping("/removeFeatured")
     public String removeFeatured(Model model, @RequestParam("list") List<Long> stuff){
-        stuff.forEach(id -> extensionService.removeFeatured(id));
-        extensionService.reloadLists();
+        extensionService.unfeatureList(stuff);
 
         return "redirect:/admin";
     }

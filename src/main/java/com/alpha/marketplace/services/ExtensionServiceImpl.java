@@ -182,6 +182,23 @@ public class ExtensionServiceImpl implements ExtensionService {
     }
 
     @Override
+    public void unfeatureList(List<Long> extensions) {
+        List<Extension> matches = new ArrayList<>();
+        extensions.forEach(ex -> matches.add(
+                getAdminSelection()
+                        .stream()
+                        .filter(e1 -> ex == e1.getId())
+                        .collect(Collectors.toList())
+                        .get(0)));
+        matches.forEach(e -> e.setSelected(false));
+        System.out.println(matches.size() + " kek");
+        new Thread(() -> {
+            repository.updateList(matches);
+            reloadLists();
+        }).start();
+    }
+
+    @Override
     public void createExtension(ExtensionBindingModel model, BindingResult errors) {
         if(errors.hasErrors()) return;
 
@@ -317,7 +334,10 @@ public class ExtensionServiceImpl implements ExtensionService {
 
     @Override
     public void setFeatured(long id) {
-        Extension extension = getById(id);
+        Extension extension = getAll().stream()
+                .filter(ex -> ex.getId() == id)
+                .collect(Collectors.toList())
+                .get(0);
         if(extension.isSelected()){
             return;
         }
@@ -328,7 +348,10 @@ public class ExtensionServiceImpl implements ExtensionService {
 
     @Override
     public void removeFeatured(long id) {
-        Extension extension = getById(id);
+        Extension extension = getAll().stream()
+                .filter(ex -> ex.getId() == id)
+                .collect(Collectors.toList())
+                .get(0);
         if(!extension.isSelected()){
             return;
         }

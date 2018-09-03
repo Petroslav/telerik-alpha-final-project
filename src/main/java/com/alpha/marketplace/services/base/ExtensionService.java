@@ -22,6 +22,7 @@ public interface ExtensionService {
     User currentUser();
     boolean isUserPublisherOrAdmin(Extension extension);
     boolean update(Extension extension);
+    void unfeatureList(List<Long> extensions);
     void createExtension(ExtensionBindingModel extensionBindingModel, BindingResult errors);
     void delete(long id);
     void approveExtensionById(long id);

@@ -176,6 +176,23 @@ public class ExtensionRepositoryImpl implements ExtensionRepository {
     }
 
     @Override
+    public boolean updateList(List<Extension> list) {
+        try (Session sess = session.openSession()) {
+            sess.beginTransaction();
+
+            list.forEach(sess::update);
+
+            sess.getTransaction().commit();
+            System.out.println("Extensions updated successfully");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public boolean delete(long id) {
         try (Session sess = session.openSession()) {
             sess.beginTransaction();

@@ -16,6 +16,7 @@ public interface ExtensionRepository {
     Extension getByName(String name);
     boolean save(Extension extension);
     boolean update(Extension extension);
+    boolean updateList(List<Extension> list);
     boolean delete(long id);
 
 
