@@ -43,9 +43,12 @@ $(document).ready(function () {
         }
     });
     $('#searchField').keypress(function(e){
-
+        var textfield = $('#searchField').val();
+        if(textfield === ""){
+            return;
+        }
         if(e.which===13){
-            var textfield = $('#searchField').val();
+
             $(location).attr('href', '/search?criteria='+ textfield);
         }
     });
