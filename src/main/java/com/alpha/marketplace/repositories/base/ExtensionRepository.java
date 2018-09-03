@@ -19,6 +19,4 @@ public interface ExtensionRepository {
     boolean updateList(List<Extension> list);
     boolean delete(long id);
 
-
-
 }

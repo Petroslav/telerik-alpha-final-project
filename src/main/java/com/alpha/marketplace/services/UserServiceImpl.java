@@ -68,9 +68,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User registerUser(UserBindingModel model) {
         if(!validateReg(model)) {
-
+            System.out.println("NOT VALID???");
             return null;
         }
+        System.out.println("VALID?");
         User u = mapper.map(model, User.class);
         Role role = roleRepository.findByName(DEFAULT_ROLE);
         String encryptedPass = encoder.encode(model.getPass());
@@ -219,7 +220,15 @@ public class UserServiceImpl implements UserService {
         if(model.getPass().length() < 6 || model.getPass().length() > 16){
             return false;
         }
-        return findByEmail(model.getEmail()) == null && repository.findByUsername(model.getUsername()) == null;
+        if(findByEmail(model.getEmail()) != null){
+            return false;
+        }
+        try{
+            repository.findByUsername(model.getUsername());
+        }catch(UsernameNotFoundException e){
+            return true;
+        }
+        return false;
     }
 
     private boolean validateEmail(String email){
