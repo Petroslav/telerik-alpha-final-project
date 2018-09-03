@@ -16,3 +16,12 @@
 .my-color{
     color: rgba(255,255,255,.6);
 }
+.my-inline-block{
+    display: inline-block;
+}
+.my-padding-right{
+    padding-right: 5%;
+}
+.my-margin-users{
+    margin: 0 5px;
+}

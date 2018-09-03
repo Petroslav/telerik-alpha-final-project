@@ -1,9 +1,10 @@
 <main>
-    <div th:each="user : ${users}">
-        <header>
-            <a th:href="@{/user/{id}(id=${user.id})}">
-                <h2 th:text=${user.username}></h2>
-            </a>
-        </header>
+    <div class="my-margin-users" th:each="user : ${users}">
+        <a th:href="@{/user/{id}(id=${user.id})}">
+            <span class="mdl-chip mdl-chip--contact">
+                <img th:attr="src=@{${user.picURI}}" class="mdl-chip__contact">
+                <span class="mdl-chip__text" th:text="${user.username}"></span>
+            </span>
+        </a>
     </div>
 </main>
