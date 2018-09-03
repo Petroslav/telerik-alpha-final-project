@@ -120,17 +120,13 @@ public class HomeController {
     @GetMapping("/search")
     public String search(@RequestParam(value = "criteria", required = false) String criteria, Model model) {
         Set<Extension> matches;
-        boolean isUserSearch = false;
-        if (criteria.startsWith("user:")) {
-            List<User> matchedUsers = service.searchUsers(criteria.substring(5));
+            List<User> matchedUsers = service.searchUsers(criteria);
             model.addAttribute("userMatches", matchedUsers);
-            isUserSearch = true;
-        } else {
+
             matches = new HashSet<>(extensionService.searchExtensions(criteria));
             matches.addAll(extensionService.searchExtensionsByTag(criteria));
             model.addAttribute("matches", matches);
-        }
-        model.addAttribute("isUserSearch", isUserSearch);
+
         model.addAttribute("view", "/search");
         return "base-layout";
     }

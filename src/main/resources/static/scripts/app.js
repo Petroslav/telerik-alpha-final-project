@@ -42,6 +42,13 @@ $(document).ready(function () {
             $(location).attr('href', '/search?criteria=' + prefix + textfield);
         }
     });
+    $('#searchField').keypress(function(e){
+
+        if(e.which===13){
+            var textfield = $('#searchField').val();
+            $(location).attr('href', '/search?criteria='+ textfield);
+        }
+    });
     $('#sortButton').on('click', function () {
 
 

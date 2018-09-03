@@ -1,26 +1,7 @@
 <main>
-    <th:block th:if="${!isUserSearch}">
 
-        <div th:each="match : ${matches}" class="myExtension">
-            <div class="myExtension mdl-card mdl-shadow--4dp">
-                <div class="mdl-card__title">
-                    <h2 class="mdl-card__title-text" th:text="${match.name}"></h2>
-                </div>
-                <div class="mdl-card__media">
-                    <img th:attr="src=@{${match.picURI}}" width="95%" border="0" alt="" style="padding:20px;">
-                </div>
-                <div th:text="${match.description}" class="mdl-card__supporting-text">
-
-                </div>
-                <div class="mdl-card__actions">
-                    <a th:href="@{/extension/{id}(id=${match.id})}">Go to extension </a>
-                </div>
-            </div>
-        </div>
-    </th:block>
-
-    <th:block th:if="${isUserSearch}">
-
+    <th:block th:if="${!userMatches.isEmpty()}">
+        <h2>Users:</h2>
         <div th:each="match : ${userMatches}">
             <header>
                 <a th:href="@{/user/{id}(id=${match.id})}">
@@ -31,5 +12,25 @@
             </header>
         </div>
     </th:block>
+
+
+    <h2>Extensions: </h2>
+    <div th:each="match : ${matches}" class="myExtension">
+        <div class="myExtension mdl-card mdl-shadow--4dp">
+            <div class="mdl-card__title">
+                <h2 class="mdl-card__title-text" th:text="${match.name}"></h2>
+            </div>
+            <div class="mdl-card__media">
+                <img th:attr="src=@{${match.picURI}}" width="95%" border="0" alt="" style="padding:20px;">
+            </div>
+            <div th:text="${match.description}" class="mdl-card__supporting-text">
+
+            </div>
+            <div class="mdl-card__actions">
+                <a th:href="@{/extension/{id}(id=${match.id})}">Go to extension </a>
+            </div>
+        </div>
+    </div>
+
 
 </main>

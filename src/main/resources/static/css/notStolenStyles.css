@@ -3,6 +3,7 @@
     display: inline-block;
     float: right;
     margin-right: 5px;
+    width: 10%;
 }
 
 .myExtension {
@@ -11,4 +12,7 @@
 }
 .searchOption{
     display: inline-block;
+}
+.my-color{
+    color: rgba(255,255,255,.6);
 }
