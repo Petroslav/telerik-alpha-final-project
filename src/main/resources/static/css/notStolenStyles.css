@@ -1,0 +1,14 @@
+
+.search-area {
+    display: inline-block;
+    float: right;
+    margin-right: 5px;
+}
+
+.myExtension {
+    display: inline-block; /*TODO make it work !!!!!!!!!!!*/
+    margin: 10px;
+}
+.searchOption{
+    display: inline-block;
+}
