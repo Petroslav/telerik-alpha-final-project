@@ -4,14 +4,14 @@
 
 <head th:include="fragments/head" th:with="pageTitle='TelerikStudio Code Marketplace'"></head>
 
-<body>
+<body class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <header th:include="fragments/header"></header>
 
-<header th:include="fragments/header"></header>
+    <main th:include="${view}"></main>
 
-<main th:include="${view}"></main>
-
-<footer th:include="fragments/footer"></footer>
-<span th:include="fragments/scripts-bundle"></span>
-
+    <footer th:include="fragments/footer"></footer>
+    <span th:include="fragments/scripts-bundle"></span>
+</div>
 </body>
 </html>

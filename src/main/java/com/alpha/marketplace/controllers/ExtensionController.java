@@ -173,7 +173,7 @@ public class ExtensionController {
     public String removeFeatured(Model model, @RequestParam("list") List<Long> stuff){
         extensionService.unfeatureList(stuff);
 
-        return "redirect:/admin";
+        return "redirect:/admin/panel";
     }
 
 
