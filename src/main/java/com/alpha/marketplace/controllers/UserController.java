@@ -31,6 +31,9 @@ public class UserController {
 
     @GetMapping("/{id}")
     public String userDetails(Model model, @PathVariable("id") Integer id){
+        if(getUser().getId() == id){
+            return "redirect:/user/profile";
+        }
         User user = service.findById(id);
         if(user == null){
             model.addAttribute("view", "error/404");
