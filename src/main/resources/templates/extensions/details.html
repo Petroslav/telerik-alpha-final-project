@@ -4,7 +4,7 @@
         <h2 th:text="${extension.description}"></h2>
         <h2 th:text="${extension.downloads}"></h2>
         <a th:href="@{/user/{id}(id=${extension.publisher.id})}">
-            <span class="mdl-chip mdl-chip--contact" th:style="${user.isBanned()} ? 'background-color:rgba(255, 0, 0 , 0.5)' : 'background-colir: #dedede'">
+            <span class="mdl-chip mdl-chip--contact" th:style="${extension.publisher.isBanned()} ? 'background-color:rgba(255, 0, 0 , 0.5)' : 'background-colir: #dedede'">
                 <img th:attr="src=@{${extension.publisher.picURI}}" class="mdl-chip__contact" >
                 <span class="mdl-chip__text" th:text="${extension.publisher.username}"></span>
             </span>

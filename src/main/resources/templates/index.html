@@ -1,6 +1,7 @@
 <main>
     <h2>Newest:</h2>
     <div th:each="extension : ${newest}" class="myExtension">
+        <a th:href="@{/extension/{id}(id=${extension.id})}">
         <div class="myExtension mdl-card mdl-shadow--4dp">
             <div class="mdl-card__title">
                 <h2 class="mdl-card__title-text" th:text="${extension.name}"></h2>
@@ -15,6 +16,7 @@
                 <a th:href="@{/extension/{id}(id=${extension.id})}">Go to extension </a>
             </div>
         </div>
+        </a>
     </div>
 
     <h2>Most Popular:</h2>
