@@ -4,6 +4,7 @@ import com.alpha.marketplace.models.Extension;
 import com.alpha.marketplace.repositories.base.ExtensionRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.internal.SessionImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

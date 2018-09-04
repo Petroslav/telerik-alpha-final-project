@@ -150,7 +150,7 @@ public class UserServiceImpl implements UserService {
             System.out.println(e.getMessage());
             return false;
         }
-        Blob blob = cloudUserRepository.saveUserPic(String.valueOf(u.getId()), bytes, file.getContentType());
+        Blob blob = cloudUserRepository.saveUserPic(u.getId() + "", bytes, file.getContentType());
         if(blob == null){
             return false;
         }
@@ -163,7 +163,7 @@ public class UserServiceImpl implements UserService {
     public boolean editUserPic(User u, String urlString) {
         Blob b;
         try{
-            b = cloudUserRepository.saveUserPicFromUrl(String.valueOf(u.getId()), urlString);
+            b = cloudUserRepository.saveUserPicFromUrl(u.getId() + "", urlString);
         }catch(CannotFetchBytesException e){
             System.out.println(e.getMessage());
             return false;
@@ -190,7 +190,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean addRoleToUser(long id, String role){
-        if(!role.contains(ROLE_PREFIX)){
+        if(!role.startsWith(ROLE_PREFIX)){
             role = ROLE_PREFIX + role;
         }
         try{
@@ -209,7 +209,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean removeRoleFromUser(long id, String role) {
-        if(!role.contains(ROLE_PREFIX)){
+        if(!role.startsWith(ROLE_PREFIX)){
             role = ROLE_PREFIX + role;
         }
         try{

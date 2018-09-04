@@ -11,6 +11,7 @@ import com.alpha.marketplace.services.UserServiceImpl;
 import com.alpha.marketplace.services.base.UserService;
 
 
+import com.google.api.client.testing.util.TestableByteArrayInputStream;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,9 +19,13 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs;
 import static org.mockito.ArgumentMatchers.any;
@@ -72,10 +77,6 @@ public class UserServiceTests {
                 .thenThrow(new UsernameNotFoundException("Kek"));
         when(encoder.encode(PASS_OLD))
                 .thenReturn("encryptedOldPass");
-        when(encoder.encode(PASS_NEW))
-                .thenReturn("encryptedNewPass");
-        when(encoder.matches(PASS_OLD, PASS_OLD))
-                .thenReturn(true);
         when(mapper.map(any(UserBindingModel.class), eq(User.class)))
                 .thenReturn(expected);
         when(userRepository.findById(1))
@@ -135,9 +136,9 @@ public class UserServiceTests {
 
     }
 
-    @Test
-    public void userServiceEditUserOldPasswordMatchSuccess(){
-        UserEditModel sad = new UserEditModel("ekler", "lastEkler", PASS_OLD, PASS_NEW);
+    @Test(expected = NullPointerException.class)
+    public void userServiceEditUserOldPasswordMatchFail(){
+        UserEditModel sad = new UserEditModel("ekler", "lastEkler", null, PASS_OLD, PASS_NEW);
         boolean kek = userService.editUser(expected, sad);
         Assert.assertTrue(kek);
     }
