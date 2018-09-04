@@ -1,7 +1,6 @@
 package com.alpha.marketplace.services;
 
 import com.alpha.marketplace.exceptions.CannotFetchBytesException;
-import com.alpha.marketplace.exceptions.ErrorMessages;
 import com.alpha.marketplace.models.Role;
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.UserBindingModel;
@@ -12,7 +11,6 @@ import com.alpha.marketplace.repositories.base.CloudUserRepository;
 import com.alpha.marketplace.services.base.UserService;
 import com.alpha.marketplace.utils.Utils;
 import com.google.cloud.storage.Blob;
-import com.google.cloud.storage.BlobId;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,13 +18,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -126,7 +121,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean banUser(long id) {
         User gettingBanned = findById(id);
-        if(!gettingBanned.isAdmin() || currentUser().isOwner()){
+        if(!gettingBanned.isAdmin() || getCurrentUser().isOwner()){
             gettingBanned.ban();
             return updateUser(gettingBanned);
         }else{
@@ -179,7 +174,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User currentUser() {
+    public User getCurrentUser() {
         if(Utils.userIsAnonymous()){
             return null;
         }

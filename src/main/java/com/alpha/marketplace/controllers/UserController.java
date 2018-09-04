@@ -2,24 +2,21 @@ package com.alpha.marketplace.controllers;
 
 import com.alpha.marketplace.models.Extension;
 import com.alpha.marketplace.models.User;
-import com.alpha.marketplace.models.binding.UserBindingModel;
 import com.alpha.marketplace.models.edit.UserEditModel;
 import com.alpha.marketplace.services.base.UserService;
 import com.alpha.marketplace.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/user")
@@ -39,7 +36,14 @@ public class UserController {
             model.addAttribute("view", "error/404");
             return "base-layout";
         }
+        User currentUser = service.getCurrentUser();
+
+        if(id == currentUser.getId()){
+            return "redirect:/user/profile";
+        }
+        Set<Extension> extensions = new HashSet<>(user.getExtensions());
         model.addAttribute("user", user);
+        model.addAttribute("extensions", extensions);
         model.addAttribute("view", "user/details");
 
         return "base-layout";
@@ -102,7 +106,7 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     public String editProfile(Model model, UserEditModel editModel){
 
-        service.editUser(service.currentUser(), editModel);
+        service.editUser(service.getCurrentUser(), editModel);
 
         return "redirect:/user/profile";
     }

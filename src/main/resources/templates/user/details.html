@@ -4,7 +4,8 @@
         <h2 th:text="${user.firstName}"></h2>
         <h2 th:text="${user.lastName}"></h2>
         <img th:attr="src=@{${user.picURI}}">
-        <div th:each="extension : ${user.extensions}" class="myExtension">
+        <h2>Extensions: </h2>
+        <div th:each="extension : ${extensions}" class="myExtension">
             <a th:href="@{/extension/{id}(id=${extension.id})}">
                 <div class="mdl-card mdl-shadow--2dp">
                     <div class="mdl-background-image" th:style="'height: 285px;background-position: center center;background-size: cover; background-image: url(\''+  @{${extension.picURI}} + '\');'"></div>
