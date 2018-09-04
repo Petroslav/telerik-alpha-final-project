@@ -4,7 +4,7 @@
         <h2>Users:</h2>
         <div class="my-inline-block my-margin-users" th:each="match : ${userMatches}">
                 <a th:href="@{/user/{id}(id=${match.id})}">
-                    <span class="mdl-chip mdl-chip--contact">
+                    <span class="mdl-chip mdl-chip--contact" th:style="${match.isBanned()} ? 'background-color:rgba(255, 0, 0 , 0.5)' : 'background-colir: #dedede'">
                         <img th:attr="src=@{${match.picURI}}" class="mdl-chip__contact" >
                         <span class="mdl-chip__text" th:text="${match.username}"></span>
                     </span>
