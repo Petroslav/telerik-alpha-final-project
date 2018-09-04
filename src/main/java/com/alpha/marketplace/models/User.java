@@ -244,13 +244,11 @@ public class User implements UserDetails {
 
     public void ban(){
         isEnabled = false;
-        extensions.forEach(Extension::forbid);
     }
 
     public void unban(){
         //TODO might have to rethink this in case there were pending extensions before the ban
         isEnabled = true;
-        extensions.forEach(Extension::approve);
     }
 
     @Transient

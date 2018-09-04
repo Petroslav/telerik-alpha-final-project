@@ -88,15 +88,6 @@ public class UserController {
         return  "redirect:/profile";
     }
 
-    private User getUser(){
-        UserDetails user = (UserDetails) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
-
-        return (User)service.loadUserByUsername(user.getUsername());
-    }
-
     @GetMapping("/profile/edit")
     @PreAuthorize("isAuthenticated()")
     public String editProfilePage(Model model){
@@ -114,5 +105,14 @@ public class UserController {
         service.editUser(service.currentUser(), editModel);
 
         return "redirect:/user/profile";
+    }
+
+    private User getUser(){
+        UserDetails user = (UserDetails) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        return (User)service.loadUserByUsername(user.getUsername());
     }
 }
