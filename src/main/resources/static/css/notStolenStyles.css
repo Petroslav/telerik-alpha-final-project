@@ -25,3 +25,12 @@
 .my-margin-users{
     margin: 0 5px;
 }
+.myExtension a{
+    text-decoration: none;
+}
+.myExtension .mdl-card > img {
+    max-height: 200px;
+    display: block;
+    margin: 0 auto;
+    width: auto;
+}
