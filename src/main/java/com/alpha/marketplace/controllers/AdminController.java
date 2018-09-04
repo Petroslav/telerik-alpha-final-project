@@ -72,6 +72,7 @@ public class AdminController {
             System.out.println("Can't ban the guy, he's an admin");
             return "redirect:/admin/users";
         }
+        extensionService.reloadLists();
         return "redirect:/user/"+id;
     }
 
@@ -79,6 +80,7 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     public String unbanUser(Model model, @PathVariable("id") long id){
         userService.unbanUser(id);
+        extensionService.reloadLists();
         model.addAttribute("view", "index");
 
         return "redirect:/user/"+id;

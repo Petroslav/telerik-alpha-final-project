@@ -137,6 +137,7 @@ public class ExtensionController {
 
         Extension extension = extensionService.getById(id);
         extensionService.download(id);
+        extensionService.reloadLists();
 
         return "redirect:"+extension.getDlURI();
     }

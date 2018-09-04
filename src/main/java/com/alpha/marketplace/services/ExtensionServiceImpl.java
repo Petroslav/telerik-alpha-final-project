@@ -117,7 +117,8 @@ public class ExtensionServiceImpl implements ExtensionService {
     public List<Extension> getAllApproved() {
         if (approved.isEmpty()) {
             approved =  getAll().stream()
-                    .filter(Extension::isApproved).collect(Collectors.toList());
+                    .filter(Extension::isApproved)
+                    .filter(extension -> !extension.getPublisher().isBanned()).collect(Collectors.toList());
         }
         return approved;
     }
