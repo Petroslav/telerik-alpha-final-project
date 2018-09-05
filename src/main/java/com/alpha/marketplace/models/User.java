@@ -3,6 +3,7 @@ package com.alpha.marketplace.models;
 import com.alpha.marketplace.models.dtos.ExtensionDTO;
 import com.fasterxml.jackson.annotation.*;
 import com.google.cloud.storage.BlobId;
+import org.hibernate.annotations.OptimisticLock;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
@@ -53,6 +54,9 @@ public class User implements UserDetails {
     @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "version")
+    private long version;
+
     @ManyToMany( fetch = FetchType.EAGER,
             cascade = {
             CascadeType.PERSIST,
@@ -69,13 +73,14 @@ public class User implements UserDetails {
     private List<Extension> extensions;
 
     public User(){
-        this.isAccountNonExpired = true;
-        this.isAccountNonLocked = true;
-        this.isCredentialsNonExpired = true;
-        this.isEnabled = true;
-        this.picURI = "https://vignette.wikia.nocookie.net/teamfourstar/images/7/7c/UnknownPerson.jpg/revision/latest?cb=20160521184455";
+        isAccountNonExpired = true;
+        isAccountNonLocked = true;
+        isCredentialsNonExpired = true;
+        isEnabled = true;
+        picURI = "https://vignette.wikia.nocookie.net/teamfourstar/images/7/7c/UnknownPerson.jpg/revision/latest?cb=20160521184455";
         extensions = new ArrayList<>();
         authorities = new HashSet<>();
+        version = 1;
     }
 
     public User(
@@ -90,7 +95,8 @@ public class User implements UserDetails {
             String firstName,
             String lastName,
             Set<Role> authorities,
-            List<Extension> extensions
+            List<Extension> extensions,
+            long version
     ) {
         this.isAccountNonExpired = isAccountNonExpired;
         this.isAccountNonLocked = isAccountNonLocked;
@@ -105,6 +111,7 @@ public class User implements UserDetails {
         this.lastName = lastName;
         this.authorities = authorities;
         this.extensions = extensions;
+        this.version = version;
     }
 
     public long getId() {
@@ -205,6 +212,11 @@ public class User implements UserDetails {
                             e.getAddedOn(),
                             e.getGitHubInfo()))
                     .collect(Collectors.toSet());
+    }
+
+    @JsonIgnore
+    public long getVersion(){
+        return version;
     }
 
     @Override

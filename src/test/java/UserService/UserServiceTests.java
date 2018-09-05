@@ -1,5 +1,6 @@
 package UserService;
 
+import com.alpha.marketplace.exceptions.VersionMismatchException;
 import com.alpha.marketplace.models.Role;
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.UserBindingModel;
@@ -67,8 +68,12 @@ public class UserServiceTests {
                 .thenReturn(true);
         when(userRepository.findByEmail(EMAIL_EXISTS))
                 .thenReturn(expected);
-        when(userRepository.update(any(User.class)))
-                .thenReturn(true);
+        try {
+            when(userRepository.update(any(User.class)))
+                    .thenReturn(true);
+        } catch (VersionMismatchException e) {
+            e.printStackTrace();
+        }
         when(userRepository.findByEmail(EMAIL_AVAILABLE))
                 .thenReturn(null);
         when(userRepository.findByUsername(USERNAME_EXISTS))
@@ -139,7 +144,12 @@ public class UserServiceTests {
     @Test(expected = NullPointerException.class)
     public void userServiceEditUserOldPasswordMatchFail(){
         UserEditModel sad = new UserEditModel("ekler", "lastEkler", null, PASS_OLD, PASS_NEW);
-        boolean kek = userService.editUser(expected, sad);
+        boolean kek = false;
+        try {
+            userService.editUser(expected, sad);
+        } catch (VersionMismatchException e) {
+            e.printStackTrace();
+        }
         Assert.assertTrue(kek);
     }
 

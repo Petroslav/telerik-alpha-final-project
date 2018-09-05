@@ -1,6 +1,7 @@
 package com.alpha.marketplace.repositories;
 
 import com.alpha.marketplace.exceptions.ErrorMessages;
+import com.alpha.marketplace.exceptions.VersionMismatchException;
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.repositories.base.UserRepository;
 import org.hibernate.Session;
@@ -10,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -125,12 +127,27 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean update(User u) {
-        try(Session sess = session.openSession()){
+    public boolean update(User u) throws VersionMismatchException {
+        try (Session sess = session.openSession()) {
             sess.beginTransaction();
-            sess.update(u);
+            long ver = new Date().getTime();
+            int rows = sess.createQuery(
+                    "UPDATE User SET firstName = :fn, lastName = :ln, version = :ver, picBlobId = :blob, password = :pass, picURI = :pic WHERE id = :id AND version = :version")
+                    .setParameter("fn", u.getFirstName())
+                    .setParameter("ln", u.getLastName())
+                    .setParameter("ver", ver)
+                    .setParameter("id", u.getId())
+                    .setParameter("version", u.getVersion())
+                    .setParameter("blob", u.getPicBlobId())
+                    .setParameter("pass", u.getPassword())
+                    .setParameter("pic", u.getPicURI()).executeUpdate();
+            if (rows == 0) {
+                throw new VersionMismatchException("Version mismatch, try again");
+            }
             sess.getTransaction().commit();
             System.out.println("User updated successfully.");
+        }catch(VersionMismatchException e1){
+            throw e1;
         }catch(Exception e){
             System.out.println(e.getMessage());
             e.printStackTrace();

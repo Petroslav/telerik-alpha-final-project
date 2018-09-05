@@ -164,7 +164,7 @@ public class ExtensionRepositoryImpl implements ExtensionRepository {
         try (Session sess = session.openSession()) {
             sess.beginTransaction();
 
-            sess.update(extension);
+            int rows;
 
             sess.getTransaction().commit();
             System.out.println("Extension " + extension.getName() + " updated successfully");

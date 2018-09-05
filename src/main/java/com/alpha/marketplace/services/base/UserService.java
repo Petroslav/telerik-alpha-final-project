@@ -1,5 +1,6 @@
 package com.alpha.marketplace.services.base;
 
+import com.alpha.marketplace.exceptions.VersionMismatchException;
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.UserBindingModel;
 import com.alpha.marketplace.models.edit.UserEditModel;
@@ -17,7 +18,7 @@ public interface UserService extends UserDetailsService {
     User findByEmail(String email);
     User getCurrentUser();
     boolean updateUser(User u);
-    boolean editUser(User u, UserEditModel edit);
+    boolean editUser(User u, UserEditModel edit) throws VersionMismatchException;
     boolean banUser(long id);
     boolean unbanUser(long id);
     boolean editUserPic(User u, MultipartFile file);
