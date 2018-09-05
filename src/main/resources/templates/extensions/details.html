@@ -1,55 +1,87 @@
 <main>
-    <header>
-        <h2 th:text="${extension.name}"></h2>
-        <h2 th:text="${extension.description}"></h2>
-        <h2 th:text="${extension.downloads}"></h2>
-        <a th:href="@{/user/{id}(id=${extension.publisher.id})}">
-            <span class="mdl-chip mdl-chip--contact" th:style="${extension.publisher.isBanned()} ? 'background-color:rgba(255, 0, 0 , 0.5)' : 'background-colir: #dedede'">
-                <img th:attr="src=@{${extension.publisher.picURI}}" class="mdl-chip__contact" >
+    <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+        <header class="mdl-background-image section__play-btn mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white"  th:style="'height: 250px;background-position: center center;background-size: cover; background-image: url(\''+  @{${extension.picURI}} + '\');'">
+
+        </header>
+        <div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
+            <div class="mdl-card__supporting-text">
+                <h4 th:text="${extension.name}"></h4>
+                <th:block th:each="tag : ${tags}">
+                            <button type="button" class="mdl-chip my-tag">
+                                <span th:text=${tag.name} class="mdl-chip__text"></span>
+                            </button>
+                        </a>
+                </th:block>
+            </div>
+            <div class="mdl-card__actions">
+                <!--<a href="#" class="mdl-button mdl" style="float: right;">Download</a>-->
+                <form th:action="@{/extension/download/{id} (id=${extension.id})}" method="POST">
+                    <input class="mdl-button mdl" style="float: right;" type="submit" value="Download"/>
+                </form>
+                <!--<a th:href="@{/user/{id}(id=${extension.publisher.id})}" th:text="${extension.publisher.username}" class="mdl-button"></a>-->
+                <a th:href="@{/user/{id}(id=${extension.publisher.id})}">
+                <span class="mdl-chip mdl-chip--contact"
+                th:style="${extension.publisher.isBanned()} ? 'background-color:rgba(255, 0, 0 , 0.5)' : 'background-colir: #dedede'">
+                <img th:attr="src=@{${extension.publisher.picURI}}" class="mdl-chip__contact">
                 <span class="mdl-chip__text" th:text="${extension.publisher.username}"></span>
-            </span>
-        </a>
-        <h2 th:text="${extension.version}"></h2>
-        <h2 th:text="${extension.addedOn}"></h2>
-        <h2 th:text="${approved}"></h2>
-        <h2 th:text="${extension.gitHubInfo.pullCount}"></h2>
-        <h2 th:text="${extension.gitHubInfo.issuesCount}"></h2>
-        <h2 th:text="${extension.gitHubInfo.lastCommit}"></h2>
-        <h2>Tags: </h2>
-        <ul th:each="tag : ${tags}">
-            <li>
-                <a th:href="@{/tag/{name}(name=${tag.name})}">
-                    <h2 th:text=${tag.name}></h2>
+                </span>
                 </a>
-            </li>
-        </ul>
+                <span class="mdl-button mdl" th:text="${extension.downloads}" style="float: right;">
+                </span>
+                <!--<i class="material-icons" style="float: right;">cloud_download</i>-->
+            </div>
+        </div>
+    </section>
+    <!--<h2 th:text="${extension.name}"></h2>-->
+    <!--<h2 th:text="${extension.description}"></h2>-->
+    <!--<h2 th:text="${extension.downloads}"></h2>-->
+    <!--<a th:href="@{/user/{id}(id=${extension.publisher.id})}">-->
+            <!--<span class="mdl-chip mdl-chip&#45;&#45;contact"-->
+                  <!--th:style="${extension.publisher.isBanned()} ? 'background-color:rgba(255, 0, 0 , 0.5)' : 'background-colir: #dedede'">-->
+                <!--<img th:attr="src=@{${extension.publisher.picURI}}" class="mdl-chip__contact">-->
+                <!--<span class="mdl-chip__text" th:text="${extension.publisher.username}"></span>-->
+            <!--</span>-->
+    <!--</a>-->
+    <!--<h2 th:text="${extension.version}"></h2>-->
+    <!--<h2 th:text="${extension.addedOn}"></h2>-->
+    <!--<h2 th:text="${approved}"></h2>-->
+    <!--<h2 th:text="${extension.gitHubInfo.pullCount}"></h2>-->
+    <!--<h2 th:text="${extension.gitHubInfo.issuesCount}"></h2>-->
+    <!--<h2 th:text="${extension.gitHubInfo.lastCommit}"></h2>-->
+    <!--<h2>Tags: </h2>-->
+    <!--<ul th:each="tag : ${tags}">-->
+        <!--<li>-->
+            <!--<a th:href="@{/tag/{name}(name=${tag.name})}">-->
+                <!--<h2 th:text=${tag.name}></h2>-->
+            <!--</a>-->
+        <!--</li>-->
+    <!--</ul>-->
 
-        <form th:action="@{/extension/sync/{id} (id=${extension.id})}" method="POST">
-            <button sec:authorize="hasRole('ADMIN')">Sync</button>
-        </form>
-        <th:block sec:authorize="isAuthenticated()"
-                  th:if="${user.isAdmin() OR user.isPublisher(extension)}">
-            <a th:href="@{/extension/delete/{id}(id = ${extension.id})}">Delete</a>
+    <form th:action="@{/extension/sync/{id} (id=${extension.id})}" method="POST">
+        <button sec:authorize="hasRole('ADMIN')">Sync</button>
+    </form>
+    <th:block sec:authorize="isAuthenticated()"
+              th:if="${user.isAdmin() OR user.isPublisher(extension)}">
+        <a th:href="@{/extension/delete/{id}(id = ${extension.id})}">Delete</a>
+    </th:block>
+    <form th:action="@{/extension/approve/{id} (id=${extension.id})}" method="POST">
+        <th:block th:if="${extension.isUnApproved()}">
+            <button sec:authorize="hasRole('ADMIN')">Approve</button>
         </th:block>
-        <form th:action="@{/extension/approve/{id} (id=${extension.id})}" method="POST">
-            <th:block th:if="${extension.isUnApproved()}">
-                <button sec:authorize="hasRole('ADMIN')">Approve</button>
-            </th:block>
-        </form>
+    </form>
 
-        <form th:action="@{/extension/feature/{id} (id=${extension.id})}" method="POST">
-            <th:block th:if="${!extension.isSelected()}">
-                <button sec:authorize="hasRole('ADMIN')">Feature</button>
-            </th:block>
-        </form>
+    <form th:action="@{/extension/feature/{id} (id=${extension.id})}" method="POST">
+        <th:block th:if="${!extension.isSelected()}">
+            <button sec:authorize="hasRole('ADMIN')">Feature</button>
+        </th:block>
+    </form>
 
-        <form th:action="@{/extension/unFeature/{id} (id=${extension.id})}" method="POST">
-            <th:block th:if="${extension.isSelected()}">
-                <button sec:authorize="hasRole('ADMIN')">Remove from featured</button>
-            </th:block>
-        </form>
-        <form th:action="@{/extension/download/{id} (id=${extension.id})}" method="POST">
-            <button sec:authorize="isAuthenticated()">Download</button>
-        </form>
-    </header>
+    <form th:action="@{/extension/unFeature/{id} (id=${extension.id})}" method="POST">
+        <th:block th:if="${extension.isSelected()}">
+            <button sec:authorize="hasRole('ADMIN')">Remove from featured</button>
+        </th:block>
+    </form>
+    <form th:action="@{/extension/download/{id} (id=${extension.id})}" method="POST">
+        <button sec:authorize="isAuthenticated()">Download</button>
+    </form>
 </main>
