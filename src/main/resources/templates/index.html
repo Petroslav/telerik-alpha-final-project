@@ -1,5 +1,5 @@
 <main>
-    <h2>Newest:</h2>
+    <h3>Newest:</h3>
     <div th:each="extension : ${newest}" class="myExtension">
         <a th:href="@{/extension/{id}(id=${extension.id})}">
             <div class="mdl-card mdl-shadow--2dp">
@@ -19,7 +19,7 @@
         </a>
     </div>
 
-    <h2>Most Popular:</h2>
+    <h3>Most Popular:</h3>
     <div th:each="extension : ${mostPopular}" class="myExtension">
         <a th:href="@{/extension/{id}(id=${extension.id})}">
             <div class="mdl-card mdl-shadow--2dp">
@@ -39,7 +39,7 @@
         </a>
     </div>
 
-    <h2>Featured:</h2>
+    <h3>Featured:</h3>
     <div th:each="extension : ${adminSelection}" class="myExtension">
         <a th:href="@{/extension/{id}(id=${extension.id})}">
             <div class="mdl-card mdl-shadow--2dp">
