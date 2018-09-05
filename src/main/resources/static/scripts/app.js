@@ -9,6 +9,14 @@ $(document).ready(function () {
         $('html').animate({scrollTop: 0}, 'slow');
         return true;
     });
+    $('.my-tag').on('click', function(){
+        var tagText = $(this).children("span").html();
+        console.log(tagText);
+
+        $(location).attr('href', '/tag/'+ tagText);
+
+
+    });
 
     // var totalH = $('#stickyNav').offset().top;
     // $(window).bind('scroll', function () {
