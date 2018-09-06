@@ -219,6 +219,10 @@ public class User implements UserDetails {
         return version;
     }
 
+    public void setVersion(long version) {
+        this.version = version;
+    }
+
     @Override
     public Set<Role> getAuthorities() {
         return authorities;

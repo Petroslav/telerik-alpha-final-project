@@ -60,9 +60,8 @@ public class ExtensionController {
     public String viewExtension(@PathVariable("id") long id, Model model) {
 
         Extension extension = extensionService.getByIdFromMemory(id);
-        if (extension == null) {
-            model.addAttribute("view", "error/404");
-            return "base-layout";
+        if(!extensionService.isUserPublisherOrAdmin(extension) && !extension.isApproved() || extension == null){
+            return "redirect:/";
         }
         if (!Utils.userIsAnonymous()) {
             User user = extensionService.currentUser();
@@ -73,14 +72,12 @@ public class ExtensionController {
         if (extension.isApproved()) {
             approved = "Approved";
         }
-        if(!extensionService.isUserPublisherOrAdmin(extension) && !extension.isApproved()){
-            return "redirect:/";
-        }
 
         model.addAttribute("view", "extensions/details");
         model.addAttribute("approved", approved);
         model.addAttribute("tags", extension.getTags());
         model.addAttribute("extension", extension);
+
         return "base-layout";
     }
 

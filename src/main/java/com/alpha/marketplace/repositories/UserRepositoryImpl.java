@@ -132,12 +132,7 @@ public class UserRepositoryImpl implements UserRepository {
             sess.beginTransaction();
             long ver = new Date().getTime();
             int rows = sess.createQuery(
-                    "UPDATE User SET firstName = :fn, lastName = :ln, picBlobId = :blob, picURI = :pic, password = :pass, version = :ver WHERE id = :id AND version = :version")
-                    .setParameter("fn", u.getFirstName())
-                    .setParameter("ln", u.getLastName())
-                    .setParameter("blob", u.getPicBlobId())
-                    .setParameter("pic", u.getPicURI())
-                    .setParameter("pass", u.getPassword())
+                    "UPDATE User SET version = :ver WHERE id = :id AND version = :version")
                     .setParameter("ver", ver)
                     .setParameter("id", u.getId())
                     .setParameter("version", u.getVersion())
@@ -145,6 +140,8 @@ public class UserRepositoryImpl implements UserRepository {
             if (rows == 0) {
                 throw new VersionMismatchException("Version mismatch, try again");
             }
+            u.setVersion(ver);
+            sess.update(u);
             sess.getTransaction().commit();
             System.out.println("User updated successfully.");
         }catch(VersionMismatchException e1){
