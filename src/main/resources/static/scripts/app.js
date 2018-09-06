@@ -72,6 +72,7 @@ $(document).ready(function () {
         $(location).attr('href', '/popular?sort=' + $('#sortOption').val());
 
     });
+    console.log("HEREEEEEEEEEEEEE"+$('#sortOption2').val())
     $('#loginSubmit').on('click', function () {
         var snackbar = document.querySelector('.mdl-js-snackbar');
         var username = $('#loginUsername');

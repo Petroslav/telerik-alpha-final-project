@@ -1,0 +1,7 @@
+<main>
+    <h2>Last Successful sync: <i th:text="${success}"></i></h2>
+    <h2>Last Failed sync: <i th:text="${fail}"></i></h2>
+    <th:block th:if="${hasFailed}">
+        <h2>Fail info: <i th:text="${failInfo}"></i></h2>
+    </th:block>
+</main>

@@ -1,7 +1,9 @@
 package com.alpha.marketplace.controllers;
 
 import com.alpha.marketplace.models.Extension;
+import com.alpha.marketplace.models.Properties;
 import com.alpha.marketplace.models.User;
+import com.alpha.marketplace.repositories.base.PropertiesRepository;
 import com.alpha.marketplace.services.base.ExtensionService;
 import com.alpha.marketplace.services.base.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -21,11 +24,13 @@ public class AdminController {
 
     private final UserService userService;
     private final ExtensionService extensionService;
+    private final PropertiesRepository propertiesRepository;
 
     @Autowired
-    public AdminController(UserService userService, ExtensionService extensionService) {
+    public AdminController(UserService userService, ExtensionService extensionService, PropertiesRepository propertiesRepository) {
         this.userService = userService;
         this.extensionService = extensionService;
+        this.propertiesRepository = propertiesRepository;
     }
 
     @GetMapping("/unapproved")
@@ -35,15 +40,6 @@ public class AdminController {
 
         model.addAttribute("extensions", extensions);
         model.addAttribute("view", "/admin/unapproved");
-
-        return "base-layout";
-    }
-
-        @GetMapping("/panel")
-        @PreAuthorize("hasRole('ADMIN')")
-        public String panel(Model model){
-
-        model.addAttribute("view", "/admin/panel");
 
         return "base-layout";
     }
@@ -85,4 +81,33 @@ public class AdminController {
 
         return "redirect:/user/"+id;
     }
+
+    @GetMapping("/syncInfo")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String syncInfo(Model model){
+        boolean hasFailed = false;
+
+        Properties properties = propertiesRepository.get();
+
+        String success = properties.getLastSuccessfulSync().toString();
+        Date failDate = properties.getLastFailedSync();
+
+        String fail = null;
+
+        if(failDate == null){
+            fail = "Never";
+        }else {
+            fail = failDate.toString();
+            hasFailed = true;
+        }
+        String failInfo = properties.getFailInfo();
+
+        model.addAttribute("hasFailed", hasFailed);
+        model.addAttribute("success", success);
+        model.addAttribute("fail", fail);
+        model.addAttribute("failInfo", failInfo);
+        model.addAttribute("view", "/admin/syncInfo");
+        return "base-layout";
+    }
+
 }

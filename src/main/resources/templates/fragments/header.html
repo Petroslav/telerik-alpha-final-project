@@ -54,7 +54,13 @@
     <a sec:authorize="isAnonymous()" th:href="@{/login}" class="mdl-layout__tab">Login</a>
     <a sec:authorize="isAnonymous()" th:href="@{/register}" class="mdl-layout__tab">Register</a>
     <a sec:authorize="isAuthenticated()" th:href="@{/user/profile}" class="mdl-layout__tab">Profile</a>
-    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/panel}" class="mdl-layout__tab">Admin</a>
+    <a sec:authorize="hasRole('ADMIN')" href="javascript:void(0)" id="adminMenu" class="mdl-layout__tab">Admin</a>
+    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="adminMenu">
+        <li class="mdl-menu__item"><a href="/admin/unapproved" class="mdl-menu__item">Unapproved Extensions</a></li>
+        <li class="mdl-menu__item"><a href="/extension/featuredSelection" class="mdl-menu__item">Featured Extensions</a></li>
+        <li class="mdl-menu__item"><a href="/admin/users" class="mdl-menu__item">All Users</a></li>
+        <li class="mdl-menu__item"><a href="/admin/syncInfo" class="mdl-menu__item">Sync Info</a></li>
+    </ul>
     <div class="search-area">
         <div class="mdl-textfield mdl-js-textfield">
             <input class="mdl-textfield__input" type="text" id="searchField">
