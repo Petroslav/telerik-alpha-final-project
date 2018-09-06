@@ -37,6 +37,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String index(Model model, @RequestParam(value = "sort", required = false) String sort) {
+
         List<Extension> newestExtensions = extensionService.getLatest();
         List<Extension> selectedByAdmin = extensionService.getAdminSelection();
         List<Extension> mostPopular = extensionService.getMostPopular();
@@ -130,4 +131,6 @@ public class HomeController {
         model.addAttribute("view", "/search");
         return "base-layout";
     }
+
+
 }

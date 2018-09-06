@@ -1,5 +1,6 @@
 package com.alpha.marketplace.controllers;
 
+import com.alpha.marketplace.exceptions.VersionMismatchException;
 import com.alpha.marketplace.models.Extension;
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.edit.UserEditModel;
@@ -69,7 +70,7 @@ public class UserController {
 
     @PostMapping("/update")
     @PreAuthorize("isAuthenticated()")
-    public String updateProfile(Model model, @ModelAttribute UserEditModel userEdit){
+    public String updateProfile(Model model, @ModelAttribute UserEditModel userEdit) throws VersionMismatchException {
         User u = getUser();
         service.editUser(u, userEdit);
         return  "redirect:/profile";
@@ -107,7 +108,7 @@ public class UserController {
 
     @PostMapping("/profile/edit")
     @PreAuthorize("isAuthenticated()")
-    public String editProfile(Model model, UserEditModel editModel){
+    public String editProfile(Model model, UserEditModel editModel) throws VersionMismatchException {
 
         service.editUser(service.getCurrentUser(), editModel);
 
