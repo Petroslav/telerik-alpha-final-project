@@ -3,6 +3,7 @@ package com.alpha.marketplace.services.base;
 import com.alpha.marketplace.models.Extension;
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.ExtensionBindingModel;
+import com.alpha.marketplace.models.edit.ExtensionEditModel;
 import org.springframework.validation.BindingResult;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public interface ExtensionService {
     User currentUser();
     boolean isUserPublisherOrAdmin(Extension extension);
     boolean update(Extension extension);
+    boolean edit(ExtensionEditModel model, long id);
     void unfeatureList(List<Long> extensions);
     void createExtension(ExtensionBindingModel extensionBindingModel, BindingResult errors);
     void delete(long id);

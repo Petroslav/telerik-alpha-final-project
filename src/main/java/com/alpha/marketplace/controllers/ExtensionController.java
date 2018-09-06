@@ -1,8 +1,10 @@
 package com.alpha.marketplace.controllers;
 
+import com.alpha.marketplace.exceptions.ErrorMessages;
 import com.alpha.marketplace.models.Extension;
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.ExtensionBindingModel;
+import com.alpha.marketplace.models.edit.ExtensionEditModel;
 import com.alpha.marketplace.services.base.ExtensionService;
 import com.alpha.marketplace.services.base.UserService;
 import com.alpha.marketplace.utils.Utils;
@@ -13,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -174,6 +177,26 @@ public class ExtensionController {
         extensionService.unfeatureList(stuff);
 
         return "redirect:/admin/panel";
+    }
+
+    @GetMapping("/edit/{id}")
+    @PreAuthorize("hasRole('USER')")
+    public String getExtensionEdit(Model model, @PathVariable long id, @RequestParam(required =  false) String error){
+        Extension toEdit = extensionService.getByIdFromMemory(id);
+        if(error != null) model.addAttribute("error", error);
+        model.addAttribute("editFormInfo", toEdit);
+        model.addAttribute("view", "/extensions/edit");
+        return "base-layout";
+    }
+
+    @PostMapping("/edit/{id}")
+    @PreAuthorize("hasRole('USER')")
+    public String editExtension(@Valid ExtensionEditModel editModel, @PathVariable long id, Model model){
+        if(!extensionService.edit(editModel, id)) {
+            model.addAttribute("error", ErrorMessages.EXTENSION_EDIT_ERROR);
+            return "redirect:/edit/" + id;
+        }
+        return "redirect:/extension" + id;
     }
 
 

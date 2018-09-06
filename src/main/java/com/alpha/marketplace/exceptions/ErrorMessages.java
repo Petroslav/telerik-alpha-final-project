@@ -11,4 +11,5 @@ public class ErrorMessages {
     public static final String FILE_UPLOAD_FAIL = "Failed to upload file.";
     public static final String GITHUB_SYNC_FAIL = "Failed to sync GitHub data";
     public static final String VERSION_MISMATCH = "There was an error processing your request. Please try again.";
+    public static final String EXTENSION_EDIT_ERROR = "Something went wrong. Please, try again.";
 }

@@ -9,6 +9,7 @@ import com.alpha.marketplace.models.Properties;
 import com.alpha.marketplace.models.Tag;
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.ExtensionBindingModel;
+import com.alpha.marketplace.models.edit.ExtensionEditModel;
 import com.alpha.marketplace.repositories.base.*;
 import com.alpha.marketplace.services.base.ExtensionService;
 import com.alpha.marketplace.utils.Utils;
@@ -205,6 +206,32 @@ public class ExtensionServiceImpl implements ExtensionService {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public boolean edit(ExtensionEditModel model, long id) {
+        Extension edit = extensionsMap.get(id);
+        edit.setName(model.getName());
+        edit.setDescription(model.getDescription());
+        edit.setVersion(model.getVersion());
+        edit.setRepoURL(model.getRepo());
+
+        if(!model.getFile().isEmpty()){
+            if(!updateExtensionFiles(edit, model)) return false;
+        }
+        if(!model.getPicture().isEmpty()) {
+            if(!updateExtensionPicture(edit, model)) return false;
+        }
+
+        if(update(edit)){
+            workers.submit(() -> {
+                Set<Tag> oldTags = updateTags(edit, model);
+                oldTags.forEach(tagRepository::updateTag);
+            });
+            return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -554,6 +581,56 @@ public class ExtensionServiceImpl implements ExtensionService {
                 dlUpdate(id);
             }
         }
+    }
+
+    private boolean updateExtensionPicture(Extension edit, ExtensionEditModel model) {
+        if(edit.getPicBlobId() != null){
+            cloudExtensionRepository.delete(edit.getBlobId());
+        }
+        try {
+            String fn = model.getPicture().getOriginalFilename().substring(model.getPicture().getOriginalFilename().lastIndexOf("."));
+            Blob b = cloudExtensionRepository.saveExtensionPic(edit.getPublisher().getId() + fn, edit.getName(), model.getFile().getContentType(), model.getFile().getBytes());
+            edit.setPicBlobId(b.getBlobId());
+            edit.setPicURI(b.getMediaLink());
+        } catch (IOException e) {
+            System.out.println("Something went wrong while uploading the file.");
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean updateExtensionFiles(Extension edit, ExtensionEditModel model) {
+        if(edit.getBlobId() != null){
+            cloudExtensionRepository.delete(edit.getBlobId());
+        }
+        try {
+            String fn = model.getFile().getOriginalFilename().substring(model.getFile().getOriginalFilename().lastIndexOf("."));
+            Blob b = cloudExtensionRepository.saveExtension(edit.getPublisher().getId() + fn, edit.getName(), model.getFile().getContentType(), model.getFile().getBytes());
+            edit.setBlobId(b.getBlobId());
+            edit.setDlURI(b.getMediaLink());
+        } catch (IOException e) {
+            System.out.println("Something went wrong while uploading the file.");
+            return false;
+        }
+
+        return true;
+    }
+
+    private Set<Tag> updateTags(Extension edit, ExtensionEditModel model) {
+        Set<Tag> oldTags = new HashSet<>();
+        List<String> tagList = Arrays.asList(model.getTags().split(", "));
+        tagList.forEach(t -> {
+            Set<Tag> sad = edit.getTags().stream()
+                    .filter(tag -> tag.getName().equals(t))
+                    .collect(Collectors.toSet());
+            oldTags.addAll(sad);
+        });
+        oldTags.forEach(t -> t.getTaggedExtensions().remove(edit));
+        Set<Tag> tags = handleTags(model.getTags(), edit);
+        edit.getTags().addAll(tags);
+
+        return oldTags;
     }
 
 }
