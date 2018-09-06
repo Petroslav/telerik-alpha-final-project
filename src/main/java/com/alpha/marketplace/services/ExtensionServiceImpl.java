@@ -215,6 +215,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         edit.setDescription(model.getDescription());
         edit.setVersion(model.getVersion());
         edit.setRepoURL(model.getRepo());
+        edit.setLatestUpdate(new Date());
 
         if(!model.getFile().isEmpty()){
             if(!updateExtensionFiles(edit, model)) return false;
@@ -223,15 +224,10 @@ public class ExtensionServiceImpl implements ExtensionService {
             if(!updateExtensionPicture(edit, model)) return false;
         }
 
-        if(update(edit)){
-            workers.submit(() -> {
-                Set<Tag> oldTags = updateTags(edit, model);
-                oldTags.forEach(tagRepository::updateTag);
-            });
-            return true;
-        }
-
-        return false;
+        Set<Tag> tags = handleTags(model.getTags(), edit);
+        edit.getTags().clear();
+        edit.getTags().addAll(tags);
+        return update(edit);
     }
 
     @Override
@@ -474,6 +470,7 @@ public class ExtensionServiceImpl implements ExtensionService {
             if(t == null){
                 Tag newTag = new Tag(tag);
                 tagRepository.saveTag(newTag);
+                tags.add(newTag);
             }
             else {
                 t.getTaggedExtensions().add(extension);
@@ -615,22 +612,6 @@ public class ExtensionServiceImpl implements ExtensionService {
         }
 
         return true;
-    }
-
-    private Set<Tag> updateTags(Extension edit, ExtensionEditModel model) {
-        Set<Tag> oldTags = new HashSet<>();
-        List<String> tagList = Arrays.asList(model.getTags().split(", "));
-        tagList.forEach(t -> {
-            Set<Tag> sad = edit.getTags().stream()
-                    .filter(tag -> tag.getName().equals(t))
-                    .collect(Collectors.toSet());
-            oldTags.addAll(sad);
-        });
-        oldTags.forEach(t -> t.getTaggedExtensions().remove(edit));
-        Set<Tag> tags = handleTags(model.getTags(), edit);
-        edit.getTags().addAll(tags);
-
-        return oldTags;
     }
 
 }

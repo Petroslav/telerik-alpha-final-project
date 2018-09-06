@@ -2,6 +2,7 @@ package com.alpha.marketplace.controllers;
 
 import com.alpha.marketplace.exceptions.ErrorMessages;
 import com.alpha.marketplace.models.Extension;
+import com.alpha.marketplace.models.Tag;
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.ExtensionBindingModel;
 import com.alpha.marketplace.models.edit.ExtensionEditModel;
@@ -183,8 +184,14 @@ public class ExtensionController {
     @PreAuthorize("hasRole('USER')")
     public String getExtensionEdit(Model model, @PathVariable long id, @RequestParam(required =  false) String error){
         Extension toEdit = extensionService.getByIdFromMemory(id);
+        String tags = "";
+        for(Tag t : toEdit.getTags()){
+            tags += t.getName() + ", ";
+        }
+        tags = tags.substring(0, tags.lastIndexOf(", "));
         if(error != null) model.addAttribute("error", error);
-        model.addAttribute("editFormInfo", toEdit);
+        model.addAttribute("toEdit", toEdit);
+        model.addAttribute("tags", tags);
         model.addAttribute("view", "/extensions/edit");
         return "base-layout";
     }
@@ -196,7 +203,7 @@ public class ExtensionController {
             model.addAttribute("error", ErrorMessages.EXTENSION_EDIT_ERROR);
             return "redirect:/edit/" + id;
         }
-        return "redirect:/extension" + id;
+        return "redirect:/extension/" + id;
     }
 
 

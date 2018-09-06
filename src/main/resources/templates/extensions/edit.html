@@ -1,10 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-</body>
-</html>
+<main xmlns:th="http://www.w3.org/1999/xhtml">
+    <div th:if="${error} != null" th:text="${error}"></div>
+    <form th:action="@{/extension/edit/{id} (id=${toEdit.id})}" method="post" enctype="multipart/form-data">
+        <input type="text" th:value="${toEdit.name}" name="name" id="edit-name"/>
+        <input type="text" th:value="${toEdit.description}" name="description" id="edit-description" />
+        <input type="text" th:value="${toEdit.version}" name="version" id="edit-version" />
+        <input type="text" th:value="${toEdit.repoURL}" name="repo" id="edit-repo" />
+        <input type="text" th:value="${tags}" name="tags" id="edit-tags"/>
+        <input type="file" name="file" id="edit-file"/>
+        <input type="file" name="picture" id="edit-picture"/>
+        <button id="edit-extension-submit">Submit</button>
+    </form>
+</main>

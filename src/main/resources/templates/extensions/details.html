@@ -1,4 +1,4 @@
-<main>
+<main xmlns:th="http://www.w3.org/1999/xhtml">
     <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
         <header class="mdl-background-image section__play-btn mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white"  th:style="'height: 250px;background-position: center center;background-size: cover; background-image: url(\''+  @{${extension.picURI}} + '\');'">
 
@@ -63,7 +63,9 @@
     <form th:action="@{/extension/download/{id} (id=${extension.id})}" method="POST">
         <button>Download</button>
     </form>
-
+    <th:block sec:authorize="isAuthenticated()" th:if="${user.isAdmin() OR user.isPublisher(extension)}">
+        <a th:href="@{/extension/edit/{id}(id = ${extension.id})}">Edit</a>
+    </th:block>
     <th:block sec:authorize="isAuthenticated()" th:if="${user.isAdmin() OR user.isPublisher(extension)}">
         <a th:href="@{/extension/delete/{id}(id = ${extension.id})}">Delete</a>
     </th:block>
