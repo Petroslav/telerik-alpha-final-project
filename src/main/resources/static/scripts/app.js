@@ -60,10 +60,16 @@ $(document).ready(function () {
             $(location).attr('href', '/search?criteria=' + textfield);
         }
     });
-    $('#sortButton').on('click', function () {
+    $('#sortButtonNewest').on('click', function () {
 
 
-        $(location).attr('href', '/?sort=' + $('#sortOption').val());
+        $(location).attr('href', '/newest?sort=' + $('#sortOption').val());
+
+    });
+    $('#sortButtonPopular').on('click', function () {
+
+
+        $(location).attr('href', '/popular?sort=' + $('#sortOption').val());
 
     });
     $('#loginSubmit').on('click', function () {

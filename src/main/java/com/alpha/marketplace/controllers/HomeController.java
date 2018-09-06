@@ -22,6 +22,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 public class HomeController {
@@ -38,9 +39,9 @@ public class HomeController {
     @GetMapping("/")
     public String index(Model model, @RequestParam(value = "sort", required = false) String sort) {
 
-        List<Extension> newestExtensions = extensionService.getLatest();
+        List<Extension> newestExtensions = extensionService.getLatest().stream().limit(5).collect(Collectors.toList());
         List<Extension> selectedByAdmin = extensionService.getAdminSelection();
-        List<Extension> mostPopular = extensionService.getMostPopular();
+        List<Extension> mostPopular = extensionService.getMostPopular().stream().limit(5).collect(Collectors.toList());
 
         if (sort != null) {
             switch (sort) {
@@ -72,6 +73,54 @@ public class HomeController {
         model.addAttribute("adminSelection", selectedByAdmin);
         model.addAttribute("mostPopular", mostPopular);
 
+        return "base-layout";
+    }
+    @GetMapping("/newest")
+    public String newestPage(Model model, @RequestParam(value = "sort", required = false) String sort){
+        List<Extension> extensions = extensionService.getLatest();
+
+        switch (sort) {
+
+            case "byLastCommit":
+                extensions.sort((e1, e2) -> e2.getGitHubInfo().getLastCommit().compareTo(e1.getGitHubInfo().getLastCommit()));
+                break;
+
+            case "byUploadDate":
+                extensions.sort((e1, e2) -> e2.getAddedOn().compareTo(e1.getAddedOn()));
+                break;
+
+            case "byDownloads":
+                extensions.sort((e1, e2) -> e2.getDownloads() - e1.getDownloads() == 0 ? e1.getName().compareTo(e2.getName()) : e2.getDownloads() - e1.getDownloads());
+                break;
+            default:
+                break;
+        }
+
+        model.addAttribute("extensions", extensions);
+        model.addAttribute("view", "home/newest");
+        return "base-layout";
+    }
+
+    @GetMapping("/popular")
+    public String mostPopularPage(Model model, @RequestParam(value = "sort", required = false) String sort){
+        List<Extension> mostPopular = extensionService.getMostPopular();
+
+        switch (sort) {
+            case "byLastCommit":
+                mostPopular.sort((e1, e2) -> e2.getGitHubInfo().getLastCommit().compareTo(e1.getGitHubInfo().getLastCommit()));
+                break;
+
+            case "byUploadDate":
+                mostPopular.sort((e1, e2) -> e2.getAddedOn().compareTo(e1.getAddedOn()));
+                break;
+
+            case "byDownloads":
+                mostPopular.sort((e1, e2) -> e2.getDownloads() - e1.getDownloads() == 0 ? e1.getName().compareTo(e2.getName()) : e2.getDownloads() - e1.getDownloads());
+                break;
+        }
+
+        model.addAttribute("extensions", mostPopular);
+        model.addAttribute("view", "home/popular");
         return "base-layout";
     }
 

@@ -107,7 +107,7 @@ public class ExtensionServiceImpl implements ExtensionService {
             selected = getAllApproved().stream()
                     .filter(Extension::isSelected)
                     .sorted(Comparator.comparing(Extension::getSelectionDate).reversed())
-                    .limit(10)
+                    .limit(5)
                     .collect(Collectors.toList());
         }
         return selected;

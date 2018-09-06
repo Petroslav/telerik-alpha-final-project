@@ -146,7 +146,7 @@ public class ExtensionController {
     @PostMapping("/feature/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String featureExtension( @PathVariable("id") Integer id) {
-        if(extensionService.getAdminSelection().size() == 10){
+        if(extensionService.getAdminSelection().size() == 5){
             return "redirect:/featuredSelection";
         }
         extensionService.setFeatured(id);
