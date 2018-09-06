@@ -90,12 +90,16 @@ public class Extension {
     @Column(name = "selection_date")
     private Date selectionDate;
 
+    @Column(name = "version_control")
+    private long versionControl;
+
     public Extension(){
         setDownloads(0);
         setAddedOn(new Date());
         setApproved(false);
         setTags(new HashSet<>());
         setSelected(false);
+        setVersionControl(1);
     }
 
     public Extension(
@@ -115,7 +119,8 @@ public class Extension {
             String repoURL,
             GitHubInfo gitHubInfo,
             boolean selected,
-            Date selectionDate
+            Date selectionDate,
+            long versionControl
         ) {
         this.name = name;
         this.description = description;
@@ -134,6 +139,7 @@ public class Extension {
         this.gitHubInfo = gitHubInfo;
         this.selected = selected;
         this.selectionDate = selectionDate;
+        this.versionControl = versionControl;
     }
 
     public long getId() {
@@ -294,6 +300,14 @@ public class Extension {
 
     public boolean isUnApproved(){
         return !isApproved;
+    }
+
+    public long getVersionControl() {
+        return versionControl;
+    }
+
+    public void setVersionControl(long versionControl) {
+        this.versionControl = versionControl;
     }
 
     @Override

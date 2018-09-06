@@ -60,7 +60,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User findByUsername(String username) throws UsernameNotFoundException {
         List<User> matches = null;
-        try(Session sess = session.openSession()){
+        try (Session sess = session.openSession()) {
             sess.beginTransaction();
             matches = sess.createQuery("FROM User WHERE username = :usernameString", User.class)
                     .setParameter("usernameString", username)
@@ -132,15 +132,16 @@ public class UserRepositoryImpl implements UserRepository {
             sess.beginTransaction();
             long ver = new Date().getTime();
             int rows = sess.createQuery(
-                    "UPDATE User SET firstName = :fn, lastName = :ln, version = :ver, picBlobId = :blob, password = :pass, picURI = :pic WHERE id = :id AND version = :version")
+                    "UPDATE User SET firstName = :fn, lastName = :ln, picBlobId = :blob, picURI = :pic, password = :pass, version = :ver WHERE id = :id AND version = :version")
                     .setParameter("fn", u.getFirstName())
                     .setParameter("ln", u.getLastName())
+                    .setParameter("blob", u.getPicBlobId())
+                    .setParameter("pic", u.getPicURI())
+                    .setParameter("pass", u.getPassword())
                     .setParameter("ver", ver)
                     .setParameter("id", u.getId())
                     .setParameter("version", u.getVersion())
-                    .setParameter("blob", u.getPicBlobId())
-                    .setParameter("pass", u.getPassword())
-                    .setParameter("pic", u.getPicURI()).executeUpdate();
+                    .executeUpdate();
             if (rows == 0) {
                 throw new VersionMismatchException("Version mismatch, try again");
             }

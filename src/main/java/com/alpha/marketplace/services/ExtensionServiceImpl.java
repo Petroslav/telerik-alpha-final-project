@@ -2,6 +2,7 @@ package com.alpha.marketplace.services;
 
 import com.alpha.marketplace.exceptions.ErrorMessages;
 import com.alpha.marketplace.exceptions.FailedToSyncException;
+import com.alpha.marketplace.exceptions.VersionMismatchException;
 import com.alpha.marketplace.models.Extension;
 import com.alpha.marketplace.models.GitHubInfo;
 import com.alpha.marketplace.models.Properties;
@@ -23,14 +24,11 @@ import org.springframework.validation.ObjectError;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 @Service
 public class ExtensionServiceImpl implements ExtensionService {
-    private static Thread syncManager;
-    private static long delay;
-
-    private final String GITHUB_PREFIX = "https://github.com/";
 
     private final ExtensionRepository repository;
     private final UserRepository userRepository;
@@ -40,12 +38,18 @@ public class ExtensionServiceImpl implements ExtensionService {
     private final PropertiesRepository propertiesRepository;
     private final ModelMapper mapper;
 
+    private Map<Long, Extension> extensionsMap;
     private List<Extension> all;
     private List<Extension> approved;
     private List<Extension> latest;
     private List<Extension> mostPopular;
     private List<Extension> unApproved;
     private List<Extension> selected;
+
+    private ExecutorService workers;
+    private ScheduledExecutorService syncWorker;
+    private ScheduledFuture syncManager;
+    private long delay;
 
     @Autowired
     public ExtensionServiceImpl(
@@ -63,6 +67,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         this.tagRepository = tagRepository;
         this.mapper = mapper;
         this.gitHubRepository = gitHubRepository;
+        this.extensionsMap = new HashMap<>();
         this.all = new ArrayList<>();
         this.approved = new ArrayList<>();
         this.latest = new ArrayList<>();
@@ -70,12 +75,18 @@ public class ExtensionServiceImpl implements ExtensionService {
         this.unApproved = new ArrayList<>();
         this.selected = new ArrayList<>();
         this.propertiesRepository = propertiesRepository;
+        workers = Executors.newFixedThreadPool(5);
+        syncWorker = Executors.newScheduledThreadPool(1);
     }
 
 
     @Override
     public List<Extension> getAll() {
-        if(all.isEmpty()) all = repository.getAll();
+        if(all.isEmpty()) {
+            all = repository.getAll();
+            extensionsMap.clear();
+            all.forEach(ex -> extensionsMap.put(ex.getId(), ex));
+        }
         return all;
     }
 
@@ -153,6 +164,14 @@ public class ExtensionServiceImpl implements ExtensionService {
     }
 
     @Override
+    public Extension getByIdFromMemory(long id) {
+        if(id < 0){
+            return null;
+        }
+        return extensionsMap.get(id);
+    }
+
+    @Override
     public Extension getByName(String name) {
         return repository.getByName(name);
     }
@@ -178,8 +197,12 @@ public class ExtensionServiceImpl implements ExtensionService {
 
     @Override
     public boolean update(Extension extension) {
-
-        return repository.update(extension);
+        try {
+            return repository.update(extension);
+        } catch (VersionMismatchException e) {
+            System.out.println("Version mismatch. Please retry the operation for extension " + extension.getName());
+            return false;
+        }
     }
 
     @Override
@@ -192,11 +215,6 @@ public class ExtensionServiceImpl implements ExtensionService {
                         .collect(Collectors.toList())
                         .get(0)));
         matches.forEach(e -> e.setSelected(false));
-        System.out.println(matches.size() + " kek");
-        new Thread(() -> {
-            repository.updateList(matches);
-            reloadLists();
-        }).start();
     }
 
     @Override
@@ -219,7 +237,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         extension.setRepoURL(model.getRepositoryUrl());
 
         try {
-            storeFiles(extension, model, errors);
+            storeFiles(extension, model);
         }catch(IOException e){
             System.out.println(e.getMessage());
             if(extension.getBlobId() != null){
@@ -231,14 +249,13 @@ public class ExtensionServiceImpl implements ExtensionService {
 
         repository.save(extension);
 
-        new Thread(()->{
+        workers.submit(() -> {
             try {
-                saveExtension(extension, model);
+                saveExtensionGitInfo(extension, model);
             } catch (FailedToSyncException e) {
-                errors.addError(new ObjectError("syncFail", ErrorMessages.GITHUB_SYNC_FAIL));
-                delete(extension.getId());
+                e.printStackTrace();
             }
-        }).start();
+        });
     }
 
     @Override
@@ -249,10 +266,20 @@ public class ExtensionServiceImpl implements ExtensionService {
 
     @Override
     public void approveExtensionById(long id) {
-
-        Extension extension = getById(id);
-        extension.approve();
-        repository.update(extension);
+        extensionsMap.get(id).approve();
+        workers.submit(() -> {
+            while(true){
+                try{
+                    Extension extension = getById(id);
+                    extension.approve();
+                    repository.update(extension);
+                    reloadLists();
+                    break;
+                }catch(VersionMismatchException e){
+                    System.out.println(e.getMessage());
+                    System.out.println("Retrying...");
+                }
+            }});
     }
 
     @Override
@@ -271,7 +298,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         selected = getAdminSelection();
         System.out.println("Lists reloaded");
     }
-    //TODO add logging for github sync
+
     @Override
     public void sync(long id) {
         Extension extension = getById(id);
@@ -293,44 +320,19 @@ public class ExtensionServiceImpl implements ExtensionService {
 
     @Override
     public void setSync(long period){
-        if(syncManager != null){
-            try {
-                if(!syncManager.isInterrupted()) syncManager.wait();
-                syncManager.interrupt();
-            } catch (InterruptedException e) {
-                System.out.println("Interrupted syncing thread successfully. Creating new thread.");
-                e.printStackTrace();
-            }
-        }
+
+        if(syncManager != null) syncManager.cancel(true);
         Properties properties = Utils.properties;
         if(delay != period){
             properties.setDelay(period);
             propertiesRepository.update();
         }
-        syncManager = new Thread(() -> {
-            while(true){
-                try {
-                    syncAll();
-                    Thread.sleep(period);
-                } catch (InterruptedException e) {
-                    System.out.println("Thread intrrupted");
-                    properties.setLastFailedSync(new Date());
-                    properties.setFailInfo("Thread was interrupted before it could finish syncing.");
-                    propertiesRepository.update();
-                }
-            }
-        });
-        syncManager.setDaemon(true);
-        syncManager.start();
+        syncManager = syncWorker.scheduleWithFixedDelay(this::syncAll, 0L, delay, TimeUnit.MILLISECONDS);
     }
 
     @Override
     public void download(long id) {
-        Extension extension = getById(id);
-        extension.setDownloads(extension.getDownloads()+1);
-        repository.update(extension);
-        System.out.println("Extension "+extension.getName()+" downloaded successfully");
-        System.out.println("number of downloads: "+extension.getDownloads());
+        workers.submit(() -> dlUpdate(id));
     }
 
     @Override
@@ -344,7 +346,9 @@ public class ExtensionServiceImpl implements ExtensionService {
         }
         extension.setSelected(true);
         extension.setSelectionDate(new Date());
-        update(extension);
+        if(update(extension)){
+            reloadLists();
+        }
     }
 
     @Override
@@ -357,7 +361,9 @@ public class ExtensionServiceImpl implements ExtensionService {
             return;
         }
         extension.setSelected(false);
-        update(extension);
+        if(update(extension)){
+            reloadLists();
+        }
 
     }
 
@@ -369,6 +375,7 @@ public class ExtensionServiceImpl implements ExtensionService {
     }
 
     private boolean validateRepoUrl(String repo){
+        String GITHUB_PREFIX = "https://github.com/";
         if(!repo.startsWith(GITHUB_PREFIX)){
             return false;
         }
@@ -430,13 +437,18 @@ public class ExtensionServiceImpl implements ExtensionService {
     }
 
 
-    private void storeFiles(Extension extension, ExtensionBindingModel model,  BindingResult errors) throws IOException {
+    private void storeFiles(Extension extension, ExtensionBindingModel model) throws IOException {
         //DECLARE VARIABLES AND GET THE FILE EXTENSION
         Blob blob;
         String fileext = model.getFile().getOriginalFilename();
         String picext = model.getPic().getOriginalFilename();
-        fileext = fileext.substring(fileext.lastIndexOf("."));
-        picext = picext.substring(picext.lastIndexOf("."));
+        int indexFile = fileext.lastIndexOf(".");
+        int indexPic = picext.lastIndexOf(".");
+
+        if(indexPic == -1 || indexFile == -1) return;
+
+        fileext = fileext.substring(indexFile);
+        picext = picext.substring(indexPic);
 
         //CALL SERVICE TO SAVE FILE
         blob = cloudExtensionRepository.saveExtension(
@@ -445,6 +457,7 @@ public class ExtensionServiceImpl implements ExtensionService {
                 model.getFile().getContentType(),
                 model.getFile().getBytes()
         );
+
         extension.setBlobId(blob.getBlobId());
         extension.setDlURI(blob.getMediaLink());
         //REPEAT FOR PIC
@@ -454,17 +467,71 @@ public class ExtensionServiceImpl implements ExtensionService {
                 model.getPic().getContentType(),
                 model.getPic().getBytes()
         );
+
         extension.setPicBlobId(picBlob.getBlobId());
         extension.setPicURI(picBlob.getMediaLink());
     }
 
-    private void saveExtension(Extension extension, ExtensionBindingModel model) throws FailedToSyncException {
-        extension.setGitHubInfo(new GitHubInfo());
-        extension.getGitHubInfo().setParent(extension);
+    private void saveExtensionGitInfo(Extension extension, ExtensionBindingModel model) throws FailedToSyncException {
+        GitHubInfo info = new GitHubInfo();
+        extension.setGitHubInfo(info);
+        info.setParent(extension);
         Utils.updateGithubInfo(extension.getGitHubInfo());
         gitHubRepository.save(extension.getGitHubInfo());
-        extension.setTags(handleTags(model.getTagString(), extension));
-        repository.update(extension);
-        reloadLists();
+        Set<Tag> tags = handleTags(model.getTagString(), extension);
+        extension.setTags(tags);
+        try {
+            repository.update(extension);
+            System.out.println("GitHub information successfully updated for extension " + extension.getName());
+            System.out.println("Reloading lists...");
+            reloadLists();
+        } catch (VersionMismatchException e) {
+            System.out.println("Version mismatch. Retrying...");
+            extension = repository.getById(extension.getId());
+            saveExtensionGitInfoRetry(extension, info, tags);
+        }
     }
+
+    private void saveExtensionGitInfoRetry(Extension extension, GitHubInfo info, Set<Tag> tags) {
+        extension.setGitHubInfo(info);
+        extension.setTags(tags);
+        try {
+            repository.update(extension);
+            System.out.println("GitHub information successfully updated for extension " + extension.getName());
+            System.out.println("Reloading lists...");
+            reloadLists();
+        } catch (VersionMismatchException e) {
+            System.out.println("Version mismatch. Retrying again in 5 seconds...");
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e1) {
+                System.out.println("Something went horribly wrong trying to update extension " + extension.getName());
+                System.out.println("Attempting to retry...");
+            }finally {
+                extension = repository.getById(extension.getId());
+                saveExtensionGitInfoRetry(extension, info, tags);
+            }
+        }
+    }
+
+    private void dlUpdate(long id){
+        try{
+            Extension extension = getById(id);
+            extension.setDownloads(extension.getDownloads()+1);
+            repository.update(extension);
+            reloadLists();
+            System.out.println("Extension "+extension.getName()+" downloaded successfully");
+            System.out.println("number of downloads: "+extension.getDownloads());
+        }catch (VersionMismatchException e) {
+            System.out.println("Version mismatch. Retrying update in 5 seconds.");
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e1) {
+                System.out.println("Something went horribly wrong trying to update the downloads of the extension with ID " + id);
+            }finally {
+                dlUpdate(id);
+            }
+        }
+    }
+
 }

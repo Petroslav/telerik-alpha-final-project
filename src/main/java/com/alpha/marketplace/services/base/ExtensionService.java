@@ -18,6 +18,7 @@ public interface ExtensionService {
     Set<Extension> searchExtensions(String criteria);
     Set<Extension> searchExtensionsByTag(String criteria);
     Extension getById(long id);
+    Extension getByIdFromMemory(long id);
     Extension getByName(String name);
     User currentUser();
     boolean isUserPublisherOrAdmin(Extension extension);

@@ -89,10 +89,8 @@ $(document).ready(function () {
     });
 
     var isEmpty = function (e) {
-        if(!e.val()){
-            return true;
-        }
-        return false;
+        return !e.val();
+
     };
     var isWrongLength = function (e) {
         var length = e.val().length;
@@ -148,7 +146,6 @@ $(document).ready(function () {
         var tags = $('#createTagString');
         var file = $('#createFile');
         var pic = $('#createPic');
-        var github_regex = new RegExp('((https?)|(git[\\w.]+))(:(//)?)([\\w.@:/-~]+)');
         var data = {
             message: 'Invalid Register info!',
             timeout: 3000
@@ -158,7 +155,7 @@ $(document).ready(function () {
             snackbar.MaterialSnackbar.showSnackbar(data);
             return;
         }
-        if(isWrongLength(name)){
+        if($.trim(name.val()).length < 201 || $.trim(name.val()).length > 1){
             data.message = 'Invalid extension name!';
             snackbar.MaterialSnackbar.showSnackbar(data);
             return;

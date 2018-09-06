@@ -62,7 +62,7 @@ public class ExtensionController {
     @GetMapping("/{id}")
     public String viewExtension(@PathVariable("id") long id, Model model) {
 
-        Extension extension = extensionService.getById(id);
+        Extension extension = extensionService.getByIdFromMemory(id);
         if (extension == null) {
             model.addAttribute("view", "error/404");
             return "base-layout";
@@ -86,7 +86,7 @@ public class ExtensionController {
 
     @PostMapping("/sync/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String syncExtension(Model model, @PathVariable("id") String id) {
+    public String syncExtension(@PathVariable("id") String id) {
         extensionService.sync(Integer.parseInt(id));
 
         return "redirect:/extension/" + id;
@@ -108,7 +108,7 @@ public class ExtensionController {
 
     @PostMapping("/delete/{id}")
     @PreAuthorize("isAuthenticated()")
-    public String deleteExtension(Model model, @PathVariable("id") Integer id) {
+    public String deleteExtension(@PathVariable("id") Integer id) {
 
         Extension extension = extensionService.getById(id);
         if (!extensionService.isUserPublisherOrAdmin(extension)) {
@@ -121,12 +121,8 @@ public class ExtensionController {
 
     @PostMapping("/approve/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public String approveExtension(Model model, @PathVariable("id") Integer id) {
-
-
+    public String approveExtension(@PathVariable("id") Integer id) {
         extensionService.approveExtensionById(id);
-
-        extensionService.reloadLists();
 
         return "redirect:/extension/" + id;
     }
@@ -135,9 +131,8 @@ public class ExtensionController {
     @PreAuthorize("isAuthenticated()")
     public String download(@PathVariable("id") Integer id) {
 
-        Extension extension = extensionService.getById(id);
+        Extension extension = extensionService.getByIdFromMemory(id);
         extensionService.download(id);
-        extensionService.reloadLists();
 
         return "redirect:"+extension.getDlURI();
     }
@@ -149,7 +144,6 @@ public class ExtensionController {
             return "redirect:/featuredSelection";
         }
         extensionService.setFeatured(id);
-        extensionService.reloadLists();
 
         return "redirect:/extension/" + id;
     }
@@ -157,7 +151,6 @@ public class ExtensionController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String unFeatureExtension( @PathVariable("id") Integer id) {
         extensionService.removeFeatured(id);
-        extensionService.reloadLists();
 
         return "redirect:/extension/" + id;
     }

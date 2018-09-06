@@ -1,6 +1,7 @@
 package com.alpha.marketplace.services;
 
 import com.alpha.marketplace.exceptions.CannotFetchBytesException;
+import com.alpha.marketplace.exceptions.ErrorMessages;
 import com.alpha.marketplace.exceptions.VersionMismatchException;
 import com.alpha.marketplace.models.Role;
 import com.alpha.marketplace.models.User;
@@ -22,7 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -41,6 +44,8 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder encoder;
     private final ModelMapper mapper;
 
+    private Map<Long, User> users;
+
     @Autowired
     public UserServiceImpl(
             UserRepository repository,
@@ -54,12 +59,18 @@ public class UserServiceImpl implements UserService {
         this.roleRepository = roleRepository;
         this.mapper = mapper;
         this.encoder = encoder;
+        users = new HashMap<>();
+        getAll();
         updateWorker = Executors.newFixedThreadPool(1);
+
     }
 
     @Override
     public List<User> getAll() {
-        return repository.getAll();
+        users.clear();
+        List<User> all = repository.getAll();
+        all.forEach(u -> users.put(u.getId(), u));
+        return all;
     }
 
     @Override
@@ -88,6 +99,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByIdFromMemory(long id) { return users.get(id); }
+
+    @Override
     public User findByEmail(String email) {
         return repository.findByEmail(email);
     }
@@ -96,10 +110,12 @@ public class UserServiceImpl implements UserService {
     public boolean updateUser(User u) {
         try{
            repository.update(u);
+           users.put(u.getId(), u);
         }catch(VersionMismatchException e){
             System.out.println("VERSIONN MISMATCH");
             return false;
         }
+        users.put(u.getId(), u);
         return true;
     }
 
@@ -128,14 +144,7 @@ public class UserServiceImpl implements UserService {
             u.setPassword(encoder.encode(edit.getNewPass()));
         }
 
-        try{
-            repository.update(u);
-        }catch(VersionMismatchException e){
-            System.out.println("There was a version mismatch");
-            return false;
-        }
-
-        return true;
+        return updateUser(u);
     }
 
     @Override
@@ -171,7 +180,7 @@ public class UserServiceImpl implements UserService {
         }
         u.setPicBlobId(blob.getBlobId());
         u.setPicURI(blob.getMediaLink());
-        return true;
+        return updateUser(u);
     }
 
     @Override
@@ -179,13 +188,13 @@ public class UserServiceImpl implements UserService {
         Blob b;
         try{
             b = cloudUserRepository.saveUserPicFromUrl(u.getId() + "", urlString);
+            u.setPicBlobId(b.getBlobId());
+            u.setPicURI(b.getMediaLink());
         }catch(CannotFetchBytesException e){
             System.out.println(e.getMessage());
             return false;
         }
-        u.setPicBlobId(b.getBlobId());
-        u.setPicURI(b.getMediaLink());
-        return true;
+        return updateUser(u);
     }
 
     @Override
@@ -214,12 +223,12 @@ public class UserServiceImpl implements UserService {
             if(r == null) return false;
             boolean success = u.getAuthorities().add(r);
             if(!success) return false;
-            return repository.update(u);
-        }catch(Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            return false;
+            repository.update(u);
+            users.put(u.getId(), u);
+        } catch (VersionMismatchException e) {
+            System.out.println("Version mismatch, aborting operation.");
         }
+        return true;
     }
 
     @Override
@@ -233,12 +242,13 @@ public class UserServiceImpl implements UserService {
             if(r == null) return false;
             boolean success = u.getAuthorities().remove(r);
             if(!success) return false;
-            return repository.update(u);
-        }catch(Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+            repository.update(u);
+            users.put(u.getId(), u);
+        } catch (VersionMismatchException e) {
+            System.out.println("Version mismatch, aborting operation.");
             return false;
         }
+        return true;
     }
 
     private boolean validateReg(UserBindingModel model) {

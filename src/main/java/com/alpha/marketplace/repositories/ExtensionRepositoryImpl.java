@@ -1,5 +1,6 @@
 package com.alpha.marketplace.repositories;
 
+import com.alpha.marketplace.exceptions.VersionMismatchException;
 import com.alpha.marketplace.models.Extension;
 import com.alpha.marketplace.repositories.base.ExtensionRepository;
 import org.hibernate.Session;
@@ -160,15 +161,28 @@ public class ExtensionRepositoryImpl implements ExtensionRepository {
     }
 
     @Override
-    public boolean update(Extension extension) {
+    public boolean update(Extension extension) throws VersionMismatchException {
         try (Session sess = session.openSession()) {
             sess.beginTransaction();
 
-            int rows;
+            long ver = new Date().getTime();
+            int rows = sess.createQuery("UPDATE Extension SET versionControl = :ver WHERE id = :id AND versionControl = :oldVer")
+                    .setParameter("ver", ver)
+                    .setParameter("id", extension.getId())
+                    .setParameter("oldVer", extension.getVersionControl())
+                    .executeUpdate();
 
+            if(rows == 0) {
+                throw new VersionMismatchException("Version mismatch, transaction was aborted.");
+            }
+
+            extension.setVersionControl(ver);
+            sess.update(extension);
             sess.getTransaction().commit();
             System.out.println("Extension " + extension.getName() + " updated successfully");
-        } catch (Exception e) {
+        }catch (VersionMismatchException e) {
+            throw e;
+        }catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
             return false;
@@ -178,17 +192,12 @@ public class ExtensionRepositoryImpl implements ExtensionRepository {
 
     @Override
     public boolean updateList(List<Extension> list) {
-        try (Session sess = session.openSession()) {
-            sess.beginTransaction();
-
-            list.forEach(sess::update);
-
-            sess.getTransaction().commit();
-            System.out.println("Extensions updated successfully");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            return false;
+        for(Extension e : list){
+            try {
+                update(e);
+            } catch (VersionMismatchException e1) {
+                return false;
+            }
         }
         return true;
     }

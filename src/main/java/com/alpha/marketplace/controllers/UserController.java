@@ -35,7 +35,7 @@ public class UserController {
         if(getUser().getId() == id){
             return "redirect:/user/profile";
         }
-        User user = service.findById(id);
+        User user = service.findByIdFromMemory(id);
         if(user == null){
             model.addAttribute("view", "error/404");
             return "base-layout";
@@ -70,7 +70,7 @@ public class UserController {
 
     @PostMapping("/update")
     @PreAuthorize("isAuthenticated()")
-    public String updateProfile(Model model, @ModelAttribute UserEditModel userEdit) throws VersionMismatchException {
+    public String updateProfile(@ModelAttribute UserEditModel userEdit) throws VersionMismatchException {
         User u = getUser();
         service.editUser(u, userEdit);
         return  "redirect:/profile";
@@ -79,9 +79,11 @@ public class UserController {
 
     @PostMapping("/update/pic/file")
     @PreAuthorize("isAuthenticated()")
-    public String updateProfile(Model model, @RequestParam("picFile") MultipartFile file){
+    public String updateProfile(@RequestParam("picFile") MultipartFile file){
         User u = getUser();
-        service.editUserPic(u, file);
+        if(!file.isEmpty()) {
+            service.editUserPic(u, file);
+        }
         //TODO HANDLE ERROR IF FILE TOO BIG OR BAD FILE FORMAT
 
         return  "redirect:/profile";
@@ -89,7 +91,7 @@ public class UserController {
 
     @PostMapping("/update/pic/url")
     @PreAuthorize("isAuthenticated()")
-    public String updateProfile(Model model, @RequestParam("picUrl") String urlString){
+    public String updateProfile(@RequestParam("picUrl") String urlString){
         User u = getUser();
         service.editUserPic(u, urlString);
         //TODO HANDLE ERROR IF BAD URL OR TOO BIG
@@ -108,7 +110,7 @@ public class UserController {
 
     @PostMapping("/profile/edit")
     @PreAuthorize("isAuthenticated()")
-    public String editProfile(Model model, UserEditModel editModel) throws VersionMismatchException {
+    public String editProfile(UserEditModel editModel) throws VersionMismatchException {
 
         service.editUser(service.getCurrentUser(), editModel);
 
@@ -116,11 +118,11 @@ public class UserController {
     }
 
     private User getUser(){
-        UserDetails user = (UserDetails) SecurityContextHolder
+        User user = (User) SecurityContextHolder
                 .getContext()
                 .getAuthentication()
                 .getPrincipal();
 
-        return (User)service.loadUserByUsername(user.getUsername());
+        return service.findByIdFromMemory(user.getId());
     }
 }

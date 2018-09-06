@@ -15,6 +15,7 @@ public interface UserService extends UserDetailsService {
     List<User> searchUsers(String criteria);
     User registerUser(UserBindingModel u);
     User findById(long id);
+    User findByIdFromMemory(long id);
     User findByEmail(String email);
     User getCurrentUser();
     boolean updateUser(User u);
