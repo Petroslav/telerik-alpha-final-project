@@ -207,5 +207,5 @@ function isGitRepo(e){
     }
     e = e.substring(githubPrefix.length);
     var words = e.split('/');
-    return words.length === 2;
+    return words.length >= 2;
 }

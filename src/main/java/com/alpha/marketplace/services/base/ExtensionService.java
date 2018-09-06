@@ -27,6 +27,7 @@ public interface ExtensionService {
     void createExtension(ExtensionBindingModel extensionBindingModel, BindingResult errors);
     void delete(long id);
     void approveExtensionById(long id);
+    void disapproveExtensionById(long id);
     void reloadLists();
     void sync(long id);
     void setSync(long period);

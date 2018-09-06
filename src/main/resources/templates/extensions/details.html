@@ -60,28 +60,31 @@
     <form th:action="@{/extension/sync/{id} (id=${extension.id})}" method="POST">
         <button sec:authorize="hasRole('ADMIN')">Sync</button>
     </form>
-    <th:block sec:authorize="isAuthenticated()"
-              th:if="${user.isAdmin() OR user.isPublisher(extension)}">
+    <form th:action="@{/extension/download/{id} (id=${extension.id})}" method="POST">
+        <button>Download</button>
+    </form>
+
+    <th:block sec:authorize="isAuthenticated()" th:if="${user.isAdmin() OR user.isPublisher(extension)}">
         <a th:href="@{/extension/delete/{id}(id = ${extension.id})}">Delete</a>
     </th:block>
-    <form th:action="@{/extension/approve/{id} (id=${extension.id})}" method="POST">
-        <th:block th:if="${extension.isUnApproved()}">
+    <th:block th:if="${!extension.isApproved()}">
+        <form th:action="@{/extension/approve/{id} (id=${extension.id})}" method="POST">
             <button sec:authorize="hasRole('ADMIN')">Approve</button>
-        </th:block>
-    </form>
-
+        </form>
+    </th:block>
+    <th:block th:if="${extension.isApproved()}">
+        <form th:action="@{/extension/disapprove/{id} (id=${extension.id})}" method="POST">
+            <button sec:authorize="hasRole('ADMIN')">Disapprove</button>
+        </form>
+    </th:block>
+    <th:block th:if="${!extension.isSelected()}">
     <form th:action="@{/extension/feature/{id} (id=${extension.id})}" method="POST">
-        <th:block th:if="${!extension.isSelected()}">
             <button sec:authorize="hasRole('ADMIN')">Feature</button>
-        </th:block>
     </form>
-
+    </th:block>
+    <th:block th:if="${extension.isSelected()}">
     <form th:action="@{/extension/unFeature/{id} (id=${extension.id})}" method="POST">
-        <th:block th:if="${extension.isSelected()}">
             <button sec:authorize="hasRole('ADMIN')">Remove from featured</button>
-        </th:block>
     </form>
-    <form th:action="@{/extension/download/{id} (id=${extension.id})}" method="POST">
-        <button sec:authorize="isAuthenticated()">Download</button>
-    </form>
+    </th:block>
 </main>

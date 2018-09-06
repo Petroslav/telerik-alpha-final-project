@@ -198,11 +198,13 @@ public class ExtensionServiceImpl implements ExtensionService {
     @Override
     public boolean update(Extension extension) {
         try {
-            return repository.update(extension);
+            repository.update(extension);
+            extensionsMap.put(extension.getId(), extension);
         } catch (VersionMismatchException e) {
             System.out.println("Version mismatch. Please retry the operation for extension " + extension.getName());
             return false;
         }
+        return true;
     }
 
     @Override
@@ -215,6 +217,7 @@ public class ExtensionServiceImpl implements ExtensionService {
                         .collect(Collectors.toList())
                         .get(0)));
         matches.forEach(e -> e.setSelected(false));
+        matches.forEach(this::update);
     }
 
     @Override
@@ -280,6 +283,25 @@ public class ExtensionServiceImpl implements ExtensionService {
                     System.out.println("Retrying...");
                 }
             }});
+    }
+
+    @Override
+    public void disapproveExtensionById(long id) {
+        extensionsMap.get(id).disapprove();
+        workers.submit(() -> {
+            while(true){
+                try{
+                    Extension extension = getById(id);
+                    extension.disapprove();
+                    repository.update(extension);
+                    reloadLists();
+                    break;
+                }catch(VersionMismatchException e){
+                    System.out.println(e.getMessage());
+                    System.out.println("Retrying...");
+                }
+            }});
+
     }
 
     @Override
@@ -381,7 +403,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         }
         repo = repo.substring(Utils.GITHUB_URL_PREFIX.length());
         String[] words = repo.split("/");
-        return words.length == 2;
+        return words.length >= 2;
     }
 
     private void syncAll() {

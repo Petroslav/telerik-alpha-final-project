@@ -8,14 +8,11 @@ import com.alpha.marketplace.services.base.UserService;
 import com.alpha.marketplace.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -76,6 +73,9 @@ public class ExtensionController {
         if (extension.isApproved()) {
             approved = "Approved";
         }
+        if(!extensionService.isUserPublisherOrAdmin(extension) && !extension.isApproved()){
+            return "redirect:/";
+        }
 
         model.addAttribute("view", "extensions/details");
         model.addAttribute("approved", approved);
@@ -126,6 +126,15 @@ public class ExtensionController {
 
         return "redirect:/extension/" + id;
     }
+
+    @PostMapping("/disapprove/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String disapproveExtension(@PathVariable("id") Integer id) {
+        extensionService.disapproveExtensionById(id);
+
+        return "redirect:/extension/" + id;
+    }
+
 
     @PostMapping("/download/{id}")
     @PreAuthorize("isAuthenticated()")
