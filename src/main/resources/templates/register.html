@@ -7,20 +7,24 @@
 </head>
 <body>
 
-<form action="#" th:action="@{/register}"  th:object="${user}" method="POST" >
-    <label for="username">Username</label>
-    <input type="text" name="Username" id="username">
-    <label for="email">Email</label>
-    <input type="text" name="email" id="email">
+<form id="registerForm" action="#" th:action="@{/register}" th:object="${user}" method="POST">
+    <label for="registerUsername">Username</label>
+    <input type="text" name="Username" id="registerUsername">
+    <label for="registerEmail">Email</label>
+    <input type="text" name="email" id="registerEmail">
     <label for="firstName">First Name</label>
     <input type="text" name="firstName" id="firstName">
     <label for="lastName">Last Name</label>
     <input type="text" name="lastName" id="lastName">
-    <label for="pass">Password</label>
-    <input type="password" name="pass" id="pass">
-    <label for="pass2">Repeat Password</label>
-    <input type="password" name="pass2" id="pass2">
-    <input type="submit" value="Register">
+    <label for="registerPassword1">Password</label>
+    <input type="password" name="pass" id="registerPassword1">
+    <label for="registerPassword2">Repeat Password</label>
+    <input type="password" name="pass2" id="registerPassword2">
+    <input id="registerButton" type="button" value="Register">
 </form>
+<div id="messageBox" class="mdl-js-snackbar mdl-snackbar">
+    <div class="mdl-snackbar__text"></div>
+    <button class="mdl-snackbar__action" type="button" style="display:none"></button>
+</div>
 </body>
 </html>
