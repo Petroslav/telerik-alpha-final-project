@@ -6,14 +6,19 @@
         <h1>TEST</h1>
         <h1>TEST</h1>
         <div th:if="${error} != null" th:text="${error}"></div>
-        <form method="post">
+        <form id="loginForm" method="post">
             <label>Username
-                <input type="text" name="username">
+                <input id="loginUsername" type="text" name="username">
             </label>
             <label>Password
-                <input type="password" name="pass1">
+                <input id="loginPass" type="password" name="pass1">
             </label>
-            <input type="submit" value="Login">
+            <input id="loginSubmit" type="button" value="Login">
         </form>
+
+        <div id="messageBox" class="mdl-js-snackbar mdl-snackbar">
+            <div class="mdl-snackbar__text"></div>
+            <button class="mdl-snackbar__action" type="button" style="display:none"></button>
+        </div>
     </div>
 </main>

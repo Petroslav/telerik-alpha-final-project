@@ -66,5 +66,35 @@ $(document).ready(function () {
             $(location).attr('href', '/?sort=' + $('#sortOption').val());
 
     });
+    $('#loginSubmit').on('click', function(){
+        var snackbar = document.querySelector('.mdl-js-snackbar');
+        var username =  $('#loginUsername');
+        var password =  $('#loginPass');
+
+        var data = {
+            message: 'Invalid Username or Password!',
+            timeout: 3000
+        };
+        if(isWrongLength(username) || isEmpty(username)){
+            data.message = 'Invalid Username!';
+            snackbar.MaterialSnackbar.showSnackbar(data);
+            return;
+        }
+        if(isWrongLength(password) || isEmpty(password)){
+            data.message = 'Invalid Password!';
+            snackbar.MaterialSnackbar.showSnackbar(data);
+            return;
+        }
+        $('#loginForm').submit();
+
+    });
+
+    var isEmpty = function(e){
+        return $.trim(e.val())=='';
+    };
+    var isWrongLength = function(e){
+        var length = e.val().length;
+        return length < 6 || length > 16;
+    };
 });
 
