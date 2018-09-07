@@ -206,7 +206,7 @@ public class ExtensionController {
         }
         if(!extensionService.edit(editModel, id)) {
             model.addAttribute("error", ErrorMessages.EXTENSION_EDIT_ERROR);
-            return "redirect:/edit/" + id;
+            return "redirect:/extension/edit/" + id;
         }
         return "redirect:/extension/" + id;
     }

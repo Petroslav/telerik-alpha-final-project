@@ -1,6 +1,6 @@
 <main xmlns:th="http://www.w3.org/1999/xhtml">
     <div th:if="${error} != null" th:text="${error}"></div>
-    <form th:action="@{/extension/edit/{id} (id=${toEdit.id})}" method="post" enctype="multipart/form-dataa">
+    <form th:action="@{/extension/edit/{id} (id=${toEdit.id})}" method="post"  enctype="multipart/form-data">
         <input type="text" th:value="${toEdit.name}" name="name" id="edit-name"/>
         <input type="text" th:value="${toEdit.description}" name="description" id="edit-description" />
         <input type="text" th:value="${toEdit.version}" name="version" id="edit-version" />
