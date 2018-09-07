@@ -27,26 +27,26 @@
         <div id="ban">
             <form th:action="@{/admin/unban/{id} (id=${user.id})}" method="POST">
                 <th:block th:if="${user.isBanned()}">
-                    <button sec:authorize="hasRole('ADMIN')">Unban</button>
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" sec:authorize="hasRole('ADMIN')">Unban</button>
                 </th:block>
             </form>
 
             <form th:action="@{/admin/ban/{id} (id=${user.id})}" method="POST">
                 <th:block th:if="${!user.isBanned()}">
-                    <button sec:authorize="hasRole('ADMIN')">Ban</button>
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" sec:authorize="hasRole('ADMIN')">Ban</button>
                 </th:block>
             </form>
         </div>
         <div id="assignAdmin">
             <form th:action="@{/owner/assignAdmin/{id} (id=${user.id})}" method="POST">
                 <th:block th:if="${!user.isAdmin()}">
-                    <button sec:authorize="hasRole('OWNER')">Make Admin</button>
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" sec:authorize="hasRole('OWNER')">Make Admin</button>
                 </th:block>
             </form>
 
             <form th:action="@{/owner/removeAdmin/{id} (id=${user.id})}" method="POST">
                 <th:block th:if="${user.isAdmin()}">
-                    <button sec:authorize="hasRole('OWNER')">U no longer admin boi</button>
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" sec:authorize="hasRole('OWNER')">U no longer admin boi</button>
                 </th:block>
             </form>
         </div>

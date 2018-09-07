@@ -39,7 +39,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .rememberMeCookieName("tscodelogin")
                 .rememberMeParameter("rememberMe")
                 .key("nocluewtfthisissupposedtobe")
-                .alwaysRemember(true)
+                .alwaysRemember(false)
                 .and()
                 .exceptionHandling().accessDeniedPage("/error/403")
                 .and()

@@ -3,7 +3,7 @@
     <h2 th:text="${user.firstName}"></h2>
     <h2 th:text="${user.lastName}"></h2>
     <img th:attr="src=@{${user.picURI}}">
-    <a th:href="@{/user/profile/edit}">Edit</a>
+    <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" th:href="@{/user/profile/edit}">Edit</a>
     <h2>Extensions: </h2>
     <div th:each="extension : ${extensions}" class="myExtension">
         <a th:href="@{/extension/{id}(id=${extension.id})}">

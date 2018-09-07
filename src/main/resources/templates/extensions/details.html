@@ -58,35 +58,35 @@
     <!--</ul>-->
 
     <form th:action="@{/extension/sync/{id} (id=${extension.id})}" method="POST">
-        <button sec:authorize="hasRole('ADMIN')">Sync</button>
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" sec:authorize="hasRole('ADMIN')">Sync</button>
     </form>
     <form th:action="@{/extension/download/{id} (id=${extension.id})}" method="POST">
-        <button>Download</button>
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">Download</button>
     </form>
     <th:block sec:authorize="isAuthenticated()" th:if="${user.isAdmin() OR user.isPublisher(extension)}">
-        <a th:href="@{/extension/edit/{id}(id = ${extension.id})}">Edit</a>
+        <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" th:href="@{/extension/edit/{id}(id = ${extension.id})}">Edit</a>
     </th:block>
     <th:block sec:authorize="isAuthenticated()" th:if="${user.isAdmin() OR user.isPublisher(extension)}">
-        <a th:href="@{/extension/delete/{id}(id = ${extension.id})}">Delete</a>
+        <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" th:href="@{/extension/delete/{id}(id = ${extension.id})}">Delete</a>
     </th:block>
     <th:block th:if="${!extension.isApproved()}">
         <form th:action="@{/extension/approve/{id} (id=${extension.id})}" method="POST">
-            <button sec:authorize="hasRole('ADMIN')">Approve</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" sec:authorize="hasRole('ADMIN')">Approve</button>
         </form>
     </th:block>
     <th:block th:if="${extension.isApproved()}">
         <form th:action="@{/extension/disapprove/{id} (id=${extension.id})}" method="POST">
-            <button sec:authorize="hasRole('ADMIN')">Disapprove</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" sec:authorize="hasRole('ADMIN')">Disapprove</button>
         </form>
     </th:block>
     <th:block th:if="${!extension.isSelected()}">
     <form th:action="@{/extension/feature/{id} (id=${extension.id})}" method="POST">
-            <button sec:authorize="hasRole('ADMIN')">Feature</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" sec:authorize="hasRole('ADMIN')">Feature</button>
     </form>
     </th:block>
     <th:block th:if="${extension.isSelected()}">
     <form th:action="@{/extension/unFeature/{id} (id=${extension.id})}" method="POST">
-            <button sec:authorize="hasRole('ADMIN')">Remove from featured</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" sec:authorize="hasRole('ADMIN')">Remove from featured</button>
     </form>
     </th:block>
 </main>

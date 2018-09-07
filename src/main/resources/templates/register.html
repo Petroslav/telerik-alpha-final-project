@@ -1,30 +1,73 @@
-<!DOCTYPE HTML>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
-<head>
-    <meta charset="UTF-8">
-    <title>Register</title>
-</head>
-<body>
-
-<form id="registerForm" action="#" th:action="@{/register}" th:object="${user}" method="POST">
-    <label for="registerUsername">Username</label>
-    <input type="text" name="Username" id="registerUsername">
-    <label for="registerEmail">Email</label>
-    <input type="text" name="email" id="registerEmail">
-    <label for="firstName">First Name</label>
-    <input type="text" name="firstName" id="firstName">
-    <label for="lastName">Last Name</label>
-    <input type="text" name="lastName" id="lastName">
-    <label for="registerPassword1">Password</label>
-    <input type="password" name="pass" id="registerPassword1">
-    <label for="registerPassword2">Repeat Password</label>
-    <input type="password" name="pass2" id="registerPassword2">
-    <input id="registerButton" type="button" value="Register">
-</form>
+<main>
+<!--<form id="registerForm" th:action="@{/register}" th:object="${user}" method="POST">-->
+    <!--<label for="registerUsername">Username</label>-->
+    <!--<input type="text" name="Username" id="registerUsername">-->
+    <!--<label for="registerEmail">Email</label>-->
+    <!--<input type="text" name="email" id="registerEmail">-->
+    <!--<label for="firstName">First Name</label>-->
+    <!--<input type="text" name="firstName" id="firstName">-->
+    <!--<label for="lastName">Last Name</label>-->
+    <!--<input type="text" name="lastName" id="lastName">-->
+    <!--<label for="registerPassword1">Password</label>-->
+    <!--<input type="password" name="pass" id="registerPassword1">-->
+    <!--<label for="registerPassword2">Repeat Password</label>-->
+    <!--<input type="password" name="pass2" id="registerPassword2">-->
+    <!--<input id="registerButton" type="button" value="Register">-->
+<!--</form>-->
 <div id="messageBox" class="mdl-js-snackbar mdl-snackbar">
     <div class="mdl-snackbar__text"></div>
     <button class="mdl-snackbar__action" type="button" style="display:none"></button>
 </div>
-</body>
-</html>
+<div class="myCard">
+
+    <div class="demo-card-wide mdl-card mdl-shadow--2dp" style="height: auto">
+        <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">Register</h2>
+        </div>
+
+
+        <div class="mdl-card__supporting-text">
+            <form id="registerForm" th:action="@{/register}" method="post">
+
+                <div id="registerInfo">
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input class="mdl-textfield__input" name="Username" type="text" id="registerUsername">
+                        <label class="mdl-textfield__label" for="registerUsername">UserName</label>
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input class="mdl-textfield__input" type="text" name="email" id="registerEmail">
+                        <label class="mdl-textfield__label" for="registerEmail">Email</label>
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input class="mdl-textfield__input" type="text" name="firstName" id="firstName">
+                        <label class="mdl-textfield__label" for="firstName">First Name</label>
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input class="mdl-textfield__input" type="text" name="lastName" id="lastName">
+                        <label class="mdl-textfield__label" for="lastName">Last Name</label>
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input class="mdl-textfield__input" type="password" name="pass" id="registerPassword1" onchange="checkIfPasswordsMatchRegister()">
+                        <label class="mdl-textfield__label" for="registerPassword1">Password</label>
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input class="mdl-textfield__input" type="password" name="pass2" id="registerPassword2" onchange="checkIfPasswordsMatchRegister()">
+                        <label class="mdl-textfield__label" for="registerPassword2">Repeat Password</label>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+
+
+    </div>
+
+    <!-- FAB button with ripple -->
+    <div id="next">
+        <button id="registerButton" type="button" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect">
+            <i class="material-icons">arrow_forward</i>
+        </button>
+    </div>
+</div>
+</main>

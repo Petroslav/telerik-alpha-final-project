@@ -1,5 +1,5 @@
 <main>
-    <h3 style="width: 92%;">Newest: <a style="display:inline-block; float: right; text-decoration: none;" href="/newest?sort=byUploadDate">See more</a></h3>
+    <h3 style="width: 92%;">Newest: <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" style="display:inline-block; float: right; text-decoration: none;" href="/newest?sort=byUploadDate">See more</a></h3>
 
     <div th:each="extension : ${newest}" class="myExtension">
         <a th:href="@{/extension/{id}(id=${extension.id})}">
@@ -22,7 +22,7 @@
         </a>
     </div>
 
-    <h3 style="width: 92%;">Most Popular: <a style="display:inline-block; float: right; text-decoration: none;" href="/popular?sort=byDownloads">See more</a></h3>
+    <h3 style="width: 92%;">Most Popular: <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" style="display:inline-block; float: right; text-decoration: none;" href="/popular?sort=byDownloads">See more</a></h3>
     <div th:each="extension : ${mostPopular}" class="myExtension">
         <a th:href="@{/extension/{id}(id=${extension.id})}">
             <div class="mdl-card mdl-shadow--2dp">

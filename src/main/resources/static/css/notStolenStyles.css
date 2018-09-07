@@ -34,3 +34,81 @@
     margin: 0 auto;
     width: auto;
 }
+/*TESTS*/
+
+.demo-card-wide.mdl-card {
+    width: 640px;
+    height: 300px;
+
+}
+
+.mdl-card__actions {
+
+    /*outline: skyblue solid 5px;*/
+    z-index: 4;
+
+
+}
+
+
+.mdl-button {
+// outline: red solid 5px;
+    margin-left: 10px ;
+
+}
+.demo-card-wide {
+    height: 200px;
+// outline: limegreen 10px solid;
+}
+
+
+.demo-card-wide > .mdl-card__title {
+    color: #fff;
+    height: 64px;
+    background-color:#303f9f;
+}
+
+.mdl-card__title-text {
+    position: relative;
+    top: 6px;
+
+}
+
+.demo-card-wide > .mdl-card__menu {
+    color: #fff;
+}
+
+
+.myCard {
+    height: 600px;
+    width:100%;
+    display:flex;
+    flex-direction: row;
+// outline: red solid 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.mdl-textfield {
+    width: 250px;
+    margin-right: 10px;
+}
+
+.mdl-button--file input {
+    cursor: pointer;
+    height: 100%;
+    right: 0;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    width: 300px;
+    z-index: 4;
+}
+
+.mdl-textfield--file .mdl-textfield__input {
+    box-sizing: border-box;
+    width: calc(100% - 32px);
+}
+.mdl-textfield--file .mdl-button--file {
+    right: 0;
+}

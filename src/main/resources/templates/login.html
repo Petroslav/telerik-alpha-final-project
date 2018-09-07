@@ -1,26 +1,69 @@
-<main>
-    <div>
-        <h1>TEST</h1>
-        <h1>TEST</h1>
-        <h1>TEST</h1>
-        <h1>TEST</h1>
-        <h1>TEST</h1>
-        <div th:if="${error} != null" th:text="${error}"></div>
-        <form id="loginForm" method="post">
-            <label>Username
-                <input id="loginUsername" type="text" name="username">
-            </label>
-            <label>Password
-                <input id="loginPass" type="password" name="pass1">
-            </label>
-            <label for="remember">Keep me logged in</label>
-            <input type="checkbox" name="remember" id="remember">
-            <input id="loginSubmit" type="button" value="Login">
-        </form>
+<main xmlns="http://www.w3.org/1999/html">
+    <!--<div>-->
+        <!--<h1>TEST</h1>-->
+        <!--<h1>TEST</h1>-->
+        <!--<h1>TEST</h1>-->
+        <!--<h1>TEST</h1>-->
+        <!--<h1>TEST</h1>-->
+        <!--<div th:if="${error} != null" th:text="${error}"></div>-->
+        <!--<form id="loginForm" method="post">-->
+            <!--<label>Username-->
+                <!--<input id="loginUsername" type="text" name="username">-->
+            <!--</label>-->
+            <!--<label>Password-->
+                <!--<input id="loginPass" type="password" name="pass1">-->
+            <!--</label>-->
+            <!--<label for="remember">Keep me logged in</label>-->
+            <!--<input type="checkbox" name="remember" id="remember">-->
+            <!--<input id="loginSubmit" type="button" value="Login">-->
+        <!--</form>-->
 
-        <div id="messageBox" class="mdl-js-snackbar mdl-snackbar">
-            <div class="mdl-snackbar__text"></div>
-            <button class="mdl-snackbar__action" type="button" style="display:none"></button>
+        <!---->
+    <!--</div>-->
+    <div id="messageBox" class="mdl-js-snackbar mdl-snackbar">
+        <div class="mdl-snackbar__text"></div>
+        <button class="mdl-snackbar__action" type="button" style="display:none"></button>
+    </div>
+    <div class="myCard">
+
+        <div class="demo-card-wide mdl-card mdl-shadow--2dp">
+            <div class="mdl-card__title">
+                <h2 class="mdl-card__title-text">Login</h2>
+            </div>
+
+
+            <div class="mdl-card__supporting-text">
+                Please enter your credentials !
+                <div th:if="${error} != null" th:text="${error}"></div>
+                <form id="loginForm" method="post">
+
+                    <div id="loginInfo">
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" name="username" type="text" id="loginUsername">
+                            <label class="mdl-textfield__label" for="loginUsername">UserName</label>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" name="pass1" type="password" id="loginPass">
+                            <label class="mdl-textfield__label" for="loginPass">Password</label>
+                        </div>
+                        <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="remember">
+                            <input type="checkbox" name="rememberMe" id="remember" class="mdl-checkbox__input">
+                            <span class="mdl-checkbox__label">Keep me logged in</span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+
+
+
+
+        </div>
+
+        <!-- FAB button with ripple -->
+        <div id="next">
+            <button id="loginSubmit" type="button" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect">
+                <i class="material-icons">arrow_forward</i>
+            </button>
         </div>
     </div>
 </main>

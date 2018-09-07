@@ -72,7 +72,6 @@ $(document).ready(function () {
         $(location).attr('href', '/popular?sort=' + $('#sortOption').val());
 
     });
-    console.log("HEREEEEEEEEEEEEE"+$('#sortOption2').val())
     $('#loginSubmit').on('click', function () {
         var snackbar = document.querySelector('.mdl-js-snackbar');
         var username = $('#loginUsername');
@@ -162,7 +161,7 @@ $(document).ready(function () {
             snackbar.MaterialSnackbar.showSnackbar(data);
             return;
         }
-        if($.trim(name.val()).length < 201 || $.trim(name.val()).length > 1){
+        if($.trim(name.val()).length > 201 || $.trim(name.val()).length < 1){
             data.message = 'Invalid extension name!';
             snackbar.MaterialSnackbar.showSnackbar(data);
             return;
@@ -199,7 +198,7 @@ function checkExtension() {
         message: 'Invalid Register info!',
         timeout: 3000
     };
-    var file = document.querySelector("#createPic");
+    var file = document.querySelector("#createPicBtn");
     if ( /\.(jpe?g|png|gif)$/i.test(file.files[0].name) === false ) {
         data.message = 'Wrong picture format!';
         snackbar.MaterialSnackbar.showSnackbar(data);
@@ -216,3 +215,27 @@ function isGitRepo(e){
     var words = e.split('/');
     return words.length >= 2;
 }
+function checkIfPasswordsMatchRegister(){
+    var pass1jq = $('#registerPassword1');
+    var pass2jq = $('#registerPassword2');
+
+    var pass1 = $.trim(pass1jq.val());
+    var pass2 = $.trim(pass2jq.val());
+
+    if(pass1 === pass2){
+        pass1jq.css('border-color', 'green');
+        pass2jq.css('border-color', 'green');
+    }
+    else {
+        pass1jq.css('border-color', 'red');
+        pass2jq.css('border-color', 'red');
+
+    }
+}
+document.getElementById("createFileBtn").onchange = function () {
+    document.getElementById("createFile").value = this.files[0].name;
+};
+document.getElementById("createPicBtn").onchange = function () {
+    checkExtension();
+    document.getElementById("createPic").value = this.files[0].name;
+};
