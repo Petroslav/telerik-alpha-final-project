@@ -201,8 +201,6 @@ public class ExtensionController {
     @PreAuthorize("hasRole('USER')")
     public String editExtension(@Valid ExtensionEditModel editModel, BindingResult errors, @PathVariable long id, Model model){
         if(errors.hasErrors()){
-            System.out.println("FAKIN SHIT");
-            errors.getAllErrors().forEach(objectError -> System.out.println(objectError.toString()));
             return "redirect:/extension/edit/" + id;
         }
         if(!extensionService.edit(editModel, id)) {
