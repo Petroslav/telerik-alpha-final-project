@@ -586,7 +586,11 @@ public class ExtensionServiceImpl implements ExtensionService {
         }
         try {
             String fn = model.getPicture().getOriginalFilename().substring(model.getPicture().getOriginalFilename().lastIndexOf("."));
-            Blob b = cloudExtensionRepository.saveExtensionPic(edit.getPublisher().getId()+"", edit.getName() + fn, model.getFile().getContentType(), model.getFile().getBytes());
+            String id = String.valueOf(edit.getPublisher().getId());
+            String name = edit.getName() + fn;
+            String ct = model.getPicture().getContentType();
+            byte[] bytes = model.getPicture().getBytes();
+            Blob b =cloudExtensionRepository.saveExtensionPic(id, name, ct, bytes);
             edit.setPicBlobId(b.getBlobId());
             edit.setPicURI(b.getMediaLink());
         } catch (IOException e) {
@@ -603,7 +607,11 @@ public class ExtensionServiceImpl implements ExtensionService {
         }
         try {
             String fn = model.getFile().getOriginalFilename().substring(model.getFile().getOriginalFilename().lastIndexOf("."));
-            Blob b = cloudExtensionRepository.saveExtension(edit.getPublisher().getId() + "", edit.getName() + fn, model.getFile().getContentType(), model.getFile().getBytes());
+            String id = String.valueOf(edit.getPublisher().getId());
+            String name = edit.getName() + fn;
+            String ct = model.getFile().getContentType();
+            byte[] bytes = model.getFile().getBytes();
+            Blob b = cloudExtensionRepository.saveExtension(id, name + fn, ct, bytes);
             edit.setBlobId(b.getBlobId());
             edit.setDlURI(b.getMediaLink());
         } catch (IOException e) {

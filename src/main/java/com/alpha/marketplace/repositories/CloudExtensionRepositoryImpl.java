@@ -31,9 +31,7 @@ public class CloudExtensionRepositoryImpl implements CloudExtensionRepository {
     @Override
     public Blob saveExtension(String userId, String extensionName, String contentType, byte[] bytes){
         String name = userId + "-" + extensionName;
-        Blob blob = extensionBucket.create(name, bytes, contentType);
-        System.out.println(blob.getMediaLink());
-        return blob;
+        return extensionBucket.create(name, bytes, contentType);
     }
 
     @Override
