@@ -198,7 +198,11 @@ public class ExtensionController {
 
     @PostMapping("/edit/{id}")
     @PreAuthorize("hasRole('USER')")
-    public String editExtension(@Valid ExtensionEditModel editModel, @PathVariable long id, Model model){
+    public String editExtension(@Valid ExtensionEditModel editModel, @PathVariable long id, Model model, BindingResult errors){
+        if(errors.hasErrors()){
+            System.out.println("FAKIN SHIT");
+            return "redirect:/edit/" + id;
+        }
         if(!extensionService.edit(editModel, id)) {
             model.addAttribute("error", ErrorMessages.EXTENSION_EDIT_ERROR);
             return "redirect:/edit/" + id;

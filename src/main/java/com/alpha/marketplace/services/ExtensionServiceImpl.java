@@ -586,7 +586,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         }
         try {
             String fn = model.getPicture().getOriginalFilename().substring(model.getPicture().getOriginalFilename().lastIndexOf("."));
-            Blob b = cloudExtensionRepository.saveExtensionPic(edit.getPublisher().getId() + fn, edit.getName(), model.getFile().getContentType(), model.getFile().getBytes());
+            Blob b = cloudExtensionRepository.saveExtensionPic(edit.getPublisher().getId()+"", edit.getName() + fn, model.getFile().getContentType(), model.getFile().getBytes());
             edit.setPicBlobId(b.getBlobId());
             edit.setPicURI(b.getMediaLink());
         } catch (IOException e) {
@@ -603,7 +603,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         }
         try {
             String fn = model.getFile().getOriginalFilename().substring(model.getFile().getOriginalFilename().lastIndexOf("."));
-            Blob b = cloudExtensionRepository.saveExtension(edit.getPublisher().getId() + fn, edit.getName(), model.getFile().getContentType(), model.getFile().getBytes());
+            Blob b = cloudExtensionRepository.saveExtension(edit.getPublisher().getId() + "", edit.getName() + fn, model.getFile().getContentType(), model.getFile().getBytes());
             edit.setBlobId(b.getBlobId());
             edit.setDlURI(b.getMediaLink());
         } catch (IOException e) {

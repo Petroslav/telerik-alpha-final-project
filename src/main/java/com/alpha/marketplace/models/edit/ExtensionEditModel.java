@@ -23,8 +23,6 @@ public class ExtensionEditModel {
     private MultipartFile file;
     private MultipartFile picture;
 
-    public ExtensionEditModel(){}
-
     public ExtensionEditModel(@NotEmpty String name, @NotEmpty String description, @NotEmpty String version, @NotEmpty String repo, String tags, MultipartFile file, MultipartFile picture) {
         this.name = name;
         this.description = description;
