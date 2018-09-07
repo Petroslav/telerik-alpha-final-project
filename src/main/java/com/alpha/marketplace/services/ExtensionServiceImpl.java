@@ -261,7 +261,32 @@ public class ExtensionServiceImpl implements ExtensionService {
         Extension extension = mapper.map(model, Extension.class);
         extension.setPublisher(publisher);
         extension.setRepoURL(model.getRepositoryUrl());
+        finishCreatingExtension(extension, model, errors);
+    }
 
+    @Override
+    public Extension createExtension(User publisher, ExtensionBindingModel model, BindingResult errors) {
+        if(errors.hasErrors()) return null;
+
+        if(!validateRepoUrl(model.getRepositoryUrl())){
+            errors.addError(new ObjectError("link", ErrorMessages.BAD_REPOSITORY));
+            return null;
+        }
+
+        if(model.getFile().isEmpty() || model.getPic().isEmpty()){
+            errors.addError(new ObjectError("noFile", ErrorMessages.NO_FILE));
+            return null;
+        }
+
+        Extension extension = mapper.map(model, Extension.class);
+        extension.setPublisher(publisher);
+        extension.setRepoURL(model.getRepositoryUrl());
+        finishCreatingExtension(extension, model, errors);
+
+        return extension;
+    }
+
+    private void finishCreatingExtension(Extension extension, ExtensionBindingModel model, BindingResult errors){
         try {
             storeFiles(extension, model);
         }catch(IOException e){
@@ -279,6 +304,7 @@ public class ExtensionServiceImpl implements ExtensionService {
             try {
                 saveExtensionGitInfo(extension, model);
             } catch (FailedToSyncException e) {
+                System.out.println(e.getMessage());
                 e.printStackTrace();
             }
         });
