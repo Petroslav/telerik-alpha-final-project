@@ -187,9 +187,9 @@ public class ExtensionController {
         Extension toEdit = extensionService.getByIdFromMemory(id);
         String tags = "";
         for(Tag t : toEdit.getTags()){
-            tags += t.getName() + ", ";
+            tags = tags.concat(t.getName() + ", ");
         }
-        tags = tags.substring(0, tags.lastIndexOf(", "));
+        if(tags.length() > 1) tags = tags.substring(0, tags.lastIndexOf(", "));
         if(error != null) model.addAttribute("error", error);
         model.addAttribute("toEdit", toEdit);
         model.addAttribute("tags", tags);
