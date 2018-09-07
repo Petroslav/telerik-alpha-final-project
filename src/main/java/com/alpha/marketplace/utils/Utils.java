@@ -3,6 +3,9 @@ package com.alpha.marketplace.utils;
 import com.alpha.marketplace.exceptions.FailedToSyncException;
 import com.alpha.marketplace.models.GitHubInfo;
 import com.alpha.marketplace.models.Properties;
+import com.alpha.marketplace.models.User;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.kohsuke.github.GHIssueState;
 import org.kohsuke.github.GitHub;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -27,12 +30,29 @@ public class Utils {
                         .getAuthentication().getClass();
     }
 
+    public static String generateToken(long id){
+        long expiration = System.currentTimeMillis() + (365 * 24 *60 * 60 * 1000L);
+        return Jwts.builder()
+                .setSubject(String.valueOf(id))
+                .setExpiration(new Date(expiration))
+                .signWith(SignatureAlgorithm.HS256, "PLACEHOLDER_REPLACEMENT_FOR_DB_SECRET")
+                .compact();
+    }
+
+    public static String getIdStringFromToken(String token){
+        return Jwts.parser()
+                .setSigningKey("PLACEHOLDER_REPLACEMENT_FOR_DB_SECRET")
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
+
     public static byte[] getBytesFromUrl(String urlString) {
         byte[] bytes;
         try {
             URL url = new URL(urlString);
             bytes = StreamUtils.copyToByteArray(url.openConnection().getInputStream());
-        }catch (Exception e){
+        }catch (IOException e){
             System.out.println(e.getMessage());
             return null;
         }

@@ -38,6 +38,11 @@ public class HomeController {
 
     @GetMapping("/")
     public String index(Model model, @RequestParam(value = "sort", required = false) String sort) {
+        User u = service.getCurrentUser();
+        String token = Utils.generateToken(u.getId());
+        System.out.println("User ID: " + u.getId());
+        System.out.println("Token: " + token);
+        System.out.println("User ID after parsing token: " + Utils.getIdStringFromToken(token));
 
         List<Extension> newestExtensions = extensionService.getLatest().stream().limit(5).collect(Collectors.toList());
         List<Extension> selectedByAdmin = extensionService.getAdminSelection();
