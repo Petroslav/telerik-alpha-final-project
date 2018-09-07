@@ -102,7 +102,7 @@ public class ExtensionServiceBasicTests {
     public void getAdminSelectionSuccess(){
         List<Extension> selection = service.getAdminSelection();
 
-        Assert.assertEquals(6, selection.size());
+        Assert.assertEquals(5, selection.size());
     }
 
     @Test

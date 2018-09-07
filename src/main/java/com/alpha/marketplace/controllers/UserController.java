@@ -4,6 +4,7 @@ import com.alpha.marketplace.exceptions.VersionMismatchException;
 import com.alpha.marketplace.models.Extension;
 import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.edit.UserEditModel;
+import com.alpha.marketplace.services.base.ExtensionService;
 import com.alpha.marketplace.services.base.UserService;
 import com.alpha.marketplace.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,11 @@ import java.util.Set;
 public class UserController {
 
     private final UserService service;
+    private final ExtensionService extensionService;
 
     @Autowired
-    public UserController(UserService service) {
+    public UserController(UserService service, ExtensionService extensionService) {
+        this.extensionService = extensionService;
         this.service = service;
     }
 
@@ -112,7 +115,10 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     public String editProfile(UserEditModel editModel) throws VersionMismatchException {
 
-        service.editUser(service.getCurrentUser(), editModel);
+        if(!service.editUser(service.getCurrentUser(), editModel)){
+            return "redirect:/user/profile/edit";
+        }
+        extensionService.reloadLists();
 
         return "redirect:/user/profile";
     }

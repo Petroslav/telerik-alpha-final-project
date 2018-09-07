@@ -112,10 +112,9 @@ public class UserServiceImpl implements UserService {
            repository.update(u);
            users.put(u.getId(), u);
         }catch(VersionMismatchException e){
-            System.out.println("VERSIONN MISMATCH");
+            System.out.println("VERSION MISMATCH");
             return false;
         }
-        users.put(u.getId(), u);
         return true;
     }
 
