@@ -244,7 +244,7 @@ public class ExtensionServiceImpl implements ExtensionService {
     }
 
     @Override
-    public void createExtension(ExtensionBindingModel model, BindingResult errors) {
+    public void createExtension(ExtensionBindingModel model, BindingResult errors, User user) {
         if(errors.hasErrors()) return;
 
         if(!validateRepoUrl(model.getRepositoryUrl())){
@@ -257,9 +257,8 @@ public class ExtensionServiceImpl implements ExtensionService {
             return;
         }
 
-        User publisher = currentUser();
         Extension extension = mapper.map(model, Extension.class);
-        extension.setPublisher(publisher);
+        extension.setPublisher(user);
         extension.setRepoURL(model.getRepositoryUrl());
         finishCreatingExtension(extension, model, errors);
     }
@@ -298,7 +297,9 @@ public class ExtensionServiceImpl implements ExtensionService {
             return;
         }
 
-        repository.save(extension);
+        if(repository.save(extension)){
+            extension.getPublisher().getExtensions().add(extension);
+        }
 
         workers.submit(() -> {
             try {

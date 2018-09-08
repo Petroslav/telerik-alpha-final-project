@@ -60,7 +60,7 @@ public class ExtensionRestController {
         }
         long id = Long.parseLong(Utils.getIdStringFromToken(key));
         User u = userService.findByIdFromMemory(id);
-        extensionService.createExtension(model, errors);
+        extensionService.createExtension(model, errors, u);
         Extension ex = null;
         return ex;
     }

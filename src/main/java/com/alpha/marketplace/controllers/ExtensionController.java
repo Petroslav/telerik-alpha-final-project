@@ -47,16 +47,17 @@ public class ExtensionController {
     @PreAuthorize("hasRole('USER')")
     public String createPage(Model model) {
         model.addAttribute("view", "extensions/create");
-
         return "base-layout";
     }
 
     @PostMapping("/create")
     public String create(ExtensionBindingModel model, BindingResult errors) {
-        extensionService.createExtension(model, errors);
-        if(errors.hasErrors()){
+        User user =  extensionService.currentUser();
+        extensionService.createExtension(model, errors, user);
+        if (errors.hasErrors()) {
             return "redirect:/extension/create";
         }
+        userService.updateUser(user);
 
         return "redirect:/";
     }
@@ -65,9 +66,15 @@ public class ExtensionController {
     public String viewExtension(@PathVariable("id") long id, Model model) {
 
         Extension extension = extensionService.getByIdFromMemory(id);
-        if(!extensionService.isUserPublisherOrAdmin(extension) && !extension.isApproved() || extension == null){
+        if (extension == null) {
             return "redirect:/";
         }
+        if (!extension.isApproved()) {
+            if (!extensionService.isUserPublisherOrAdmin(extension)) {
+                return "redirect:/";
+            }
+        }
+
         if (!Utils.userIsAnonymous()) {
             User user = extensionService.currentUser();
             model.addAttribute("user", user);
@@ -145,22 +152,23 @@ public class ExtensionController {
         Extension extension = extensionService.getByIdFromMemory(id);
         extensionService.download(id);
 
-        return "redirect:"+extension.getDlURI();
+        return "redirect:" + extension.getDlURI();
     }
 
     @PostMapping("/feature/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String featureExtension( @PathVariable("id") Integer id) {
-        if(extensionService.getAdminSelection().size() == 5){
+    public String featureExtension(@PathVariable("id") Integer id) {
+        if (extensionService.getAdminSelection().size() == 5) {
             return "redirect:/featuredSelection";
         }
         extensionService.setFeatured(id);
 
         return "redirect:/extension/" + id;
     }
+
     @PostMapping("/unFeature/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String unFeatureExtension( @PathVariable("id") Integer id) {
+    public String unFeatureExtension(@PathVariable("id") Integer id) {
         extensionService.removeFeatured(id);
 
         return "redirect:/extension/" + id;
@@ -168,14 +176,14 @@ public class ExtensionController {
 
     @GetMapping("/featuredSelection")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String getFeaturedSelection(Model model){
+    public String getFeaturedSelection(Model model) {
         model.addAttribute("view", "/admin/featuredSelection");
         model.addAttribute("featured", extensionService.getAdminSelection());
         return "base-layout";
     }
 
     @PostMapping("/removeFeatured")
-    public String removeFeatured(Model model, @RequestParam("list") List<Long> stuff){
+    public String removeFeatured(Model model, @RequestParam("list") List<Long> stuff) {
         extensionService.unfeatureList(stuff);
 
         return "redirect:/admin/panel";
@@ -183,14 +191,14 @@ public class ExtensionController {
 
     @GetMapping("/edit/{id}")
     @PreAuthorize("hasRole('USER')")
-    public String getExtensionEdit(Model model, @PathVariable long id, @RequestParam(required =  false) String error){
+    public String getExtensionEdit(Model model, @PathVariable long id, @RequestParam(required = false) String error) {
         Extension toEdit = extensionService.getByIdFromMemory(id);
         String tags = "";
-        for(Tag t : toEdit.getTags()){
+        for (Tag t : toEdit.getTags()) {
             tags = tags.concat(t.getName() + ", ");
         }
-        if(tags.length() > 1) tags = tags.substring(0, tags.lastIndexOf(", "));
-        if(error != null) model.addAttribute("error", error);
+        if (tags.length() > 1) tags = tags.substring(0, tags.lastIndexOf(", "));
+        if (error != null) model.addAttribute("error", error);
         model.addAttribute("toEdit", toEdit);
         model.addAttribute("tags", tags);
         model.addAttribute("view", "/extensions/edit");
@@ -199,11 +207,11 @@ public class ExtensionController {
 
     @PostMapping("/edit/{id}")
     @PreAuthorize("hasRole('USER')")
-    public String editExtension(@Valid ExtensionEditModel editModel, BindingResult errors, @PathVariable long id, Model model){
-        if(errors.hasErrors()){
+    public String editExtension(@Valid ExtensionEditModel editModel, BindingResult errors, @PathVariable long id, Model model) {
+        if (errors.hasErrors()) {
             return "redirect:/extension/edit/" + id;
         }
-        if(!extensionService.edit(editModel, id)) {
+        if (!extensionService.edit(editModel, id)) {
             model.addAttribute("error", ErrorMessages.EXTENSION_EDIT_ERROR);
             return "redirect:/extension/edit/" + id;
         }

@@ -1,15 +1,99 @@
 <main xmlns:th="http://www.w3.org/1999/xhtml">
-    <div th:if="${error} != null" th:text="${error}"></div>
-    <form th:action="@{/extension/edit/{id} (id=${toEdit.id})}" method="post"  enctype="multipart/form-data">
-        <input type="text" th:value="${toEdit.name}" name="name" id="edit-name"/>
-        <input type="text" th:value="${toEdit.description}" name="description" id="edit-description" />
-        <input type="text" th:value="${toEdit.version}" name="version" id="edit-version" />
-        <input type="text" th:value="${toEdit.repoURL}" name="repo" id="edit-repo" />
-        <input type="text" th:value="${tags}" name="tags" id="edit-tags"/>
-        <label for="edit-file">FILE</label>
-        <input type="file" name="file" id="edit-file"/>
-        <label for="edit-picture">PICTURE</label>
-        <input type="file" name="picture" id="edit-picture"/>
-        <button id="edit-extension-submit">Submit</button>
-    </form>
+    <!--<div th:if="${error} != null" th:text="${error}"></div>-->
+    <!--<form th:action="@{/extension/edit/{id} (id=${toEdit.id})}" method="post"  enctype="multipart/form-data">-->
+        <!--<input type="text" name="name" id="extensionEditName"/>-->
+        <!--<input type="text" name="description" id="extensionEditDescription" />-->
+        <!--<input type="text" name="version" id="extensionEditVersion" />-->
+        <!--<input type="text" name="repo" id="extensionEditRepo" />-->
+        <!--<input type="text" name="tags" id="extensionEditTags"/>-->
+        <!--<label for="edit-file">FILE</label>-->
+        <!--<input type="file" name="file" id="extensionEditFile"/>-->
+        <!--<label for="edit-picture">PICTURE</label>-->
+        <!--<input type="file" name="picture" id="extensionEditPicture"/>-->
+        <!--<button id="edit-extension-submit">Submit</button>-->
+    <!--</form>-->
+
+    <div id="messageBox" class="mdl-js-snackbar mdl-snackbar">
+        <div class="mdl-snackbar__text"></div>
+        <button class="mdl-snackbar__action" type="button" style="display:none"></button>
+    </div>
+
+    <div class="myCard">
+
+        <div class="demo-card-wide mdl-card mdl-shadow--2dp" style="height: auto">
+            <div class="mdl-card__title">
+                <h2 class="mdl-card__title-text">Create an extension</h2>
+            </div>
+            <div th:if="${error} != null" th:text="${error}"></div>
+
+            <div class="mdl-card__supporting-text">
+                <form id="extensionEditForm" th:action="@{/extension/edit/{id} (id=${toEdit.id})}" method="post"  enctype="multipart/form-data">
+
+                    <div id="createExtensionInfo">
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" th:value="${toEdit.name}" type="text" name="name" id="extensionEditName">
+                            <label class="mdl-textfield__label" for="extensionEditName">Name</label>
+                        </div>
+
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" th:value="${toEdit.repoURL}" type="text" name="repo" id="extensionEditRepo">
+                            <label class="mdl-textfield__label" for="extensionEditRepo">Repo Url</label>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input"  th:value="${toEdit.version}" type="text" name="version" id="extensionEditVersion">
+                            <label class="mdl-textfield__label" for="extensionEditVersion">Version</label>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" th:value="${tags}" type="text" name="tags" id="extensionEditTags">
+                            <label class="mdl-textfield__label" for="extensionEditTags">Tags</label>
+                            <div class="mdl-tooltip" for="createTagString">
+                                Split with a comma
+                            </div>
+                        </div>
+
+                        <!--<div class="mdl-textfield mdl-js-textfield mdl-textfield&#45;&#45;floating-label">-->
+                        <!--<input class="mdl-textfield__input" type="file" name="file" id="createFile">-->
+                        <!--<label class="mdl-textfield__label" for="createFile">File</label>-->
+                        <!--</div>-->
+                        <!--<div class="mdl-textfield mdl-js-textfield mdl-textfield&#45;&#45;floating-label">-->
+                        <!--<input class="mdl-textfield__input" type="file" name="pic" id="createPic" onchange="checkExtension()">-->
+                        <!--<label class="mdl-textfield__label" for="createPic">Picture</label>-->
+                        <!--</div>-->
+
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--file">
+                            <input class="mdl-textfield__input" placeholder="File" type="text"  id="extensionEditFile" readonly/>
+                            <div class="mdl-button mdl-button--primary mdl-button--icon mdl-button--file">
+                                <i class="material-icons">attach_file</i><input name="file" type="file" id="extensionEditFileBtn">
+                            </div>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--file">
+                            <input class="mdl-textfield__input" placeholder="Picture"  id="extensionEditPicture" readonly/>
+                            <div class="mdl-button mdl-button--primary mdl-button--icon mdl-button--file">
+                                <i class="material-icons">image</i><input name="picture" type="file" id="extensionEditPictureBtn" >
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield" style="width: 92%;">
+                        <textarea class="mdl-textfield__input" th:text="${toEdit.description}" type="text" name="description" rows="4" id="extensionEditDescription"></textarea>
+                        <label class="mdl-textfield__label" for="extensionEditDescription">Description</label>
+                    </div>
+                    <!--<div class="mdl-textfield mdl-js-textfield mdl-textfield&#45;&#45;floating-label">-->
+                    <!--<input class="mdl-textfield__input" name="description" id="createDescription">-->
+                    <!--<label class="mdl-textfield__label" for="createDescription">Description</label>-->
+                    <!--</div>-->
+
+                </form>
+            </div>
+
+
+
+        </div>
+
+        <!-- FAB button with ripple -->
+        <div id="next">
+            <button  id="extensionEditButton" type="button" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect">
+                <i class="material-icons">arrow_forward</i>
+            </button>
+        </div>
+    </div>
 </main>

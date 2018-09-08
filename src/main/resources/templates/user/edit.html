@@ -1,17 +1,76 @@
 <main>
-    <form th:action="@{/user/profile/edit}" method="post" enctype="multipart/form-data">
-        <label for="firstName">First Name</label>
-        <input type="text" name="firstName" id="firstName">
-        <label for="lastName">Last Name</label>
-        <input type="text" name="lastName" id="lastName">
-        <label for="picture">Picture</label>
-        <input type="file" name="picture" id="picture">
-        <label for="oldPass">Old Password</label>
-        <input type="password" name="oldPass" id="oldPass">
-        <label for="newPass">New Password</label>
-        <input type="password" name="newPass" id="newPass">
-        <label for="newPassConfirm">Repeat New Password</label>
-        <input type="password" name="newPassConfirm" id="newPassConfirm">
-        <input type="submit" value="Save">
-    </form>
+    <!--<form th:action="@{/user/profile/edit}" method="post" enctype="multipart/form-data">-->
+        <!--<label for="firstName">First Name</label>-->
+        <!--<input type="text" name="firstName" id="editFirstName">-->
+        <!--<label for="lastName">Last Name</label>-->
+        <!--<input type="text" name="lastName" id="editLastName">-->
+        <!--<label for="picture">Picture</label>-->
+        <!--<input type="file" name="picture" id="picture">-->
+        <!--<label for="oldPass">Old Password</label>-->
+        <!--<input type="password" name="oldPass" id="editOldPass">-->
+        <!--<label for="newPass">New Password</label>-->
+        <!--<input type="password" name="newPass" id="editNewPass">-->
+        <!--<label for="newPassConfirm">Repeat New Password</label>-->
+        <!--<input type="password" name="newPassConfirm" id="editNewPass2">-->
+        <!--<input type="submit" value="Save">-->
+    <!--</form>-->
+
+    <div id="messageBox" class="mdl-js-snackbar mdl-snackbar">
+        <div class="mdl-snackbar__text"></div>
+        <button class="mdl-snackbar__action" type="button" style="display:none"></button>
+    </div>
+    <div class="myCard">
+
+        <div class="demo-card-wide mdl-card mdl-shadow--2dp" style="height: auto">
+            <div class="mdl-card__title">
+                <h2 class="mdl-card__title-text">Edit user profile</h2>
+            </div>
+
+
+            <div class="mdl-card__supporting-text">
+                <form id="userEditForm" th:action="@{/user/profile/edit}" method="post" enctype="multipart/form-data">
+
+                    <div id="registerInfo">
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="text" name="firstName" id="editFirstName">
+                            <label class="mdl-textfield__label" for="editFirstName">First Name</label>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="text" name="lastName" id="editLastName">
+                            <label class="mdl-textfield__label" for="editLastName">Last Name</label>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--file">
+                            <input class="mdl-textfield__input" placeholder="Picture"  id="userEditPic" readonly/>
+                            <div class="mdl-button mdl-button--primary mdl-button--icon mdl-button--file">
+                                <i class="material-icons">image</i><input name="picture" type="file" id="userEditPicBtn" onchange="editOnChange()" >
+                            </div>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="password" name="oldPass" id="editOldPass">
+                            <label class="mdl-textfield__label" for="editOldPass">Old Password</label>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="password" name="newPass" id="editNewPass" onchange="checkIfPasswordsMatchEdit()">
+                            <label class="mdl-textfield__label" for="editNewPass">New Password</label>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="password" name="newPassConfirm" id="editNewPass2" onchange="checkIfPasswordsMatchEdit()">
+                            <label class="mdl-textfield__label" for="editNewPass2">Repeat New Password</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+
+
+        </div>
+
+        <!-- FAB button with ripple -->
+        <div id="next">
+            <button id="userEditButton" type="button" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect">
+                <i class="material-icons">arrow_forward</i>
+            </button>
+        </div>
+    </div>
 </main>

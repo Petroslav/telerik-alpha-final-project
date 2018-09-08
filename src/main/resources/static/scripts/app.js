@@ -161,37 +161,116 @@ $(document).ready(function () {
             snackbar.MaterialSnackbar.showSnackbar(data);
             return;
         }
-        if($.trim(name.val()).length > 201 || $.trim(name.val()).length < 1){
+        if ($.trim(name.val()).length > 201 || $.trim(name.val()).length < 1) {
             data.message = 'Invalid extension name!';
             snackbar.MaterialSnackbar.showSnackbar(data);
             return;
         }
-        if(description.val().length ===0 || description.val().length > 5000){
+        if (description.val().length === 0 || description.val().length > 5000) {
             data.message = 'Invalid description length!';
             snackbar.MaterialSnackbar.showSnackbar(data);
             return;
         }
-        if(!isGitRepo($.trim(repoUrl.val()))){
+        if (!isGitRepo($.trim(repoUrl.val()))) {
             data.message = 'Invalid repository url!';
             snackbar.MaterialSnackbar.showSnackbar(data);
             return;
         }
-        if(!file.val()){
+        if (!file.val()) {
             data.message = 'Upload a file!';
             snackbar.MaterialSnackbar.showSnackbar(data);
             return;
         }
-        if(!pic.val()){
+        if (!pic.val()) {
             data.message = 'Upload a picture!';
             snackbar.MaterialSnackbar.showSnackbar(data);
             return;
         }
-        if(!checkExtension()){
+        if (!checkExtension()) {
             return;
         }
         $('#createForm').submit();
     });
+
+    $('#userEditButton').on('click', function () {
+        var snackbar = document.querySelector('.mdl-js-snackbar');
+        var password = $('#editNewPass');
+        var password2 = $('#editNewPass2');
+
+        var data = {
+            message: 'Invalid Edit info!',
+            timeout: 3000
+        };
+        if (!isEmpty(password) && isWrongLength(password)) {
+            data.message = 'Invalid Password!';
+            snackbar.MaterialSnackbar.showSnackbar(data);
+            return;
+        }
+        if (!isEmpty(password2) && isWrongLength(password2)) {
+            data.message = 'Invalid Repeated Password!';
+            snackbar.MaterialSnackbar.showSnackbar(data);
+            return;
+        }
+        if (password.val() !== password2.val()) {
+            data.message = 'Passwords dont match !!';
+            snackbar.MaterialSnackbar.showSnackbar(data);
+            return;
+        }
+        if ($('#userEditPicBtn').val() && !checkExtensionUserEdit()) {
+            return;
+        }
+        $('#userEditForm').submit();
+    });
+    $('#extensionEditButton').on('click', function () {
+        var snackbar = document.querySelector('.mdl-js-snackbar');
+        var name = $('#extensionEditName');
+        var description = $('#extensionEditDescription');
+        var repoUrl = $('#extensionEditRepo');
+        var version = $('#extensionEditVersion');
+        var tags = $('#extensionEditTags');
+        var file = $('#extensionEditFileBtn');
+        var pic = $('#extensionEditPictureBtn');
+        var data = {
+            message: 'Invalid Register info!',
+            timeout: 3000
+        };
+        if (isEmpty(name) || isEmpty(description) || isEmpty(repoUrl) || isEmpty(version) || isEmpty(tags)) {
+            data.message = 'Please fill all of the fields !';
+            snackbar.MaterialSnackbar.showSnackbar(data);
+            return;
+        }
+        if ($.trim(name.val()).length > 201 || $.trim(name.val()).length < 1) {
+            data.message = 'Invalid extension name!';
+            snackbar.MaterialSnackbar.showSnackbar(data);
+            return;
+        }
+        if (description.val().length === 0 || description.val().length > 5000) {
+            data.message = 'Invalid description length!';
+            snackbar.MaterialSnackbar.showSnackbar(data);
+            return;
+        }
+        if (!isGitRepo($.trim(repoUrl.val()))) {
+            data.message = 'Invalid repository url!';
+            snackbar.MaterialSnackbar.showSnackbar(data);
+            return;
+        }
+        // if (!file.val()) {
+        //     data.message = 'Upload a file!';
+        //     snackbar.MaterialSnackbar.showSnackbar(data);
+        //     return;
+        // }
+        // if (!pic.val()) {
+        //     data.message = 'Upload a picture!';
+        //     snackbar.MaterialSnackbar.showSnackbar(data);
+        //     return;
+        // }
+        if (pic.val() && !checkExtensionForExtensionEdit()) {
+            return;
+        }
+        $('#extensionEditForm').submit();
+    });
 });
+
 function checkExtension() {
     var snackbar = document.querySelector('.mdl-js-snackbar');
     var data = {
@@ -199,30 +278,60 @@ function checkExtension() {
         timeout: 3000
     };
     var file = document.querySelector("#createPicBtn");
-    if ( /\.(jpe?g|png|gif)$/i.test(file.files[0].name) === false ) {
+    if (/\.(jpe?g|png|gif)$/i.test(file.files[0].name) === false) {
         data.message = 'Wrong picture format!';
         snackbar.MaterialSnackbar.showSnackbar(data);
         return false;
     }
     return true;
 }
-function isGitRepo(e){
+
+function checkExtensionUserEdit() {
+    var snackbar = document.querySelector('.mdl-js-snackbar');
+    var data = {
+        message: 'Invalid Register info!',
+        timeout: 3000
+    };
+    var file = document.querySelector('#userEditPicBtn');
+    if (/\.(jpe?g|png|gif)$/i.test(file.files[0].name) === false) {
+        data.message = 'Wrong picture format!';
+        snackbar.MaterialSnackbar.showSnackbar(data);
+        return false;
+    }
+    return true;
+}
+function checkExtensionForExtensionEdit() {
+    var snackbar = document.querySelector('.mdl-js-snackbar');
+    var data = {
+        message: 'Invalid Register info!',
+        timeout: 3000
+    };
+    var file = document.querySelector('#extensionEditPictureBtn');
+    if (/\.(jpe?g|png|gif)$/i.test(file.files[0].name) === false) {
+        data.message = 'Wrong picture format!';
+        snackbar.MaterialSnackbar.showSnackbar(data);
+        return false;
+    }
+    return true;
+}
+function isGitRepo(e) {
     var githubPrefix = 'https://github.com/';
-    if(!e.startsWith(githubPrefix)){
+    if (!e.startsWith(githubPrefix)) {
         return false;
     }
     e = e.substring(githubPrefix.length);
     var words = e.split('/');
     return words.length >= 2;
 }
-function checkIfPasswordsMatchRegister(){
+
+function checkIfPasswordsMatchRegister() {
     var pass1jq = $('#registerPassword1');
     var pass2jq = $('#registerPassword2');
 
     var pass1 = $.trim(pass1jq.val());
     var pass2 = $.trim(pass2jq.val());
 
-    if(pass1 === pass2){
+    if (pass1 === pass2) {
         pass1jq.css('border-color', 'green');
         pass2jq.css('border-color', 'green');
     }
@@ -232,10 +341,49 @@ function checkIfPasswordsMatchRegister(){
 
     }
 }
-document.getElementById("createFileBtn").onchange = function () {
-    document.getElementById("createFile").value = this.files[0].name;
-};
-document.getElementById("createPicBtn").onchange = function () {
-    checkExtension();
-    document.getElementById("createPic").value = this.files[0].name;
-};
+
+function checkIfPasswordsMatchEdit() {
+    var pass1jq = $('#editNewPass');
+    var pass2jq = $('#editNewPass2');
+
+    var pass1 = $.trim(pass1jq.val());
+    var pass2 = $.trim(pass2jq.val());
+
+    if (pass1 === pass2) {
+        pass1jq.css('border-color', 'green');
+        pass2jq.css('border-color', 'green');
+    }
+    else {
+        pass1jq.css('border-color', 'red');
+        pass2jq.css('border-color', 'red');
+
+    }
+}
+if($("#createForm").length) {
+
+    document.getElementById("createFileBtn").onchange = function () {
+        document.getElementById("createFile").value = this.files[0].name;
+    };
+
+    document.getElementById("createPicBtn").onchange = function () {
+        checkExtension();
+        document.getElementById("createPic").value = this.files[0].name;
+    };
+}
+if($('#userEditForm').length) {
+    document.getElementById("userEditPicBtn").onchange = function () {
+        checkExtensionUserEdit();
+        document.getElementById("userEditPic").value = this.files[0].name;
+    }
+}
+if($('#extensionEditForm').length){
+    document.getElementById("extensionEditFileBtn").onchange = function () {
+        document.getElementById("extensionEditFile").value = this.files[0].name;
+    };
+
+    document.getElementById("extensionEditPictureBtn").onchange = function () {
+        checkExtensionForExtensionEdit();
+        document.getElementById("extensionEditPicture").value = this.files[0].name;
+    }
+}
+
