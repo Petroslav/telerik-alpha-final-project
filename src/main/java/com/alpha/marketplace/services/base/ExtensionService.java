@@ -26,6 +26,7 @@ public interface ExtensionService {
     boolean update(Extension extension);
     boolean edit(ExtensionEditModel model, long id);
     void unfeatureList(List<Long> extensions);
+    void approveList(List<Long> ids);
     void createExtension(ExtensionBindingModel extensionBindingModel, BindingResult errors, User user);
     Extension createExtension(User publisher, ExtensionBindingModel extensionBindingModel, BindingResult errors);
     void delete(long id);
@@ -37,4 +38,5 @@ public interface ExtensionService {
     void download(long id);
     void setFeatured(long id);
     void removeFeatured(long id);
+    void syncAllExtensions();
 }

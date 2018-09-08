@@ -186,10 +186,10 @@ public class ExtensionController {
     }
 
     @PostMapping("/removeFeatured")
-    public String removeFeatured(Model model, @RequestParam("list") List<Long> stuff) {
+    public String removeFeatured(@RequestParam("list") List<Long> stuff) {
         extensionService.unfeatureList(stuff);
 
-        return "redirect:/admin/panel";
+        return "redirect:/admin/featuredSelection";
     }
 
     @GetMapping("/edit/{id}")

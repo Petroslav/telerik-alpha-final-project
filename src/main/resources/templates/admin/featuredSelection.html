@@ -1,24 +1,39 @@
 <main>
-    <form action="/extension/removeFeatured" th:object="${featured}" method="post">
-        <div th:each="extension : ${featured}" class="myExtension">
-            <label>
-                <div class="myExtension mdl-card mdl-shadow--4dp">
-                    <div class="mdl-card__title">
-                        <h2 class="mdl-card__title-text" th:text="${extension.name}"></h2>
-                    </div>
-                    <div class="mdl-card__media">
-                        <img th:attr="src=@{${extension.picURI}}" width="95%" border="0" alt="" style="padding:20px;">
-                    </div>
-                    <div th:text="${extension.description}" class="mdl-card__supporting-text">
+    <div style="width: fit-content; margin: auto;">
+        <h3>FEATURED EXTENSIONS</h3>
+        <form action="/extension/removeFeatured" th:object="${featured}" method="post">
+            <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp"
+                   style="text-align: center;">
+                <thead>
+                <tr>
+                    <th class="mdl-data-table__cell--non-numeric">Image</th>
+                    <th>Name</th>
+                    <th>Author</th>
+                    <th>Selected</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="extension : ${featured}">
+                    <td class="mdl-data-table__cell--non-numeric"><img height="50px" th:attr="src=@{${extension.picURI}}">
+                    </td>
+                    <td><a th:text="${extension.name}" th:href="@{/extension/{id}(id=${extension.id})}"></a></td>
+                    <td>
+                <span class="mdl-chip mdl-chip--contact"
+                      th:style="${extension.publisher.isBanned()} ? 'background-color:rgba(255, 0, 0 , 0.5)' : 'background-colir: #dedede'">
+                    <img th:attr="src=@{${extension.publisher.picURI}}" class="mdl-chip__contact">
+                    <span class="mdl-chip__text" th:text="${extension.publisher.username}"></span>
+                </span>
+                    </td>
+                    <td>
+                        <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
+                            <input class="mdl-checkbox__input" type="checkbox" th:value="${extension.id}" name="list"/>
+                        </label>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <input class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="submit" value="Remove From Featured" style="float:right; margin-top:3%">
+        </form>
 
-                    </div>
-                    <div class="mdl-card__actions">
-                        <a th:href="@{/extension/{id}(id=${extension.id})}">Details </a>
-                    </div>
-                </div>
-                <input type = "checkbox" th:value="${extension.id}" name="list"/>
-            </label>
-        </div>
-        <input type="submit" value="Remove">
-    </form>
+    </div >
 </main>

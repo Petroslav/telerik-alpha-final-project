@@ -240,7 +240,20 @@ public class ExtensionServiceImpl implements ExtensionService {
                         .collect(Collectors.toList())
                         .get(0)));
         matches.forEach(e -> e.setSelected(false));
-        matches.forEach(this::update);
+        workers.submit(() -> matches.forEach(this::update));
+    }
+
+    @Override
+    public void approveList(List<Long> ids) {
+        List<Extension> matches = new ArrayList<>();
+        ids.forEach(ex -> matches.add(
+                getUnapproved()
+                        .stream()
+                        .filter(e1 -> ex == e1.getId())
+                        .collect(Collectors.toList())
+                        .get(0)));
+        matches.forEach(Extension::approve);
+        workers.submit(() -> matches.forEach(this::update));
     }
 
     @Override
@@ -454,6 +467,11 @@ public class ExtensionServiceImpl implements ExtensionService {
         repo = repo.substring(Utils.GITHUB_URL_PREFIX.length());
         String[] words = repo.split("/");
         return words.length >= 2;
+    }
+
+    @Override
+    public void syncAllExtensions(){
+        workers.submit(() -> syncAll());
     }
 
     private void syncAll() {

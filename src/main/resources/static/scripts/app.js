@@ -359,6 +359,10 @@ function checkIfPasswordsMatchEdit() {
 
     }
 }
+
+function showSyncInfo(){
+    $($('#syncInfo')).css('display', 'block');
+}
 if($("#createForm").length) {
 
     document.getElementById("createFileBtn").onchange = function () {

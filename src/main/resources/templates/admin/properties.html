@@ -1,0 +1,41 @@
+<main>
+
+    <div class="myCard">
+
+        <div class="demo-card-wide mdl-card mdl-shadow--2dp" style="height: auto">
+            <div class="mdl-card__title">
+                <h2 class="mdl-card__title-text">Properties</h2>
+            </div>
+
+
+            <div class="mdl-card__supporting-text">
+                <form id="registerForm" th:action="@{/admin/editProperties}" method="post">
+
+                    <div id="properties">
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" th:value="${properties.delay}" name="delay" type="text" id="delay">
+                            <label class="mdl-textfield__label" for="delay">Delay</label>
+                        </div>
+                    </div>
+                    <input class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="submit" value="Update Delay">
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="button" onclick="showSyncInfo()">Show Sync Info</button>
+                </form>
+                <form style="display: inline-block;" method="POST" action="/admin/syncAll">
+                    <input id="syncAll" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="submit" value="Sync All">
+                </form>
+                <div id="syncInfo" style="display:none;">
+                    <h4>Last Successful sync: <i th:text="${success}"></i></h4>
+                    <h4>Last Failed sync: <i th:text="${fail}"></i></h4>
+                    <th:block th:if="${hasFailed}">
+                        <h4>Fail info: <i th:text="${failInfo}"></i></h4>
+                    </th:block>
+
+                </div>
+            </div>
+
+
+
+
+        </div>
+    </div>
+</main>

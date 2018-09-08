@@ -88,9 +88,9 @@ public class AdminController {
         return "redirect:/user/"+id;
     }
 
-    @GetMapping("/syncInfo")
+    @GetMapping("/properties")
     @PreAuthorize("hasRole('ADMIN')")
-    public String syncInfo(Model model){
+    public String propertiesPage(Model model){
         if(!userService.getCurrentUser().isAdmin()){
             return "redirect:/";
         }
@@ -115,8 +115,36 @@ public class AdminController {
         model.addAttribute("success", success);
         model.addAttribute("fail", fail);
         model.addAttribute("failInfo", failInfo);
-        model.addAttribute("view", "/admin/syncInfo");
+        model.addAttribute("properties", properties);
+        model.addAttribute("view", "/admin/properties");
         return "base-layout";
     }
 
+    @PostMapping("/editProperties")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String editProperties(@RequestParam("delay") long delay){
+        if(!userService.getCurrentUser().isAdmin()){
+            return "redirect:/";
+        }
+
+        extensionService.setSync(delay);
+        return "redirect:/admin/properties";
+    }
+
+    @PostMapping("/syncAll")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String syncAll(){
+        if(!userService.getCurrentUser().isAdmin()){
+            return "redirect:/";
+        }
+
+        extensionService.syncAllExtensions();
+        return "redirect:/admin/properties";
+    }
+    @PostMapping("/approveSelected")
+    public String removeFeatured(@RequestParam("list") List<Long> stuff) {
+        extensionService.approveList(stuff);
+
+        return "redirect:/";
+    }
 }
