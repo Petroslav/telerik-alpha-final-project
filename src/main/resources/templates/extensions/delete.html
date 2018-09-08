@@ -1,8 +1,13 @@
 <main>
-    <h1>Are you sure you wish to delete:</h1>
-    <h2 th:text = "${extension.name}"></h2>
-    <form th:action="@{/extension/delete/{id} (id=${extension.id})}" method="POST">
-        <a th:href="@{/extension/{id}(id = ${extension.id})}">No</a>
-        <input type="submit" value="Yes"/>
-    </form>
+    <div class="section--center delete-card wtf-1">
+        <h1>Are you sure you wish to delete <span th:text = "${extension.name}"></span>?</h1>
+        <section class="section--center bottom-stuff wtf-2">
+            <form class="form-button" th:action="@{/extension/delete/{id} (id=${extension.id})}" method="POST">
+                <input class="mdl-button" type="submit" value="Yes"/>
+            </form>
+            <form class="form-button" th:action="@{/extension/{id}(id = ${extension.id})}" method="get">
+                <input class="mdl-button" type="submit" value="No"/>
+            </form>
+        </section>
+    </div>
 </main>

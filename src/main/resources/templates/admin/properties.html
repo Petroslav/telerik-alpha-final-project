@@ -1,15 +1,11 @@
-<main>
-
-    <div class="myCard">
-
+<div class="myCard">
         <div class="demo-card-wide mdl-card mdl-shadow--2dp" style="height: auto">
             <div class="mdl-card__title">
                 <h2 class="mdl-card__title-text">Properties</h2>
             </div>
 
-
             <div class="mdl-card__supporting-text">
-                <form id="propertiesForm" th:action="@{/admin/editProperties}" method="post">
+                <form id="propertiesForm" th:action="@{/admin/editProperties}" method="post" class="form-button">
 
                     <div id="properties">
                         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -20,7 +16,7 @@
                     <input class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="submit" value="Update Delay">
                     <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="dialog-button" type="button">Show Sync Info</button>
                 </form>
-                <form style="display: inline-block;" method="POST" action="/admin/syncAll">
+                <form style="display: inline-block;" method="POST" action="/admin/syncAll" class="form-button">
                     <input id="syncAll" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="submit" value="Sync All">
                 </form>
             </div>

@@ -1,5 +1,5 @@
 <main xmlns:th="http://www.w3.org/1999/xhtml">
-    <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+    <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp extension-page-card-top">
         <header class="mdl-background-image section__play-btn mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white"  th:style="'height: 250px;background-position: center center;background-size: cover; background-image: url(\''+  @{${extension.picURI}} + '\');'">
 
         </header>
@@ -7,10 +7,9 @@
             <div class="mdl-card__supporting-text">
                 <h4 th:text="${extension.name}"></h4>
                 <th:block th:each="tag : ${tags}">
-                            <button type="button" class="mdl-chip my-tag">
-                                <span th:text=${tag.name} class="mdl-chip__text"></span>
-                            </button>
-                        </a>
+                    <button type="button" class="mdl-chip my-tag">
+                        <span th:text=${tag.name} class="mdl-chip__text"></span>
+                    </button>
                 </th:block>
             </div>
             <div class="mdl-card__actions">
@@ -20,73 +19,66 @@
                 </form>
                 <!--<a th:href="@{/user/{id}(id=${extension.publisher.id})}" th:text="${extension.publisher.username}" class="mdl-button"></a>-->
                 <a th:href="@{/user/{id}(id=${extension.publisher.id})}">
-                <span class="mdl-chip mdl-chip--contact"
-                th:style="${extension.publisher.isBanned()} ? 'background-color:rgba(255, 0, 0 , 0.5)' : 'background-colir: #dedede'">
-                <img th:attr="src=@{${extension.publisher.picURI}}" class="mdl-chip__contact">
-                <span class="mdl-chip__text" th:text="${extension.publisher.username}"></span>
-                </span>
+            <span class="mdl-chip mdl-chip--contact"
+                  th:style="${extension.publisher.isBanned()} ? 'background-color:rgba(255, 0, 0 , 0.5)' : 'background-colir: #dedede'">
+            <img th:attr="src=@{${extension.publisher.picURI}}" class="mdl-chip__contact">
+            <span class="mdl-chip__text" th:text="${extension.publisher.username}"></span>
+            </span>
                 </a>
-                <span class="mdl-button mdl" th:text="${extension.downloads}" style="float: right;">
-                </span>
-                <!--<i class="material-icons" style="float: right;">cloud_download</i>-->
+                <span class="mdl-button mdl" style="float: right;"><i class="fas fa-cloud-download-alt"></i>  <span th:text="${extension.downloads}"></span>
+            </span>
+            </div>
+        </div>
+        <div style="width: 100%;">
+            <div sec:authorize="isAuthenticated()" th:if="${user.isAdmin() OR user.isPublisher(extension)}" style="float: left;">
+                <a class="mdl-button mdl" th:href="@{/extension/edit/{id}(id = ${extension.id})}">Edit</a>
+                <a class="mdl-button mdl" th:href="@{/extension/delete/{id}(id = ${extension.id})}">Delete</a>
+            </div>
+            <div sec:authorize="hasRole('ADMIN')" style="float: right;">
+                <form th:href="@{/extension/sync/{id} (id=${extension.id})}" method="POST" class="form-button">
+                    <button class="mdl-button mdl">Sync</button>
+                </form>
+
+                <th:block th:if="${!extension.isApproved()}">
+                    <form th:action="@{/extension/approve/{id} (id=${extension.id})}" method="POST" class="form-button">
+                        <button class="mdl-button mdl">Approve</button>
+                    </form>
+                </th:block>
+                <th:block th:if="${extension.isApproved()}">
+                    <form th:action="@{/extension/disapprove/{id} (id=${extension.id})}" method="POST" class="form-button">
+                        <button class="mdl-button mdl">Disapprove</button>
+                    </form>
+                </th:block>
+                <th:block th:if="${!extension.isSelected()}">
+                    <form th:action="@{/extension/feature/{id} (id=${extension.id})}" method="POST" class="form-button">
+                        <button class="mdl-button mdl">Feature</button>
+                    </form>
+                </th:block>
+                <th:block th:if="${extension.isSelected()}">
+                    <form th:action="@{/extension/unFeature/{id} (id=${extension.id})}" method="POST" class="form-button">
+                        <button class="mdl-button mdl">Remove from featured</button>
+                    </form>
+                </th:block>
             </div>
         </div>
     </section>
-    <!--<h2 th:text="${extension.name}"></h2>-->
-    <!--<h2 th:text="${extension.description}"></h2>-->
-    <!--<h2 th:text="${extension.downloads}"></h2>-->
-    <!--<a th:href="@{/user/{id}(id=${extension.publisher.id})}">-->
-            <!--<span class="mdl-chip mdl-chip&#45;&#45;contact"-->
-                  <!--th:style="${extension.publisher.isBanned()} ? 'background-color:rgba(255, 0, 0 , 0.5)' : 'background-colir: #dedede'">-->
-                <!--<img th:attr="src=@{${extension.publisher.picURI}}" class="mdl-chip__contact">-->
-                <!--<span class="mdl-chip__text" th:text="${extension.publisher.username}"></span>-->
-            <!--</span>-->
-    <!--</a>-->
-    <!--<h2 th:text="${extension.version}"></h2>-->
-    <!--<h2 th:text="${extension.addedOn}"></h2>-->
-    <!--<h2 th:text="${approved}"></h2>-->
-    <!--<h2 th:text="${extension.gitHubInfo.pullCount}"></h2>-->
-    <!--<h2 th:text="${extension.gitHubInfo.issuesCount}"></h2>-->
-    <!--<h2 th:text="${extension.gitHubInfo.lastCommit}"></h2>-->
-    <!--<h2>Tags: </h2>-->
-    <!--<ul th:each="tag : ${tags}">-->
-        <!--<li>-->
-            <!--<a th:href="@{/tag/{name}(name=${tag.name})}">-->
-                <!--<h2 th:text=${tag.name}></h2>-->
-            <!--</a>-->
-        <!--</li>-->
-    <!--</ul>-->
-
-    <form th:action="@{/extension/sync/{id} (id=${extension.id})}" method="POST">
-        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" sec:authorize="hasRole('ADMIN')">Sync</button>
-    </form>
-    <form th:action="@{/extension/download/{id} (id=${extension.id})}" method="POST">
-        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">Download</button>
-    </form>
-    <th:block sec:authorize="isAuthenticated()" th:if="${user.isAdmin() OR user.isPublisher(extension)}">
-        <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" th:href="@{/extension/edit/{id}(id = ${extension.id})}">Edit</a>
-    </th:block>
-    <th:block sec:authorize="isAuthenticated()" th:if="${user.isAdmin() OR user.isPublisher(extension)}">
-        <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" th:href="@{/extension/delete/{id}(id = ${extension.id})}">Delete</a>
-    </th:block>
-    <th:block th:if="${!extension.isApproved()}">
-        <form th:action="@{/extension/approve/{id} (id=${extension.id})}" method="POST">
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" sec:authorize="hasRole('ADMIN')">Approve</button>
-        </form>
-    </th:block>
-    <th:block th:if="${extension.isApproved()}">
-        <form th:action="@{/extension/disapprove/{id} (id=${extension.id})}" method="POST">
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" sec:authorize="hasRole('ADMIN')">Disapprove</button>
-        </form>
-    </th:block>
-    <th:block th:if="${!extension.isSelected()}">
-    <form th:action="@{/extension/feature/{id} (id=${extension.id})}" method="POST">
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" sec:authorize="hasRole('ADMIN')">Feature</button>
-    </form>
-    </th:block>
-    <th:block th:if="${extension.isSelected()}">
-    <form th:action="@{/extension/unFeature/{id} (id=${extension.id})}" method="POST">
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" sec:authorize="hasRole('ADMIN')">Remove from featured</button>
-    </form>
-    </th:block>
+    <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp custom-stuff">
+        <div class="mdl-card mdl-cell mdl-cell--12-col">
+            <div>
+                <span class="mdl-button"><i class="fas fa-shield-alt"></i> ver:  <span th:text="${extension.version}"></span></span>
+                <span class="mdl-button"><i class="far fa-calendar-alt"></i> Updated on:  <span th:text="${extension.getLatestUpdateToString()}"></span></span>
+                <span class="mdl-button" style="float:right;"><i class="far fa-calendar-alt"></i> Published on:  <span th:text="${extension.getPublishDateToString()}"></span></span>
+            </div>
+            <div class="mdl-card__supporting-text">
+                <h4>Description</h4>
+                <span th:text="${extension.description}"></span>
+            </div>
+            <div class="mdl-card__actions">
+                <a class="mdl-button" target="_blank" th:href="${extension.repoURL}"><i class="fab fa-github-square"></i></a>
+                <span class="mdl-button"><i class="fas fa-bug"></i>  <span th:text="${extension.gitHubInfo.issuesCount}"></span></span>
+                <span class="mdl-button"><i class="fas fa-code-branch"></i>  <span th:text="${extension.gitHubInfo.pullCount}"></span></span>
+                <span class="mdl-button" style="float:right;"><i class="far fa-clock"></i>  <span th:text="${extension.gitHubInfo.getLastCommitToString()}"></span></span>
+            </div>
+        </div>
+    </section>
 </main>

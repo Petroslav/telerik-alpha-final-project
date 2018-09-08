@@ -112,3 +112,34 @@
 .mdl-textfield--file .mdl-button--file {
     right: 0;
 }
+
+.extension-page-card-top {
+    margin-top: 3%;
+}
+
+.form-button {
+    display: inline;
+}
+
+.float-right-inline {
+    display: inline;
+    float: right;
+}
+
+.custom-stuff {
+    margin-top: 5%;
+    margin-bottom: 5%;
+}
+
+.bottom-stuff{
+    margin-bottom: 5%;
+}
+
+.wtf-1{
+    text-align: center;
+}
+
+.wtf-2{
+    margin-left: 45%;
+    margin-right: 43%;
+}

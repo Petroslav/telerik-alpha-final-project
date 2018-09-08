@@ -1,14 +1,30 @@
 $(document).ready(function () {
 
-    var url = $(location).attr('href');
-    var parameter = url.substring(url.lastIndexOf('=') + 1);
 
-    $('#sortOption').val(parameter);
+    if ($('.sorting-list').length) {
+        var url = $(location).attr('href');
+        var parameter = url.substring(url.lastIndexOf('=') + 1);
 
-    $('.home-icon').on('click', function () {
-        $('html').animate({scrollTop: 0}, 'slow');
-        return true;
-    });
+        var redirectOption = url.includes('newest') ? 'newest' : 'popular';
+
+        if (parameter.lastIndexOf('/') === parameter.length - 1) {
+            parameter = parameter.substring(0, parameter.length - 1);
+        }
+
+        var option = $('#' + parameter).html();
+
+        $('#sortOption').val(option);
+        $('#byDownloads').on('click', function () {
+            $(location).attr('href', '/' + redirectOption + '?sort=byDownloads')
+        });
+        $('#byLastCommit').on('click', function () {
+            $(location).attr('href', '/' + redirectOption + '?sort=byLastCommit')
+        });
+        $('#byUploadDate').on('click', function () {
+            $(location).attr('href', '/' + redirectOption + '?sort=byUploadDate')
+        });
+    }
+
     $('.my-tag').on('click', function () {
         var tagText = $(this).children("span").html();
         console.log(tagText);
@@ -269,18 +285,18 @@ $(document).ready(function () {
         }
         $('#extensionEditForm').submit();
     });
-    if($('#propertiesForm').length){
+    if ($('#propertiesForm').length) {
         'use strict';
         var dialogButton = document.querySelector('#dialog-button');
         var dialog = document.querySelector('#dialog');
-        if (! dialog.showModal) {
+        if (!dialog.showModal) {
             dialogPolyfill.registerDialog(dialog);
         }
-        dialogButton.addEventListener('click', function() {
+        dialogButton.addEventListener('click', function () {
             dialog.showModal();
         });
         dialog.querySelector('button:not([disabled])')
-            .addEventListener('click', function() {
+            .addEventListener('click', function () {
                 dialog.close();
             });
     }
@@ -315,6 +331,7 @@ function checkExtensionUserEdit() {
     }
     return true;
 }
+
 function checkExtensionForExtensionEdit() {
     var snackbar = document.querySelector('.mdl-js-snackbar');
     var data = {
@@ -329,6 +346,7 @@ function checkExtensionForExtensionEdit() {
     }
     return true;
 }
+
 function isGitRepo(e) {
     var githubPrefix = 'https://github.com/';
     if (!e.startsWith(githubPrefix)) {
@@ -375,10 +393,11 @@ function checkIfPasswordsMatchEdit() {
     }
 }
 
-function showSyncInfo(){
+function showSyncInfo() {
     $($('#syncInfo')).css('display', 'block');
 }
-if($("#createForm").length) {
+
+if ($("#createForm").length) {
 
     document.getElementById("createFileBtn").onchange = function () {
         document.getElementById("createFile").value = this.files[0].name;
@@ -389,13 +408,13 @@ if($("#createForm").length) {
         document.getElementById("createPic").value = this.files[0].name;
     };
 }
-if($('#userEditForm').length) {
+if ($('#userEditForm').length) {
     document.getElementById("userEditPicBtn").onchange = function () {
         checkExtensionUserEdit();
         document.getElementById("userEditPic").value = this.files[0].name;
     }
 }
-if($('#extensionEditForm').length){
+if ($('#extensionEditForm').length) {
     document.getElementById("extensionEditFileBtn").onchange = function () {
         document.getElementById("extensionEditFile").value = this.files[0].name;
     };

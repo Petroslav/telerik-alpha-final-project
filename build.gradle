@@ -51,7 +51,6 @@ dependencies {
     compile group: 'org.springframework.security', name: 'spring-security-core', version: '5.0.7.RELEASE'
     compile group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-springsecurity4', version: '3.0.2.RELEASE'
 
-
     runtime('mysql:mysql-connector-java')
 
     testCompile('org.springframework.boot:spring-boot-starter-test')

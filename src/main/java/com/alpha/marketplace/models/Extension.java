@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.cloud.storage.BlobId;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -284,6 +285,21 @@ public class Extension {
         return selectionDate;
     }
 
+    public String getSelectionDateToString() {
+        return dateToString(selectionDate);
+    }
+
+    public String getPublishDateToString() {
+        return dateToString(addedOn);
+    }
+
+    public String getLatestUpdateToString() {
+        if(latestUpdate == null){
+            return "No updates yet";
+        }
+        return dateToString(latestUpdate);
+    }
+
     public void setSelectionDate(Date selectionDate) {
         this.selectionDate = selectionDate;
     }
@@ -320,5 +336,11 @@ public class Extension {
     public int hashCode() {
 
         return Objects.hash(getId());
+    }
+
+    private String dateToString(Date date){
+        String pattern = "yyyy/MM/dd, hh:mm:ss a";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        return simpleDateFormat.format(date);
     }
 }
