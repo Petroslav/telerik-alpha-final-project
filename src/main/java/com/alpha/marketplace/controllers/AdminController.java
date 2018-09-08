@@ -36,6 +36,9 @@ public class AdminController {
     @GetMapping("/unapproved")
     @PreAuthorize("hasRole('ADMIN')")
     public String unapproved(Model model){
+        if(!userService.getCurrentUser().isAdmin()){
+            return "redirect:/";
+        }
         List<Extension> extensions = extensionService.getUnapproved();
 
         model.addAttribute("extensions", extensions);
@@ -47,6 +50,9 @@ public class AdminController {
     @GetMapping("/users")
     @PreAuthorize("hasRole('ADMIN')")
     public String users(Model model){
+        if(!userService.getCurrentUser().isAdmin()){
+            return "redirect:/";
+        }
         List<User> users = userService.getAll();
 
         model.addAttribute("users", users);
@@ -85,6 +91,9 @@ public class AdminController {
     @GetMapping("/syncInfo")
     @PreAuthorize("hasRole('ADMIN')")
     public String syncInfo(Model model){
+        if(!userService.getCurrentUser().isAdmin()){
+            return "redirect:/";
+        }
         boolean hasFailed = false;
 
         Properties properties = propertiesRepository.get();

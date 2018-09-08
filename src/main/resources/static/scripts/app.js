@@ -135,7 +135,7 @@ $(document).ready(function () {
             snackbar.MaterialSnackbar.showSnackbar(data);
             return;
         }
-        if (isWrongLength(email) || isEmpty(email) || email_regex.test($.trim(email.val()))) {
+        if (isWrongLength(email) || isEmpty(email) || !email_regex.test($.trim(email.val()))) {
             data.message = 'Invalid Email!!';
             snackbar.MaterialSnackbar.showSnackbar(data);
             return;

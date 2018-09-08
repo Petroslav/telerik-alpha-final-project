@@ -58,7 +58,7 @@ public class ExtensionController {
             return "redirect:/extension/create";
         }
         userService.updateUser(user);
-
+        userService.reloadMemory();
         return "redirect:/";
     }
 
@@ -97,7 +97,7 @@ public class ExtensionController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String syncExtension(@PathVariable("id") String id) {
         extensionService.sync(Integer.parseInt(id));
-
+        extensionService.reloadLists();
         return "redirect:/extension/" + id;
     }
 
@@ -124,7 +124,7 @@ public class ExtensionController {
             return "redirect:/extension/" + id;
         }
         extensionService.delete(id);
-
+        userService.reloadMemory();
         return "redirect:/";
     }
 
@@ -177,6 +177,9 @@ public class ExtensionController {
     @GetMapping("/featuredSelection")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String getFeaturedSelection(Model model) {
+        if(!userService.getCurrentUser().isAdmin()){
+            return "redirect:/";
+        }
         model.addAttribute("view", "/admin/featuredSelection");
         model.addAttribute("featured", extensionService.getAdminSelection());
         return "base-layout";
@@ -215,6 +218,7 @@ public class ExtensionController {
             model.addAttribute("error", ErrorMessages.EXTENSION_EDIT_ERROR);
             return "redirect:/extension/edit/" + id;
         }
+        userService.reloadMemory();
         return "redirect:/extension/" + id;
     }
 

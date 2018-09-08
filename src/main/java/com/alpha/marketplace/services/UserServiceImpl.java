@@ -250,6 +250,12 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+    @Override
+    public void reloadMemory() {
+        users.clear();
+        getAll().forEach(user -> users.put(user.getId(), user));
+    }
+
     private boolean validateReg(UserBindingModel model) {
         if (!validateEmail(model.getEmail())) {
             return false;

@@ -34,18 +34,18 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public String userDetails(Model model, @PathVariable("id") Integer id){
-        if(getUser().getId() == id){
+    public String userDetails(Model model, @PathVariable("id") Integer id) {
+        if (getUser().getId() == id) {
             return "redirect:/user/profile";
         }
         User user = service.findByIdFromMemory(id);
-        if(user == null){
+        if (user == null) {
             model.addAttribute("view", "error/404");
             return "base-layout";
         }
         User currentUser = service.getCurrentUser();
 
-        if(id == currentUser.getId()){
+        if (id == currentUser.getId()) {
             return "redirect:/user/profile";
         }
         Set<Extension> extensions = new HashSet<>(user.getExtensions());
@@ -58,9 +58,12 @@ public class UserController {
 
     @GetMapping("/profile")
     @PreAuthorize("isAuthenticated()")
-    public String profile(Model model){
+    public String profile(Model model) {
         User u = getUser();
-
+        if (u == null) {
+            service.reloadMemory();
+            u = getUser();
+        }
         List<Extension> extensions = u.getExtensions();
 
 
@@ -76,34 +79,34 @@ public class UserController {
     public String updateProfile(@ModelAttribute UserEditModel userEdit) throws VersionMismatchException {
         User u = getUser();
         service.editUser(u, userEdit);
-        return  "redirect:/profile";
+        return "redirect:/profile";
     }
 
 
     @PostMapping("/update/pic/file")
     @PreAuthorize("isAuthenticated()")
-    public String updateProfile(@RequestParam("picFile") MultipartFile file){
+    public String updateProfile(@RequestParam("picFile") MultipartFile file) {
         User u = getUser();
-        if(!file.isEmpty()) {
+        if (!file.isEmpty()) {
             service.editUserPic(u, file);
         }
         //TODO HANDLE ERROR IF FILE TOO BIG OR BAD FILE FORMAT
 
-        return  "redirect:/profile";
+        return "redirect:/profile";
     }
 
     @PostMapping("/update/pic/url")
     @PreAuthorize("isAuthenticated()")
-    public String updateProfile(@RequestParam("picUrl") String urlString){
+    public String updateProfile(@RequestParam("picUrl") String urlString) {
         User u = getUser();
         service.editUserPic(u, urlString);
         //TODO HANDLE ERROR IF BAD URL OR TOO BIG
-        return  "redirect:/profile";
+        return "redirect:/profile";
     }
 
     @GetMapping("/profile/edit")
     @PreAuthorize("isAuthenticated()")
-    public String editProfilePage(Model model){
+    public String editProfilePage(Model model) {
         if (Utils.userIsAnonymous()) {
             return "redirect:/";
         }
@@ -115,15 +118,15 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     public String editProfile(UserEditModel editModel) throws VersionMismatchException {
 
-        if(!service.editUser(service.getCurrentUser(), editModel)){
+        if (!service.editUser(service.getCurrentUser(), editModel)) {
             return "redirect:/user/profile/edit";
         }
         extensionService.reloadLists();
-
+        service.reloadMemory();
         return "redirect:/user/profile";
     }
 
-    private User getUser(){
+    private User getUser() {
         User user = (User) SecurityContextHolder
                 .getContext()
                 .getAuthentication()

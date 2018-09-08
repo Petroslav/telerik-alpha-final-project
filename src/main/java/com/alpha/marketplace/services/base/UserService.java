@@ -26,4 +26,5 @@ public interface UserService extends UserDetailsService {
     boolean editUserPic(User u, String urlString);
     boolean addRoleToUser(long id, String role);
     boolean removeRoleFromUser(long id, String role);
+    void reloadMemory();
 }

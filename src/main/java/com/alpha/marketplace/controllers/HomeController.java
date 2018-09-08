@@ -131,7 +131,7 @@ public class HomeController {
         }
         model.addAttribute("view", "register");
         model.addAttribute("user", new UserBindingModel());
-
+        service.reloadMemory();
         return "base-layout";
     }
 
@@ -144,7 +144,7 @@ public class HomeController {
             return "base-layout";
         }
 
-        return "redirect:/";
+        return "redirect:/login";
     }
 
     @GetMapping(value = "/login")
