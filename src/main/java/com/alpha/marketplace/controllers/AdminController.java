@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -53,7 +54,7 @@ public class AdminController {
         if(!userService.getCurrentUser().isAdmin()){
             return "redirect:/";
         }
-        List<User> users = userService.getAll();
+        List<User> users = new ArrayList<>(userService.getUsers().values());
 
         model.addAttribute("users", users);
         model.addAttribute("view", "/admin/users");
@@ -61,11 +62,6 @@ public class AdminController {
         return "base-layout";
     }
 
-    @GetMapping("/userEdit")
-    @PreAuthorize(("hasRole('ADMIN')"))
-    public String editUserRoles(){
-        return "redirect:/";
-    }
 
     @PostMapping("/ban/{id}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -86,6 +82,27 @@ public class AdminController {
         model.addAttribute("view", "index");
 
         return "redirect:/user/"+id;
+    }
+
+    @PostMapping("/usersBan/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String banUserAdminPage(@PathVariable("id") long id){
+        if(!userService.banUser(id)){
+            System.out.println("Can't ban the guy, he's an admin");
+            return "redirect:/admin/users";
+        }
+        extensionService.reloadLists();
+        return "redirect:/admin/users";
+    }
+
+    @PostMapping("/usersUnban/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String unbanUserAdminPage(Model model, @PathVariable("id") long id){
+        userService.unbanUser(id);
+        extensionService.reloadLists();
+        model.addAttribute("view", "index");
+
+        return "redirect:/admin/users";
     }
 
     @GetMapping("/properties")

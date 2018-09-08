@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserService extends UserDetailsService {
 
@@ -27,4 +28,5 @@ public interface UserService extends UserDetailsService {
     boolean addRoleToUser(long id, String role);
     boolean removeRoleFromUser(long id, String role);
     void reloadMemory();
+    Map<Long, User> getUsers();
 }

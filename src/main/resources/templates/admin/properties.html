@@ -9,7 +9,7 @@
 
 
             <div class="mdl-card__supporting-text">
-                <form id="registerForm" th:action="@{/admin/editProperties}" method="post">
+                <form id="propertiesForm" th:action="@{/admin/editProperties}" method="post">
 
                     <div id="properties">
                         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -18,24 +18,29 @@
                         </div>
                     </div>
                     <input class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="submit" value="Update Delay">
-                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="button" onclick="showSyncInfo()">Show Sync Info</button>
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="dialog-button" type="button">Show Sync Info</button>
                 </form>
                 <form style="display: inline-block;" method="POST" action="/admin/syncAll">
                     <input id="syncAll" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="submit" value="Sync All">
                 </form>
-                <div id="syncInfo" style="display:none;">
-                    <h4>Last Successful sync: <i th:text="${success}"></i></h4>
-                    <h4>Last Failed sync: <i th:text="${fail}"></i></h4>
-                    <th:block th:if="${hasFailed}">
-                        <h4>Fail info: <i th:text="${failInfo}"></i></h4>
-                    </th:block>
-
-                </div>
             </div>
-
-
-
-
         </div>
     </div>
+    <dialog id="dialog" class="mdl-dialog" style="width: fit-content">
+        <h3 class="mdl-dialog__title">SYNC INFO</h3>
+        <div class="mdl-dialog__content">
+            <p>
+                Last Successful Sync <i th:text="${success}"></i>
+            </p>
+            <p>
+                Last Failed sync: <i th:text="${fail}"></i>
+            </p>
+            <p th:if="${hasFailed}">
+                Fail info: <i th:text="${failInfo}"></i>
+            </p>
+        </div>
+        <div class="mdl-dialog__actions">
+            <button type="button" class="mdl-button">Close</button>
+        </div>
+    </dialog>
 </main>

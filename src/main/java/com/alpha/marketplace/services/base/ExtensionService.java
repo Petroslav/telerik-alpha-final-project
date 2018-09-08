@@ -7,6 +7,7 @@ import com.alpha.marketplace.models.edit.ExtensionEditModel;
 import org.springframework.validation.BindingResult;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface ExtensionService {

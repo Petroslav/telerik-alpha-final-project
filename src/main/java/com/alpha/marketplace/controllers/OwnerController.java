@@ -41,5 +41,21 @@ public class OwnerController {
         service.removeRoleFromUser(id, "ROLE_ADMIN");
         return "redirect:/user/"+id;
     }
+    @PostMapping("/usersAssignAdmin/{id}")
+    @PreAuthorize("hasRole('OWNER')")
+    public String assignRolePage(@PathVariable("id") long id){
+        service.addRoleToUser(id, "ROLE_ADMIN");
+        return "redirect:/admin/users";
+    }
 
+    @PostMapping("/usersRemoveAdmin/{id}")
+    @PreAuthorize("hasRole('OWNER')")
+    public String removeAdminPage(@PathVariable("id") long id){
+        User u = service.findById(id);
+        if(!u.isAdmin()){
+            return "redirect:/";
+        }
+        service.removeRoleFromUser(id, "ROLE_ADMIN");
+        return "redirect:/admin/users";
+    }
 }

@@ -278,7 +278,13 @@ public class UserServiceImpl implements UserService {
         return email.matches(VALID_EMAIL_ADDRESS_REGEX);
     }
 
-// THIS IS A TEST METHOD. IN CASE IT MAKES IT INTO THE FINAL PRODUCT I AM VERY AND TRULY SORRY.
+    @Override
+    public Map<Long, User> getUsers() {
+        return users;
+    }
+
+
+    // THIS IS A TEST METHOD. IN CASE IT MAKES IT INTO THE FINAL PRODUCT I AM VERY AND TRULY SORRY.
 //    @Override
 //    public void wtf(){
 //        System.out.println("WAT");

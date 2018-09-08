@@ -1,10 +1,56 @@
 <main>
-    <div class="my-margin-users" th:each="user : ${users}">
-        <a th:href="@{/user/{id}(id=${user.id})}">
-            <span class="mdl-chip mdl-chip--contact" th:style="${user.isBanned()} ? 'background-color:rgba(255, 0, 0 , 0.5)' : 'background-colir: #dedede'" >
-                <img th:attr="src=@{${user.picURI}}" class="mdl-chip__contact">
-                <span class="mdl-chip__text" th:text="${user.username}"></span>
-            </span>
-        </a>
+    <!--<div class="my-margin-users" th:each="user : ${users}">-->
+        <!--<a th:href="@{/user/{id}(id=${user.id})}">-->
+            <!--<span class="mdl-chip mdl-chip&#45;&#45;contact"-->
+                  <!--th:style="${user.isBanned()} ? 'background-color:rgba(255, 0, 0 , 0.5)' : 'background-colir: #dedede'">-->
+                <!--<img th:attr="src=@{${user.picURI}}" class="mdl-chip__contact">-->
+                <!--<span class="mdl-chip__text" th:text="${user.username}"></span>-->
+            <!--</span>-->
+        <!--</a>-->
+    <!--</div>-->
+    <div style="width: fit-content; margin: auto;">
+        <h3>USERS</h3>
+        <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp"
+               style="text-align: center;">
+            <thead>
+            <tr>
+                <th class="mdl-data-table__cell--non-numeric">User</th>
+                <th>Ban</th>
+                <th  sec:authorize="hasRole('OWNER')">Adminify</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td class="mdl-data-table__cell--non-numeric">
+                    <span class="mdl-chip mdl-chip--contact" th:style="${user.isBanned()} ? 'background-color:rgba(255, 0, 0 , 0.5)' : 'background-colir: #dedede'">
+                        <img th:attr="src=@{${user.picURI}}" class="mdl-chip__contact">
+                        <span class="mdl-chip__text" th:text="${user.username}"></span>
+                    </span>
+                </td>
+                <td>
+                    <div id="ban">
+                        <form th:action="@{/admin/usersUnban/{id} (id=${user.id})}" method="POST" th:if="${user.isBanned()}">
+                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" >Unban</button>
+                        </form>
+
+                        <form th:action="@{/admin/usersBan/{id} (id=${user.id})}" method="POST" th:if="${!user.isBanned()}">
+                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" >Ban</button>
+                        </form>
+                    </div>
+                </td>
+                <td  sec:authorize="hasRole('OWNER')">
+                    <div id="assignAdmin">
+                        <form th:action="@{/owner/usersAssignAdmin/{id} (id=${user.id})}" method="POST" th:if="${!user.isAdmin()}">
+                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" >Make Admin</button>
+                        </form>
+
+                        <form th:action="@{/owner/usersRemoveAdmin/{id} (id=${user.id})}" method="POST" th:if="${user.isAdmin()}">
+                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">U no longer admin boi</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </main>
