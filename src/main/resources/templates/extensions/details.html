@@ -13,11 +13,9 @@
                 </th:block>
             </div>
             <div class="mdl-card__actions">
-                <!--<a href="#" class="mdl-button mdl" style="float: right;">Download</a>-->
                 <form th:action="@{/extension/download/{id} (id=${extension.id})}" method="POST">
                     <input class="mdl-button mdl" style="float: right;" type="submit" value="Download"/>
                 </form>
-                <!--<a th:href="@{/user/{id}(id=${extension.publisher.id})}" th:text="${extension.publisher.username}" class="mdl-button"></a>-->
                 <a th:href="@{/user/{id}(id=${extension.publisher.id})}">
             <span class="mdl-chip mdl-chip--contact"
                   th:style="${extension.publisher.isBanned()} ? 'background-color:rgba(255, 0, 0 , 0.5)' : 'background-colir: #dedede'">

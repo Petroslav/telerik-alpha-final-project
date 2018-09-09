@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/user")
@@ -66,9 +67,16 @@ public class UserController {
         }
         List<Extension> extensions = u.getExtensions();
 
+        List<Extension> pending = extensions.stream()
+                .filter(e -> !e.isApproved())
+                .collect(Collectors.toList());
+        extensions = extensions.stream()
+                .filter(Extension::isApproved)
+                .collect(Collectors.toList());
 
         model.addAttribute("user", u);
-        model.addAttribute("extensions", extensions);
+        model.addAttribute("approved", extensions);
+        model.addAttribute("pending", pending);
         model.addAttribute("view", "user/profile");
 
         return "base-layout";

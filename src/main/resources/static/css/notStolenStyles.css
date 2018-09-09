@@ -143,3 +143,25 @@
     margin-left: 45%;
     margin-right: 43%;
 }
+
+.profile-pic {
+    max-height: 500px;
+    max-width: 500px;
+}
+
+.profile-header {
+    display:flex;
+    flex-direction: row;
+    background-color: white;
+}
+
+.profile-header-info {
+    display:flex;
+    flex-direction: column;
+}
+
+.correct-alignment {
+    display: flex;
+    justify-content: space-between;
+    vertical-align: center;
+}

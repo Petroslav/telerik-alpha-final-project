@@ -132,6 +132,7 @@ public class ExtensionController {
     @PreAuthorize("hasRole('ADMIN')")
     public String approveExtension(@PathVariable("id") Integer id) {
         extensionService.approveExtensionById(id);
+        userService.reloadMemory();
 
         return "redirect:/extension/" + id;
     }
@@ -140,6 +141,7 @@ public class ExtensionController {
     @PreAuthorize("hasRole('ADMIN')")
     public String disapproveExtension(@PathVariable("id") Integer id) {
         extensionService.disapproveExtensionById(id);
+        userService.reloadMemory();
 
         return "redirect:/extension/" + id;
     }
