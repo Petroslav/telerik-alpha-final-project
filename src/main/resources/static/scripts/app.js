@@ -102,7 +102,7 @@ $(document).ready(function () {
             snackbar.MaterialSnackbar.showSnackbar(data);
             return;
         }
-        if (isWrongLength(password) || isEmpty(password)) {
+        if (password.val().length< 6 || password.val().length>16 || isEmpty(password)) {
             data.message = 'Invalid Password!';
             snackbar.MaterialSnackbar.showSnackbar(data);
             return;
@@ -142,7 +142,7 @@ $(document).ready(function () {
             return;
         }
 
-        if (isWrongLength(password) || isEmpty(password)) {
+        if (password.val().length< 6 || password.val().length>16 || isEmpty(password)) {
             data.message = 'Invalid Password!';
             snackbar.MaterialSnackbar.showSnackbar(data);
             return;
@@ -152,7 +152,7 @@ $(document).ready(function () {
             snackbar.MaterialSnackbar.showSnackbar(data);
             return;
         }
-        if ((email.val().length < 5 && email.val().length >36) || isEmpty(email) || !email_regex.test($.trim(email.val()))) {
+        if (email.val().length < 5 || email.val().length >36 || isEmpty(email) || !email_regex.test($.trim(email.val()))) {
             data.message = 'Invalid Email!!';
             snackbar.MaterialSnackbar.showSnackbar(data);
             return;
