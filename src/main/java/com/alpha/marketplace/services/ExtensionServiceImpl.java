@@ -317,6 +317,7 @@ public class ExtensionServiceImpl implements ExtensionService {
 
         if(repository.save(extension)){
             extension.getPublisher().getExtensions().add(extension);
+            extensionsMap.put(extension.getId(), extension);
         }
 
         workers.submit(() -> {
