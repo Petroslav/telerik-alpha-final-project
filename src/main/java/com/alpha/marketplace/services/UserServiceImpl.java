@@ -20,6 +20,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -79,8 +82,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User registerUser(UserBindingModel model) {
-        if(!validateReg(model)) {
+    public User registerUser(UserBindingModel model, BindingResult errors) {
+        if (!validateReg(model, errors)) {
             return null;
         }
         User u = mapper.map(model, User.class);
@@ -99,7 +102,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByIdFromMemory(long id) { return users.get(id); }
+    public User findByIdFromMemory(long id) {
+        return users.get(id);
+    }
 
     @Override
     public User findByEmail(String email) {
@@ -108,10 +113,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean updateUser(User u) {
-        try{
-           repository.update(u);
-           users.put(u.getId(), u);
-        }catch(VersionMismatchException e){
+        try {
+            repository.update(u);
+            users.put(u.getId(), u);
+        } catch (VersionMismatchException e) {
             System.out.println("VERSION MISMATCH");
             return false;
         }
@@ -122,7 +127,7 @@ public class UserServiceImpl implements UserService {
     public boolean editUser(User u, UserEditModel edit) {
         u.setFirstName(edit.getFirstName());
         u.setLastName(edit.getLastName());
-        if(!edit.getPicture().isEmpty()) {
+        if (!edit.getPicture().isEmpty()) {
             try {
                 if (u.getPicBlobId() != null) {
                     cloudUserRepository.deleteUserPic(u.getPicBlobId());
@@ -131,12 +136,12 @@ public class UserServiceImpl implements UserService {
                 Blob b = cloudUserRepository.saveUserPic(u.getId() + e.substring(e.lastIndexOf(".")), edit.getPicture().getBytes(), edit.getPicture().getContentType());
                 u.setPicBlobId(b.getBlobId());
                 u.setPicURI(b.getMediaLink());
-            }catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
                 System.out.println("SAD LIFE");
             }
         }
-        if(!edit.getOldPass().isEmpty()) {
+        if (!edit.getOldPass().isEmpty()) {
             if (!encoder.matches(edit.getOldPass(), u.getPassword())) {
                 return false;
             }
@@ -149,10 +154,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean banUser(long id) {
         User gettingBanned = findById(id);
-        if(!gettingBanned.isAdmin() || getCurrentUser().isOwner()){
+        if (!gettingBanned.isAdmin() || getCurrentUser().isOwner()) {
             gettingBanned.ban();
             return updateUser(gettingBanned);
-        }else{
+        } else {
             return false;
         }
     }
@@ -167,14 +172,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean editUserPic(User u, MultipartFile file) {
         byte[] bytes;
-        try{
+        try {
             bytes = file.getBytes();
-        }catch(IOException e){
+        } catch (IOException e) {
             System.out.println(e.getMessage());
             return false;
         }
         Blob blob = cloudUserRepository.saveUserPic(u.getId() + "", bytes, file.getContentType());
-        if(blob == null){
+        if (blob == null) {
             return false;
         }
         u.setPicBlobId(blob.getBlobId());
@@ -185,11 +190,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean editUserPic(User u, String urlString) {
         Blob b;
-        try{
+        try {
             b = cloudUserRepository.saveUserPicFromUrl(u.getId() + "", urlString);
             u.setPicBlobId(b.getBlobId());
             u.setPicURI(b.getMediaLink());
-        }catch(CannotFetchBytesException e){
+        } catch (CannotFetchBytesException e) {
             System.out.println(e.getMessage());
             return false;
         }
@@ -203,7 +208,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getCurrentUser() {
-        if(Utils.userIsAnonymous()){
+        if (Utils.userIsAnonymous()) {
             return null;
         }
         UserDetails user = (UserDetails) SecurityContextHolder.getContext()
@@ -212,16 +217,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean addRoleToUser(long id, String role){
-        if(!role.startsWith(ROLE_PREFIX)){
+    public boolean addRoleToUser(long id, String role) {
+        if (!role.startsWith(ROLE_PREFIX)) {
             role = ROLE_PREFIX + role;
         }
-        try{
+        try {
             User u = findById(id);
             Role r = roleRepository.findByName(role);
-            if(r == null) return false;
+            if (r == null) return false;
             boolean success = u.getAuthorities().add(r);
-            if(!success) return false;
+            if (!success) return false;
             repository.update(u);
             users.put(u.getId(), u);
         } catch (VersionMismatchException e) {
@@ -232,15 +237,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean removeRoleFromUser(long id, String role) {
-        if(!role.startsWith(ROLE_PREFIX)){
+        if (!role.startsWith(ROLE_PREFIX)) {
             role = ROLE_PREFIX + role;
         }
-        try{
+        try {
             User u = findById(id);
             Role r = roleRepository.findByName(role);
-            if(r == null) return false;
+            if (r == null) return false;
             boolean success = u.getAuthorities().remove(r);
-            if(!success) return false;
+            if (!success) return false;
             repository.update(u);
             users.put(u.getId(), u);
         } catch (VersionMismatchException e) {
@@ -256,25 +261,29 @@ public class UserServiceImpl implements UserService {
         getAll().forEach(user -> users.put(user.getId(), user));
     }
 
-    private boolean validateReg(UserBindingModel model) {
+    private boolean validateReg(UserBindingModel model, BindingResult errors) {
         if (!validateEmail(model.getEmail())) {
+            errors.addError(new FieldError("email", "email", ErrorMessages.INVALID_EMAIL));
             return false;
         }
-        if(model.getPass().length() < 6 || model.getPass().length() > 16){
+        if (model.getPass().length() < 6 || model.getPass().length() > 16) {
+            errors.addError(new FieldError("pass", "pass", ErrorMessages.PASSWORD_INVALID));
             return false;
         }
-        if(findByEmail(model.getEmail()) != null){
+        if (findByEmail(model.getEmail()) != null) {
+            errors.addError(new FieldError("email", "email", ErrorMessages.EMAIL_EXISTS));
             return false;
         }
-        try{
+        try {
             repository.findByUsername(model.getUsername());
-        }catch(UsernameNotFoundException e){
+            errors.addError(new FieldError("username", "username",ErrorMessages.USERNAME_EXISTS));
+        } catch (UsernameNotFoundException e) {
             return true;
         }
         return false;
     }
 
-    private boolean validateEmail(String email){
+    private boolean validateEmail(String email) {
         return email.matches(VALID_EMAIL_ADDRESS_REGEX);
     }
 

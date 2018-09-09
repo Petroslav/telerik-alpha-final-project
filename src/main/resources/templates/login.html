@@ -33,8 +33,7 @@
 
 
             <div class="mdl-card__supporting-text">
-                Please enter your credentials !
-                <div th:if="${error} != null" th:text="${error}"></div>
+                <div th:if="${error} != null" th:text="${error}" style="background-color: rgba(255, 0 , 0, 0.5)"></div>
                 <form id="loginForm" method="post">
 
                     <div id="loginInfo">

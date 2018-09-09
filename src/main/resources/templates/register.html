@@ -1,4 +1,4 @@
-<main>
+<main xmlns:th="http://www.w3.org/1999/xhtml">
 <!--<form id="registerForm" th:action="@{/register}" th:object="${user}" method="POST">-->
     <!--<label for="registerUsername">Username</label>-->
     <!--<input type="text" name="Username" id="registerUsername">-->
@@ -27,8 +27,12 @@
 
 
         <div class="mdl-card__supporting-text">
-            <form id="registerForm" th:action="@{/register}" method="post">
-
+            <form id="registerForm" th:action="@{/register}" th:object="${user}" method="post">
+                <div th:if="${errors}!=null" style="background-color: rgba(255, 0 , 0, 0.5)">
+                    <span th:errors="*{email}"></span>
+                    <span th:errors="*{username}"></span>
+                    <span th:errors="*{pass}"></span>
+                </div>
                 <div id="registerInfo">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                         <input class="mdl-textfield__input" name="Username" type="text" id="registerUsername">

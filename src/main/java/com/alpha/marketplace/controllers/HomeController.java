@@ -105,18 +105,19 @@ public class HomeController {
         }
         model.addAttribute("view", "register");
         model.addAttribute("user", new UserBindingModel());
-        service.reloadMemory();
         return "base-layout";
     }
 
     @PostMapping("/register")
-    public String regUser(@Valid @ModelAttribute UserBindingModel user, BindingResult errors, Model model) {
-        System.out.println(user == null);
-        service.registerUser(user);
+    public String regUser(@Valid @ModelAttribute("user") UserBindingModel user, BindingResult errors, Model model) {
+        service.registerUser(user, errors);
         if (errors.hasErrors()) {
+            model.addAttribute("errors", errors);
             model.addAttribute("view", "register");
+
             return "base-layout";
         }
+        service.reloadMemory();
 
         return "redirect:/login";
     }

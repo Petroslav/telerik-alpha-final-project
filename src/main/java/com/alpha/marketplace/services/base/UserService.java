@@ -5,6 +5,7 @@ import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.models.binding.UserBindingModel;
 import com.alpha.marketplace.models.edit.UserEditModel;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public interface UserService extends UserDetailsService {
 
     List<User> getAll();
     List<User> searchUsers(String criteria);
-    User registerUser(UserBindingModel u);
+    User registerUser(UserBindingModel u, BindingResult errors);
     User findById(long id);
     User findByIdFromMemory(long id);
     User findByEmail(String email);

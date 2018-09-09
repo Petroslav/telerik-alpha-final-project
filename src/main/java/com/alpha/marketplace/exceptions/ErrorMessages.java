@@ -12,4 +12,7 @@ public class ErrorMessages {
     public static final String GITHUB_SYNC_FAIL = "Failed to sync GitHub data";
     public static final String VERSION_MISMATCH = "There was an error processing your request. Please try again.";
     public static final String EXTENSION_EDIT_ERROR = "Something went wrong. Please, try again.";
+    public static final String PASSWORD_INVALID = "Invalid Password!";
+    public static final String EMAIL_EXISTS = "Email is already registered!";
+    public static final String USERNAME_EXISTS = "Username is already registered!";
 }
