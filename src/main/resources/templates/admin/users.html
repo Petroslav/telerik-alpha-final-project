@@ -12,10 +12,12 @@
             <tbody>
             <tr th:each="user : ${users}">
                 <td class="mdl-data-table__cell--non-numeric">
+                    <a th:href="@{/user/{id}(id=${user.id})}">
                     <span class="mdl-chip mdl-chip--contact" th:style="${user.isBanned()} ? 'background-color:rgba(255, 0, 0 , 0.5)' : 'background-colir: #dedede'">
                         <img th:attr="src=@{${user.picURI}}" class="mdl-chip__contact">
                         <span class="mdl-chip__text" th:text="${user.username}"></span>
                     </span>
+                    </a>
                 </td>
                 <td>
                     <div id="ban">

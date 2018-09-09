@@ -34,6 +34,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("/", true)
                 .usernameParameter("username")
                 .passwordParameter("pass1")
+
                 .and()
                 .rememberMe()
                 .rememberMeCookieName("tscodelogin")

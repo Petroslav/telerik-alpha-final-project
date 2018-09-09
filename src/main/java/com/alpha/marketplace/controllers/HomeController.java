@@ -143,6 +143,9 @@ public class HomeController {
 
     @GetMapping("/search")
     public String search(@RequestParam(value = "criteria", required = false) String criteria, @RequestParam(value = "sort", required = false) String sort, Model model) {
+        if(sort==null){
+            return "redirect:/search?criteria="+criteria+"&sort=byDownloads";
+        }
         Set<Extension> matches;
         List<User> matchedUsers = service.searchUsers(criteria);
         model.addAttribute("userMatches", matchedUsers);
@@ -151,7 +154,7 @@ public class HomeController {
         matches.addAll(extensionService.searchExtensionsByTag(criteria));
 
         List<Extension> extensions = new ArrayList<>(matches);
-        if (!matches.isEmpty() && sort != null) {
+        if (!matches.isEmpty()) {
             switch (sort) {
                 case "byLastCommit":
                     extensions.sort((e1, e2) -> e2.getGitHubInfo().getLastCommit().compareTo(e1.getGitHubInfo().getLastCommit()));
