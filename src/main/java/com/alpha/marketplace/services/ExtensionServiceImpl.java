@@ -97,7 +97,6 @@ public class ExtensionServiceImpl implements ExtensionService {
         if (mostPopular.isEmpty()) {
             mostPopular = getAllApproved().stream()
                     .sorted(Comparator.comparing(Extension::getDownloads).reversed())
-                    .limit(10)
                     .collect(Collectors.toList());
         }
         return mostPopular;
@@ -120,7 +119,6 @@ public class ExtensionServiceImpl implements ExtensionService {
         if (latest.isEmpty()) {
             latest = getAllApproved().stream()
                     .sorted(Comparator.comparing(Extension::getAddedOn).reversed())
-                    .limit(10)
                     .collect(Collectors.toList());
         }
         return latest;
