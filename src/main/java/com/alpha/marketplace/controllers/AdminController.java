@@ -6,6 +6,7 @@ import com.alpha.marketplace.models.User;
 import com.alpha.marketplace.repositories.base.PropertiesRepository;
 import com.alpha.marketplace.services.base.ExtensionService;
 import com.alpha.marketplace.services.base.UserService;
+import com.alpha.marketplace.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -113,12 +114,12 @@ public class AdminController {
         }
         boolean hasFailed = false;
 
-        Properties properties = propertiesRepository.get();
+        Properties properties = Utils.properties;
 
         String success = properties.getLastSuccessfulSync().toString();
         Date failDate = properties.getLastFailedSync();
 
-        String fail = null;
+        String fail;
 
         if(failDate == null){
             fail = "Never";
