@@ -1,54 +1,53 @@
-<main>
-    <header>
-        <h2 th:text="${user.username}"></h2>
-        <h2 th:text="${user.firstName}"></h2>
-        <h2 th:text="${user.lastName}"></h2>
-        <img th:attr="src=@{${user.picURI}}">
-        <h2>Extensions: </h2>
-        <div th:each="extension : ${extensions}" class="myExtension">
-            <a th:href="@{/extension/{id}(id=${extension.id})}">
-                <div class="mdl-card mdl-shadow--2dp">
-                    <div class="mdl-background-image" th:style="'height: 285px;background-position: center center;background-size: cover; background-image: url(\''+  @{${extension.picURI}} + '\');'"></div>
-                    <div class="mdl-card__title mdl-card--border">
-                        <h2 class="mdl-card__title-text" th:text="${extension.name}"></h2>
-                    </div>
-                    <div class="mdl-card__title">
-                    <span class="mdl-chip mdl-chip--contact" th:style="${extension.publisher.isBanned()} ? 'background-color:rgba(255, 0, 0 , 0.5)' : 'background-colir: #dedede'" >
+<section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp extension-page-card-top">
+    <header class="mdl-background-image section__play-btn mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white"
+            th:style="'height: 250px;background-position: center center;background-size: cover; background-image: url(\''+  @{${user.picURI}} + '\');'">
+
+    </header>
+    <div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
+        <div class="mdl-card__supporting-text">
+            <h3 th:text="${user.username}"></h3>
+        </div>
+
+        <div class="mdl-card__actions">
+            <form th:if="${user.isBanned()}" th:action="@{/admin/unban/{id} (id=${user.id})}" method="POST" sec:authorize="hasRole('ADMIN')">
+                <input class="mdl-button mdl" style="float: right;" type="submit" value="Unban"/>
+            </form>
+
+            <form th:if="${!user.isBanned()}" th:action="@{/admin/ban/{id} (id=${user.id})}" method="POST" sec:authorize="hasRole('ADMIN')">
+                <input class="mdl-button mdl" style="float: right;" type="submit" value="Ban"/>
+            </form>
+
+            <form th:if="${!user.isAdmin()}" th:action="@{/owner/assignAdmin/{id} (id=${user.id})}" method="POST" sec:authorize="hasRole('OWNER')">
+                <input class="mdl-button mdl" style="float: right;" type="submit" value="Make Dio"/>
+            </form>
+
+            <form th:if="${user.isAdmin()}" th:action="@{/owner/removeAdmin/{id} (id=${user.id})}" method="POST" sec:authorize="hasRole('OWNER')">
+                <input class="mdl-button mdl" style="float: right;" type="submit" value="Unmake Dio"/>
+            </form>
+            <i class="fas fa-user-alt"></i>
+            <span class="mdl-button mdl"><span th:text="${user.firstName}"></span> <span th:text="${user.lastName}"></span>
+        </div>
+    </div>
+</section>
+
+<h2>Extensions: </h2>
+<div th:each="extension : ${extensions}" class="myExtension">
+    <a th:href="@{/extension/{id}(id=${extension.id})}">
+        <div class="mdl-card mdl-shadow--2dp">
+            <div class="mdl-background-image"
+                 th:style="'height: 285px;background-position: center center;background-size: cover; background-image: url(\''+  @{${extension.picURI}} + '\');'"></div>
+            <div class="mdl-card__title mdl-card--border">
+                <h2 class="mdl-card__title-text" th:text="${extension.name}"></h2>
+            </div>
+            <div class="mdl-card__title">
+                    <span class="mdl-chip mdl-chip--contact"
+                          th:style="${extension.publisher.isBanned()} ? 'background-color:rgba(255, 0, 0 , 0.5)' : 'background-colir: #dedede'">
                         <img th:attr="src=@{${extension.publisher.picURI}}" class="mdl-chip__contact">
                 <span class="mdl-chip__text" th:text="${extension.publisher.username}"></span>
             </span>
-                        <div class="mdl-layout-spacer"></div>
-                        <span th:text="${extension.downloads}"></span>
-                    </div>
-                </div>
-            </a>
+                <div class="mdl-layout-spacer"></div>
+                <span th:text="${extension.downloads}"></span>
+            </div>
         </div>
-
-        <div id="ban">
-            <form th:action="@{/admin/unban/{id} (id=${user.id})}" method="POST">
-                <th:block th:if="${user.isBanned()}">
-                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" sec:authorize="hasRole('ADMIN')">Unban</button>
-                </th:block>
-            </form>
-
-            <form th:action="@{/admin/ban/{id} (id=${user.id})}" method="POST">
-                <th:block th:if="${!user.isBanned()}">
-                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" sec:authorize="hasRole('ADMIN')">Ban</button>
-                </th:block>
-            </form>
-        </div>
-        <div id="assignAdmin">
-            <form th:action="@{/owner/assignAdmin/{id} (id=${user.id})}" method="POST">
-                <th:block th:if="${!user.isAdmin()}">
-                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" sec:authorize="hasRole('OWNER')">Make Admin</button>
-                </th:block>
-            </form>
-
-            <form th:action="@{/owner/removeAdmin/{id} (id=${user.id})}" method="POST">
-                <th:block th:if="${user.isAdmin()}">
-                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" sec:authorize="hasRole('OWNER')">U no longer admin boi</button>
-                </th:block>
-            </form>
-        </div>
-    </header>
-</main>
+    </a>
+</div>

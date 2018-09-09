@@ -49,7 +49,10 @@ public class UserController {
         if (id == currentUser.getId()) {
             return "redirect:/user/profile";
         }
-        Set<Extension> extensions = new HashSet<>(user.getExtensions());
+        Set<Extension> extensions = user.getExtensions().stream()
+                .filter(e -> e.isApproved())
+                .collect(Collectors.toSet());
+
         model.addAttribute("user", user);
         model.addAttribute("extensions", extensions);
         model.addAttribute("view", "user/details");
