@@ -1,6 +1,7 @@
 package com.alpha.marketplace.config;
 
 import com.alpha.marketplace.models.*;
+import com.alpha.marketplace.repositories.PropertiesRepositoryImpl;
 import com.alpha.marketplace.repositories.base.PropertiesRepository;
 import com.alpha.marketplace.utils.Utils;
 import com.google.auth.Credentials;
@@ -21,8 +22,6 @@ import java.io.*;
 @Configuration
 @EnableScheduling
 public class Config {
-
-    private PropertiesRepository propertiesRepository;
 
     @Bean
     SessionFactory getSessionFactory() {
@@ -45,7 +44,7 @@ public class Config {
     @Bean
     Storage getStorage() {
         try {
-            Utils.properties = propertiesRepository.get();
+            new PropertiesRepositoryImpl(getSessionFactory());
             String cr = Utils.properties.getCredentials();
             InputStream is = new ByteArrayInputStream(cr.getBytes());
             Credentials credentials = GoogleCredentials.fromStream(is);
@@ -68,10 +67,5 @@ public class Config {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.setBasename("messages");
         return messageSource;
-    }
-
-    @Autowired
-    public void setPropertiesRepository(PropertiesRepository propertiesRepository) {
-        this.propertiesRepository = propertiesRepository;
     }
 }

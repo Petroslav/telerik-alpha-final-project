@@ -16,6 +16,7 @@ public class PropertiesRepositoryImpl implements PropertiesRepository {
     @Autowired
     public PropertiesRepositoryImpl(SessionFactory sessionFactory) {
         this.session = sessionFactory;
+        Utils.properties = get();
     }
 
     @Override

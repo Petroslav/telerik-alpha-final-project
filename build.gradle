@@ -5,26 +5,46 @@ buildscript {
     repositories {
         jcenter()
         mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath('gradle.plugin.com.palantir.gradle.docker:gradle-docker:0.13.0')
     }
 }
 
 apply plugin: 'java'
-apply plugin: 'war'
+apply plugin: 'idea'
 apply plugin: 'eclipse'
+apply plugin: 'com.palantir.docker'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
 group = 'com.alpha'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = 1.8
+//version = '0.0.1-SNAPSHOT'
+//sourceCompatibility = 1.8
+
+bootJar {
+    baseName = 'marketplace-docker'
+    version =  '0.1.0'
+}
+
+docker {
+    dependsOn build
+    name "telerikfinalproject/${bootJar.baseName}"
+    files bootJar.archivePath
+    buildArgs(['JAR_FILE': "${bootJar.archiveName}"])
+}
 
 repositories {
     mavenCentral()
     maven { url "https://repo.spring.io/milestone" }
 }
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 ext {
     springCloudGcpVersion = '1.0.0.RELEASE'
@@ -50,6 +70,13 @@ dependencies {
     compile group: 'org.springframework.security', name: 'spring-security-web', version: '5.0.7.RELEASE'
     compile group: 'org.springframework.security', name: 'spring-security-core', version: '5.0.7.RELEASE'
     compile group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-springsecurity4', version: '3.0.2.RELEASE'
+
+    // https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
+    compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.2.4'
+    // https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-impl
+    compile group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.2.3-1'
+    // https://mvnrepository.com/artifact/javax.activation/activation
+    compile group: 'javax.activation', name: 'activation', version: '1.1.1'
 
     runtime('mysql:mysql-connector-java')
 
