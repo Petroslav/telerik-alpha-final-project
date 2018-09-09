@@ -53,12 +53,11 @@ public class ExtensionController {
     @PostMapping("/create")
     public String create(ExtensionBindingModel model, BindingResult errors) {
         User user =  extensionService.currentUser();
-        extensionService.createExtension(model, errors, user);
+        extensionService.createExtension(model, errors, user, userService);
         if (errors.hasErrors()) {
             return "redirect:/extension/create";
         }
         userService.updateUser(user);
-        userService.reloadMemory();
         return "redirect:/";
     }
 
@@ -123,16 +122,14 @@ public class ExtensionController {
         if (!extensionService.isUserPublisherOrAdmin(extension)) {
             return "redirect:/extension/" + id;
         }
-        extensionService.delete(id);
-        userService.reloadMemory();
+        extensionService.delete(id, userService);
         return "redirect:/";
     }
 
     @PostMapping("/approve/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public String approveExtension(@PathVariable("id") Integer id) {
-        extensionService.approveExtensionById(id);
-        userService.reloadMemory();
+        extensionService.approveExtensionById(id, userService);
 
         return "redirect:/extension/" + id;
     }
@@ -140,8 +137,7 @@ public class ExtensionController {
     @PostMapping("/disapprove/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public String disapproveExtension(@PathVariable("id") Integer id) {
-        extensionService.disapproveExtensionById(id);
-        userService.reloadMemory();
+        extensionService.disapproveExtensionById(id, userService);
 
         return "redirect:/extension/" + id;
     }
@@ -216,11 +212,10 @@ public class ExtensionController {
         if (errors.hasErrors()) {
             return "redirect:/extension/edit/" + id;
         }
-        if (!extensionService.edit(editModel, id)) {
+        if (!extensionService.edit(editModel, id, userService)) {
             model.addAttribute("error", ErrorMessages.EXTENSION_EDIT_ERROR);
             return "redirect:/extension/edit/" + id;
         }
-        userService.reloadMemory();
         return "redirect:/extension/" + id;
     }
 

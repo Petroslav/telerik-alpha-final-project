@@ -12,6 +12,7 @@ import com.alpha.marketplace.models.binding.ExtensionBindingModel;
 import com.alpha.marketplace.models.edit.ExtensionEditModel;
 import com.alpha.marketplace.repositories.base.*;
 import com.alpha.marketplace.services.base.ExtensionService;
+import com.alpha.marketplace.services.base.UserService;
 import com.alpha.marketplace.utils.Utils;
 import com.google.cloud.storage.Blob;
 import org.modelmapper.ModelMapper;
@@ -209,7 +210,7 @@ public class ExtensionServiceImpl implements ExtensionService {
     }
 
     @Override
-    public boolean edit(ExtensionEditModel model, long id) {
+    public boolean edit(ExtensionEditModel model, long id, UserService userService) {
         Extension edit = extensionsMap.get(id);
         edit.setName(model.getName());
         edit.setDescription(model.getDescription());
@@ -227,7 +228,11 @@ public class ExtensionServiceImpl implements ExtensionService {
         Set<Tag> tags = handleTags(model.getTags(), edit);
         edit.getTags().clear();
         edit.getTags().addAll(tags);
-        return update(edit);
+        if(!update(edit)){
+            return false;
+        }
+        userService.reloadMemory();
+        return true;
     }
 
     @Override
@@ -257,7 +262,7 @@ public class ExtensionServiceImpl implements ExtensionService {
     }
 
     @Override
-    public void createExtension(ExtensionBindingModel model, BindingResult errors, User user) {
+    public void createExtension(ExtensionBindingModel model, BindingResult errors, User user, UserService userService) {
         if(errors.hasErrors()) return;
 
         if(!validateRepoUrl(model.getRepositoryUrl())){
@@ -273,11 +278,11 @@ public class ExtensionServiceImpl implements ExtensionService {
         Extension extension = mapper.map(model, Extension.class);
         extension.setPublisher(user);
         extension.setRepoURL(model.getRepositoryUrl());
-        finishCreatingExtension(extension, model, errors);
+        finishCreatingExtension(extension, model, errors, userService);
     }
 
     @Override
-    public Extension createExtension(User publisher, ExtensionBindingModel model, BindingResult errors) {
+    public Extension createExtension(User publisher, ExtensionBindingModel model, BindingResult errors, UserService userService) {
         if(errors.hasErrors()) return null;
 
         if(!validateRepoUrl(model.getRepositoryUrl())){
@@ -293,12 +298,12 @@ public class ExtensionServiceImpl implements ExtensionService {
         Extension extension = mapper.map(model, Extension.class);
         extension.setPublisher(publisher);
         extension.setRepoURL(model.getRepositoryUrl());
-        finishCreatingExtension(extension, model, errors);
+        finishCreatingExtension(extension, model, errors, userService);
 
         return extension;
     }
 
-    private void finishCreatingExtension(Extension extension, ExtensionBindingModel model, BindingResult errors){
+    private void finishCreatingExtension(Extension extension, ExtensionBindingModel model, BindingResult errors, UserService userService){
         try {
             storeFiles(extension, model);
         }catch(IOException e){
@@ -316,7 +321,7 @@ public class ExtensionServiceImpl implements ExtensionService {
 
         workers.submit(() -> {
             try {
-                saveExtensionGitInfo(extension, model);
+                saveExtensionGitInfo(extension, model, userService);
             } catch (FailedToSyncException e) {
                 System.out.println(e.getMessage());
                 e.printStackTrace();
@@ -325,13 +330,14 @@ public class ExtensionServiceImpl implements ExtensionService {
     }
 
     @Override
-    public void delete(long id) {
+    public void delete(long id, UserService userService) {
         repository.delete(id);
         reloadLists();
+        userService.reloadMemory();
     }
 
     @Override
-    public void approveExtensionById(long id) {
+    public void approveExtensionById(long id, UserService userService) {
         extensionsMap.get(id).approve();
         workers.submit(() -> {
             while(true){
@@ -340,6 +346,7 @@ public class ExtensionServiceImpl implements ExtensionService {
                     extension.approve();
                     repository.update(extension);
                     reloadLists();
+                    userService.reloadMemory();
                     break;
                 }catch(VersionMismatchException e){
                     System.out.println(e.getMessage());
@@ -349,7 +356,7 @@ public class ExtensionServiceImpl implements ExtensionService {
     }
 
     @Override
-    public void disapproveExtensionById(long id) {
+    public void disapproveExtensionById(long id, UserService userService) {
         extensionsMap.get(id).disapprove();
         workers.submit(() -> {
             while(true){
@@ -358,6 +365,7 @@ public class ExtensionServiceImpl implements ExtensionService {
                     extension.disapprove();
                     repository.update(extension);
                     reloadLists();
+                    userService.reloadMemory();
                     break;
                 }catch(VersionMismatchException e){
                     System.out.println(e.getMessage());
@@ -563,7 +571,7 @@ public class ExtensionServiceImpl implements ExtensionService {
         extension.setPicURI(picBlob.getMediaLink());
     }
 
-    private void saveExtensionGitInfo(Extension extension, ExtensionBindingModel model) throws FailedToSyncException {
+    private void saveExtensionGitInfo(Extension extension, ExtensionBindingModel model, UserService userService) throws FailedToSyncException {
         GitHubInfo info = new GitHubInfo();
         extension.setGitHubInfo(info);
         info.setParent(extension);
@@ -576,6 +584,7 @@ public class ExtensionServiceImpl implements ExtensionService {
             System.out.println("GitHub information successfully updated for extension " + extension.getName());
             System.out.println("Reloading lists...");
             reloadLists();
+            userService.reloadMemory();
         } catch (VersionMismatchException e) {
             System.out.println("Version mismatch. Retrying...");
             extension = repository.getById(extension.getId());
