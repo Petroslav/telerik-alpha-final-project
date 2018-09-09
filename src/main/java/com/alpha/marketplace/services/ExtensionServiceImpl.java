@@ -231,7 +231,8 @@ public class ExtensionServiceImpl implements ExtensionService {
         if(!update(edit)){
             return false;
         }
-        userService.reloadMemory();
+        workers.submit(this::reloadLists);
+        workers.submit(userService::reloadMemory);
         return true;
     }
 
@@ -480,7 +481,7 @@ public class ExtensionServiceImpl implements ExtensionService {
 
     @Override
     public void syncAllExtensions(){
-        workers.submit(() -> syncAll());
+        workers.submit(this::syncAll);
     }
 
     private void syncAll() {
