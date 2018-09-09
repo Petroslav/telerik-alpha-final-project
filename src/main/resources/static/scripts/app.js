@@ -5,23 +5,24 @@ $(document).ready(function () {
         var url = $(location).attr('href');
         var parameter = url.substring(url.lastIndexOf('=') + 1);
 
-        var redirectOption = url.includes('newest') ? 'newest' : 'popular';
-
+        var redirectOption = url.includes('newest') ? 'newest?' : 'popular?';
+        if (url.includes('search')) {
+            redirectOption = url.substring(url.lastIndexOf('/') +1 , url.lastIndexOf('&') + 1)
+        }
         if (parameter.lastIndexOf('/') === parameter.length - 1) {
             parameter = parameter.substring(0, parameter.length - 1);
         }
 
         var option = $('#' + parameter).html();
-
         $('#sortOption').val(option);
         $('#byDownloads').on('click', function () {
-            $(location).attr('href', '/' + redirectOption + '?sort=byDownloads')
+            $(location).attr('href', '/' + redirectOption + 'sort=byDownloads')
         });
         $('#byLastCommit').on('click', function () {
-            $(location).attr('href', '/' + redirectOption + '?sort=byLastCommit')
+            $(location).attr('href', '/' + redirectOption + 'sort=byLastCommit')
         });
         $('#byUploadDate').on('click', function () {
-            $(location).attr('href', '/' + redirectOption + '?sort=byUploadDate')
+            $(location).attr('href', '/' + redirectOption + 'sort=byUploadDate')
         });
     }
 
@@ -73,7 +74,7 @@ $(document).ready(function () {
         }
         if (e.which === 13) {
 
-            $(location).attr('href', '/search?criteria=' + textfield);
+            $(location).attr('href', '/search?criteria=' + textfield+'&sort=byDownloads');
         }
     });
     $('#sortButtonNewest').on('click', function () {

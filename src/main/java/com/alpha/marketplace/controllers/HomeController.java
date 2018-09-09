@@ -18,12 +18,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("Duplicates")
 @Controller
 public class HomeController {
 
@@ -37,36 +35,11 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String index(Model model, @RequestParam(value = "sort", required = false) String sort) {
+    public String index(Model model) {
 
         List<Extension> newestExtensions = extensionService.getLatest().stream().limit(5).collect(Collectors.toList());
         List<Extension> selectedByAdmin = extensionService.getAdminSelection();
         List<Extension> mostPopular = extensionService.getMostPopular().stream().limit(5).collect(Collectors.toList());
-
-        if (sort != null) {
-            switch (sort) {
-
-                case "byLastCommit":
-                    newestExtensions.sort((e1, e2) -> e2.getGitHubInfo().getLastCommit().compareTo(e1.getGitHubInfo().getLastCommit()));
-                    selectedByAdmin.sort((e1, e2) -> e2.getGitHubInfo().getLastCommit().compareTo(e1.getGitHubInfo().getLastCommit()));
-                    mostPopular.sort((e1, e2) -> e2.getGitHubInfo().getLastCommit().compareTo(e1.getGitHubInfo().getLastCommit()));
-                    break;
-
-                case "byUploadDate":
-                    newestExtensions.sort((e1, e2) -> e2.getAddedOn().compareTo(e1.getAddedOn()));
-                    selectedByAdmin.sort((e1, e2) -> e2.getAddedOn().compareTo(e1.getAddedOn()));
-                    mostPopular.sort((e1, e2) -> e2.getAddedOn().compareTo(e1.getAddedOn()));
-                    break;
-
-                case "byDownloads":
-                    newestExtensions.sort((e1, e2) -> e2.getDownloads() - e1.getDownloads() == 0 ? e1.getName().compareTo(e2.getName()) : e2.getDownloads() - e1.getDownloads());
-                    selectedByAdmin.sort((e1, e2) -> e2.getDownloads() - e1.getDownloads() == 0 ? e1.getName().compareTo(e2.getName()) : e2.getDownloads() - e1.getDownloads());
-                    mostPopular.sort((e1, e2) -> e2.getDownloads() - e1.getDownloads() == 0 ? e1.getName().compareTo(e2.getName()) : e2.getDownloads() - e1.getDownloads());
-                    break;
-                default:
-                    break;
-            }
-        }
 
         model.addAttribute("view", "index");
         model.addAttribute("newest", newestExtensions);
@@ -75,8 +48,9 @@ public class HomeController {
 
         return "base-layout";
     }
+
     @GetMapping("/newest")
-    public String newestPage(Model model, @RequestParam(value = "sort", required = false) String sort){
+    public String newestPage(Model model, @RequestParam(value = "sort", required = false) String sort) {
         List<Extension> extensions = extensionService.getLatest();
 
         switch (sort) {
@@ -102,7 +76,7 @@ public class HomeController {
     }
 
     @GetMapping("/popular")
-    public String mostPopularPage(Model model, @RequestParam(value = "sort", required = false) String sort){
+    public String mostPopularPage(Model model, @RequestParam(value = "sort", required = false) String sort) {
         List<Extension> mostPopular = extensionService.getMostPopular();
 
         switch (sort) {
@@ -168,14 +142,34 @@ public class HomeController {
     }
 
     @GetMapping("/search")
-    public String search(@RequestParam(value = "criteria", required = false) String criteria, Model model) {
+    public String search(@RequestParam(value = "criteria", required = false) String criteria, @RequestParam(value = "sort", required = false) String sort, Model model) {
         Set<Extension> matches;
-            List<User> matchedUsers = service.searchUsers(criteria);
-            model.addAttribute("userMatches", matchedUsers);
+        List<User> matchedUsers = service.searchUsers(criteria);
+        model.addAttribute("userMatches", matchedUsers);
 
-            matches = new HashSet<>(extensionService.searchExtensions(criteria));
-            matches.addAll(extensionService.searchExtensionsByTag(criteria));
-            model.addAttribute("matches", matches);
+        matches = new HashSet<>(extensionService.searchExtensions(criteria));
+        matches.addAll(extensionService.searchExtensionsByTag(criteria));
+
+        List<Extension> extensions = new ArrayList<>(matches);
+        if (!matches.isEmpty() && sort != null) {
+            switch (sort) {
+                case "byLastCommit":
+                    extensions.sort((e1, e2) -> e2.getGitHubInfo().getLastCommit().compareTo(e1.getGitHubInfo().getLastCommit()));
+                    break;
+
+                case "byUploadDate":
+                    extensions.sort((e1, e2) -> e2.getAddedOn().compareTo(e1.getAddedOn()));
+                    break;
+
+                case "byDownloads":
+                    extensions.sort((e1, e2) -> e2.getDownloads() - e1.getDownloads() == 0 ? e1.getName().compareTo(e2.getName()) : e2.getDownloads() - e1.getDownloads());
+                    break;
+                default:
+                    break;
+            }
+        }
+        model.addAttribute("matches", extensions);
+
 
         model.addAttribute("view", "/search");
         return "base-layout";
