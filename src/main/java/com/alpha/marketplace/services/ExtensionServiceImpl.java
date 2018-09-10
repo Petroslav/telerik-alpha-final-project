@@ -257,7 +257,11 @@ public class ExtensionServiceImpl implements ExtensionService {
                         .collect(Collectors.toList())
                         .get(0)));
         matches.forEach(Extension::approve);
-        workers.submit(() -> matches.forEach(this::update));
+        matches.forEach(e -> extensionsMap.get(e.getId()).approve());
+        workers.submit(() -> {
+            matches.forEach(this::update);
+            reloadLists();
+        });
     }
 
     @Override
