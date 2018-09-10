@@ -96,6 +96,7 @@ public class ExtensionController {
     public String syncExtension(@PathVariable("id") String id) {
         extensionService.sync(Integer.parseInt(id));
         extensionService.reloadLists();
+        System.out.println("sad");
         return "redirect:/extension/" + id;
     }
 
