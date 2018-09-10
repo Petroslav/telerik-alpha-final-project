@@ -35,7 +35,7 @@
             <a class="mdl-button mdl" th:href="@{/extension/delete/{id}(id = ${extension.id})}">Delete</a>
         </div>
         <div sec:authorize="hasRole('ADMIN')" style="float: right;">
-            <form th:href="@{/extension/sync/{id} (id=${extension.id})}" method="POST" class="form-button">
+            <form th:action="@{/extension/sync/{id} (id=${extension.id})}" method="POST" class="form-button">
                 <button class="mdl-button mdl">Sync</button>
             </form>
 
