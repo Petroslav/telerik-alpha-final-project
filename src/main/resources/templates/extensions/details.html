@@ -96,5 +96,8 @@
                         th:text="${extension.gitHubInfo.getLastCommitToString()}"></span></button>
             </form>
         </div>
+        <div class="mdl-card__actions" th:unless="${extension.gitHubInfo !=null}">
+            <span style="width: 93%;" class="mdl-button">Invalid github repo! Please update it</span>
+        </div>
     </div>
 </section>
