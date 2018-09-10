@@ -78,7 +78,7 @@
             <h4>Description</h4>
             <span th:text="${extension.description}"></span>
         </div>
-        <div class="mdl-card__actions">
+        <div class="mdl-card__actions" th:if="${extension.gitHubInfo != null}">
             <form th:action="@{${extension.repoURL}}" method="GET" class="my-inline-block" target="_blank">
                 <button class="mdl-button mdl" type="submit"><i class="fab fa-github-square"></i></button>
             </form>

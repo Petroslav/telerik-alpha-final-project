@@ -81,7 +81,14 @@ public class HomeController {
 
         switch (sort) {
             case "byLastCommit":
-                mostPopular.sort((e1, e2) -> e2.getGitHubInfo().getLastCommit().compareTo(e1.getGitHubInfo().getLastCommit()));
+                mostPopular.sort((e1, e2) -> {
+                    if(e1.getGitHubInfo() != null) {
+                        return e2.getGitHubInfo().getLastCommit().compareTo(e1.getGitHubInfo().getLastCommit());
+                    }else{
+                        return -1;
+                    }
+
+                });
                 break;
 
             case "byUploadDate":

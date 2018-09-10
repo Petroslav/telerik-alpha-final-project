@@ -662,10 +662,10 @@ public class ExtensionServiceImpl implements ExtensionService {
         try {
             String fn = model.getFile().getOriginalFilename().substring(model.getFile().getOriginalFilename().lastIndexOf("."));
             String id = String.valueOf(edit.getPublisher().getId());
-            String name = edit.getName() + fn;
+            String name = edit.getId() + fn;
             String ct = model.getFile().getContentType();
             byte[] bytes = model.getFile().getBytes();
-            Blob b = cloudExtensionRepository.saveExtension(id, name + fn, ct, bytes);
+            Blob b = cloudExtensionRepository.saveExtension(id, name, ct, bytes);
             edit.setBlobId(b.getBlobId());
             edit.setDlURI(b.getMediaLink());
         } catch (IOException e) {

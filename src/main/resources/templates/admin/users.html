@@ -20,7 +20,7 @@
                     </a>
                 </td>
                 <td>
-                    <div id="ban">
+                    <div id="ban" th:unless="${user.id == currentUser.id}">
                         <form th:action="@{/admin/usersUnban/{id} (id=${user.id})}" method="POST" th:if="${user.isBanned()}">
                                 <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" >Unban</button>
                         </form>
@@ -30,7 +30,7 @@
                         </form>
                     </div>
                 </td>
-                <td  sec:authorize="hasRole('OWNER')">
+                <td  sec:authorize="hasRole('OWNER')" th:unless="${user.id == currentUser.id}">
                     <div id="assignAdmin">
                         <form th:action="@{/owner/usersAssignAdmin/{id} (id=${user.id})}" method="POST" th:if="${!user.isAdmin()}">
                                 <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" >Make Admin</button>

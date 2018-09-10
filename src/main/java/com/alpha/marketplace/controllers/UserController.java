@@ -49,12 +49,16 @@ public class UserController {
         if (id == currentUser.getId()) {
             return "redirect:/user/profile";
         }
+        Set<Extension> pending = user.getExtensions().stream()
+                .filter(e -> !e.isApproved())
+                .collect(Collectors.toSet());
         Set<Extension> extensions = user.getExtensions().stream()
                 .filter(e -> e.isApproved())
                 .collect(Collectors.toSet());
 
         model.addAttribute("user", user);
         model.addAttribute("extensions", extensions);
+        model.addAttribute("pending", pending);
         model.addAttribute("view", "user/details");
 
         return "base-layout";

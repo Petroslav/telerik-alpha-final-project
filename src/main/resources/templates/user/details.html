@@ -30,7 +30,7 @@
     </div>
 </section>
 
-<h2>Extensions: </h2>
+<h2 th:if="${extensions.size() > 0}">Extensions: </h2>
 <div th:each="extension : ${extensions}" class="myExtension">
     <a th:href="@{/extension/{id}(id=${extension.id})}">
         <div class="mdl-card mdl-shadow--2dp">
@@ -50,4 +50,27 @@
             </div>
         </div>
     </a>
+</div>
+<div sec:authorize="hasRole('ADMIN')">
+    <h2 th:if="${pending.size()} > 0">Pending: </h2>
+    <div th:each="extension : ${pending}" class="myExtension">
+        <a th:href="@{/extension/{id}(id=${extension.id})}">
+            <div class="mdl-card mdl-shadow--2dp">
+                <div class="mdl-background-image"
+                     th:style="'height: 285px;background-position: center center;background-size: cover; background-image: url(\''+  @{${extension.picURI}} + '\');'"></div>
+                <div class="mdl-card__title mdl-card--border">
+                    <h2 class="mdl-card__title-text" th:text="${extension.name}"></h2>
+                </div>
+                <div class="mdl-card__title">
+                    <span class="mdl-chip mdl-chip--contact"
+                          th:style="${extension.publisher.isBanned()} ? 'background-color:rgba(255, 0, 0 , 0.5)' : 'background-colir: #dedede'">
+                        <img th:attr="src=@{${extension.publisher.picURI}}" class="mdl-chip__contact">
+                <span class="mdl-chip__text" th:text="${extension.publisher.username}"></span>
+            </span>
+                    <div class="mdl-layout-spacer"></div>
+                    <span th:text="${extension.downloads}"></span>
+                </div>
+            </div>
+        </a>
+    </div>
 </div>

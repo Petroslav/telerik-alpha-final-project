@@ -57,6 +57,7 @@ public class AdminController {
         }
         List<User> users = new ArrayList<>(userService.getUsers().values());
 
+        model.addAttribute("currentUser", userService.getCurrentUser());
         model.addAttribute("users", users);
         model.addAttribute("view", "/admin/users");
 
